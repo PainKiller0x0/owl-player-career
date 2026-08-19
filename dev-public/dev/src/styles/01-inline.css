@@ -1,0 +1,11 @@
+
+/* ===== V7.7.1 · Team picker grouping ===== */
+#careerTeamManualGrid.v771-grouped-team-grid{display:block;}
+#careerTeamManualGrid.v771-grouped-team-grid.ui-hidden{display:none;}
+.v771-team-region{margin-top:12px;}
+.v771-team-region:first-child{margin-top:0;}
+.v771-team-region-head{display:flex;align-items:center;gap:9px;margin:0 2px 8px;padding:7px 9px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px;font-weight:950;letter-spacing:.06em;}
+.v771-team-region-head strong{color:var(--ink);font-size:12px;}
+.v771-team-region-count{margin-left:auto;font-size:10px;opacity:.8;}
+.v771-team-region-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+@media(max-width:600px){.v771-team-region-grid{grid-template-columns:1fr}.v771-team-region-head{padding-left:5px;padding-right:5px}}

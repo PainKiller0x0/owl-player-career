@@ -1,0 +1,51 @@
+
+/* ======================================================================
+   PUBLIC BETA RC 0.9.0 · persistence / onboarding / trade / hero training
+   ====================================================================== */
+.v800-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:5000;padding:10px 14px;border-radius:12px;background:#111923;color:#fff;font-size:11px;font-weight:800;box-shadow:0 12px 34px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:.2s}
+.v800-toast.show{opacity:1;bottom:32px}
+.v800-cover-saves{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.38)}
+.v800-cover-save-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.v800-cover-save-head strong{font-size:11px}.v800-cover-save-head button{font-size:9px}
+.v800-latest-save{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border-radius:12px;background:rgba(44,110,170,.055);border:1px solid var(--line)}
+.v800-latest-save b,.v800-latest-save span,.v800-latest-save small{display:block}.v800-latest-save b{font-size:12px}.v800-latest-save span,.v800-latest-save small{font-size:9px;color:var(--muted);margin-top:2px}
+.v800-latest-save .actions{display:flex;gap:6px;flex:0 0 auto}
+.v800-overlay{position:fixed;inset:0;z-index:4200;background:rgba(8,12,18,.72);backdrop-filter:blur(8px);display:grid;place-items:center;padding:18px}
+.v800-overlay.ui-hidden{display:none}
+.v800-modal{width:min(900px,100%);max-height:min(90vh,900px);overflow:auto;border:1px solid var(--line);border-radius:22px;background:var(--panel-solid);box-shadow:0 24px 70px rgba(0,0,0,.36);padding:18px}
+.v800-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:13px}.v800-modal-head h2{margin:0;font-size:22px}.v800-modal-head p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+.v800-close{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;width:34px;height:34px;cursor:pointer}
+.v800-save-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.v800-save-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.36);min-width:0}
+.v800-save-card.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,126,58,.09)}
+.v800-save-card .slot{font-size:9px;color:var(--accent);font-weight:950;letter-spacing:.08em}.v800-save-card h3{margin:5px 0 4px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v800-save-card p{margin:0;color:var(--muted);font-size:9px;line-height:1.6}
+.v800-save-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}.v800-save-actions button{padding:8px 7px;font-size:9px}
+.v800-save-empty{min-height:104px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:10px}
+.v800-save-tools{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap}.v800-save-tools small{color:var(--muted);font-size:9px}
+.v800-onboard-body{text-align:center;padding:14px 8px 4px}.v800-onboard-icon{font-size:50px}.v800-onboard-body h2{font-size:27px;margin:7px 0}.v800-onboard-body p{max-width:640px;margin:0 auto;color:var(--muted);font-size:12px;line-height:1.85}
+.v800-onboard-dots{display:flex;justify-content:center;gap:6px;margin:15px 0}.v800-onboard-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.v800-onboard-dots i.on{background:var(--accent)}
+.v800-onboard-actions{display:flex;justify-content:center;gap:8px}
+.v800-context-tip{margin:10px 0;padding:10px 12px;border:1px dashed rgba(87,159,215,.42);border-radius:12px;background:rgba(44,110,170,.055);font-size:10px;color:var(--muted);line-height:1.65}.v800-context-tip b{color:var(--ink)}
+.v800-diagnostic-box{margin-top:10px;padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.3)}.v800-diagnostic-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.v800-diagnostic-actions button{font-size:9px;padding:8px 10px}
+.v800-hero-training{margin:12px 0;padding:13px;border:1px solid rgba(93,157,209,.34);border-radius:16px;background:rgba(44,110,170,.05)}
+.v800-hero-training h4{margin:4px 0;font-size:16px}.v800-hero-training>p{margin:0 0 9px;color:var(--muted);font-size:10px;line-height:1.6}
+.v800-hero-picks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.v800-hero-pick{padding:8px;border:1px solid var(--line);border-radius:11px;background:var(--panel);color:var(--ink);text-align:left;cursor:pointer}.v800-hero-pick.selected{border-color:var(--accent);background:rgba(255,126,58,.08)}.v800-hero-pick strong,.v800-hero-pick small{display:block}.v800-hero-pick strong{font-size:10px}.v800-hero-pick small{font-size:8px;color:var(--muted);margin-top:2px}
+.v800-hero-training-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}.v800-hero-training-foot span{font-size:9px;color:var(--muted)}
+.v800-trade-card{max-width:720px}.v800-trade-team{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.35);margin:10px 0}.v800-trade-logo{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:950}.v800-trade-team strong,.v800-trade-team span{display:block}.v800-trade-team span{font-size:9px;color:var(--muted);margin-top:3px}
+.v800-trade-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.v800-trade-actions button{padding:12px}
+.v800-trade-request{margin-top:8px;display:flex;justify-content:flex-end}.v800-trade-request button{font-size:9px}
+.v800-career-passport{margin:0 0 14px;padding:15px;border:1px solid rgba(247,181,63,.34);border-radius:18px;background:linear-gradient(145deg,rgba(247,181,63,.07),rgba(44,110,170,.045))}
+.v800-passport-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.v800-passport-head h2{margin:0;font-size:20px}.v800-passport-head p{margin:3px 0 0;font-size:9px;color:var(--muted)}
+.v800-passport-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:11px}.v800-passport-stat{padding:8px;border:1px solid var(--line);border-radius:11px;text-align:center}.v800-passport-stat strong,.v800-passport-stat span{display:block}.v800-passport-stat strong{font-size:15px}.v800-passport-stat span{font-size:8px;color:var(--muted);margin-top:2px}
+.v800-passport-stories{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.v800-passport-stories span{font-size:9px;padding:5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}.v800-passport-actions{display:flex;justify-content:flex-end;margin-top:9px}
+.v800-save-indicator{position:fixed;left:12px;bottom:12px;z-index:700;font-size:8px;color:var(--muted);opacity:.65;pointer-events:none}
+html[data-theme="dark"] .v800-cover-saves,html[data-theme="dark"] .v800-latest-save,html[data-theme="dark"] .v800-save-card,html[data-theme="dark"] .v800-diagnostic-box,html[data-theme="dark"] .v800-trade-team{background:rgba(255,255,255,.035)}
+@media(max-width:720px){
+  .v800-save-grid{grid-template-columns:1fr}.v800-modal{padding:13px;border-radius:17px}.v800-latest-save{display:block}.v800-latest-save .actions{margin-top:8px}
+  .v800-hero-picks{grid-template-columns:repeat(2,minmax(0,1fr))}.v800-trade-actions{grid-template-columns:1fr}
+  .v800-passport-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.v800-passport-head{display:block}.v800-passport-actions{justify-content:stretch}.v800-passport-actions button{width:100%}
+  .career-total-grid,.training-summary-grid,.review-grid,.offers-grid{min-width:0}
+  .season-app,.playoff-app,.offseason-app,.career-app,.retirement-app,.retired-career-app,.team-app,.builder-app,.reveal-app{max-width:100%;overflow-x:hidden}
+  button,input,select{max-width:100%}
+}
+@media(max-width:420px){.v800-hero-picks{grid-template-columns:1fr}.v800-save-actions{grid-template-columns:1fr 1fr}}

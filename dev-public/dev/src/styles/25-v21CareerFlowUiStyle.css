@@ -1,0 +1,110 @@
+/* Public Beta 1.9 RC22 · Career Flow & UI Fixes */
+
+/* Career archive now has two real tabs. The old three-column grid left a fake blank tab. */
+#careerScreen .career-tabs{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+/* Hero market profile + player baseline belong to the same decision row. */
+#offseasonContent .v21-market-profile-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 230px;
+  gap:12px;
+  align-items:stretch;
+  clear:both;
+  margin:12px 0 14px;
+}
+#offseasonContent .v21-market-profile-row>.v772-personal-hero-market,
+#offseasonContent .v21-market-profile-row>.v16-market-self{
+  position:static!important;
+  float:none!important;
+  width:auto!important;
+  min-width:0!important;
+  height:100%;
+  margin:0!important;
+  box-sizing:border-box;
+}
+#offseasonContent .v21-market-profile-row>.v772-personal-hero-market{
+  display:flex!important;
+  align-items:center;
+}
+#offseasonContent .v21-market-profile-row>.v772-personal-hero-market>div:first-child{
+  min-width:0;
+}
+#offseasonContent .v21-market-profile-row>.v772-personal-hero-market>div:first-child>span,
+#offseasonContent .v21-market-profile-row>.v772-personal-hero-market>div:first-child>strong{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#offseasonContent .v21-market-profile-row>.v16-market-self{
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  text-align:left!important;
+}
+
+/* Hero-lab auto pick is assistance, not auto-confirm. */
+.v800-auto-hero-btn{white-space:nowrap}
+.v800-hero-training-foot>div{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* Expanded playoffs: every round must use the full bracket card instead of leaving a dead right half. */
+#playoffScreen.v772-playoff-expanded .playoff-summary{align-items:stretch}
+#playoffScreen.v772-playoff-expanded .bracket-card{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow:hidden!important;
+  box-sizing:border-box;
+}
+#playoffScreen.v772-playoff-expanded .double-bracket,
+#playoffScreen.v772-playoff-expanded .double-lane{min-width:0;width:100%;box-sizing:border-box}
+#playoffScreen.v772-playoff-expanded .double-rounds{
+  grid-auto-flow:row!important;
+  grid-auto-columns:unset!important;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important;
+  width:100%;
+  min-width:0;
+  overflow:visible!important;
+  align-items:start;
+}
+#playoffScreen.v772-playoff-expanded .double-grand .double-rounds{
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr))!important;
+  justify-content:stretch!important;
+}
+#playoffScreen.v772-playoff-expanded .double-round,
+#playoffScreen.v772-playoff-expanded .bracket-match,
+#playoffScreen.v772-playoff-expanded .bracket-team{min-width:0;max-width:100%;box-sizing:border-box}
+
+.v21-dev-skip-note{
+  margin:0 0 12px;
+  padding:10px 12px;
+  border:1px solid rgba(76,139,214,.28);
+  border-radius:12px;
+  background:rgba(76,139,214,.08);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.55;
+}
+
+@media(max-width:900px){
+  #offseasonContent .v21-market-profile-row{grid-template-columns:1fr 210px}
+}
+@media(max-width:720px){
+  #offseasonContent .v21-market-profile-row{grid-template-columns:1fr}
+  #offseasonContent .v21-market-profile-row>.v772-personal-hero-market{display:block!important}
+  #playoffScreen.v772-playoff-expanded .double-rounds,
+  #playoffScreen.v772-playoff-expanded .double-grand .double-rounds{grid-template-columns:1fr!important}
+}
+@media(max-width:600px){
+  #careerScreen .career-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .v800-hero-training-foot>div{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .v800-hero-training-foot>div .primary-btn{grid-column:1/-1}
+  .v800-hero-training-foot>div button{width:100%!important;min-width:0!important}
+}
+/* Double-elimination renderer is a single child inside the legacy 3-column bracket shell.
+   Span that child across the whole shell; otherwise it gets trapped in column 1. */
+#playoffScreen.v772-playoff-expanded .bracket-grid>.double-bracket{
+  grid-column:1/-1!important;
+  width:100%!important;
+}

@@ -1,0 +1,53 @@
+/* Public Beta 1.7 RC1 · OWL Realism & Presentation */
+.v17-market-layout{padding-top:0!important}
+.v17-market-layout .v800-context-tip{margin-right:0!important;clear:both}
+.v17-market-layout .v16-market-self{position:static!important;width:230px!important;min-width:210px!important;margin:8px 18px 14px 18px!important;text-align:left!important;display:block!important;float:right!important;vertical-align:top!important}
+.v17-market-layout .offers-grid{clear:both!important}
+.v17-market-layout .v16-market-self span,.v17-market-layout .v16-market-self small{font-size:10px!important}
+
+/* The old flex card squeezed the team identity into a vertical column once the playoff path was appended. */
+.playoff-team-card.v17-playoff-team-card{display:grid!important;grid-template-columns:78px minmax(180px,260px) minmax(0,1fr)!important;grid-template-rows:auto auto!important;align-items:center!important;column-gap:18px!important;row-gap:12px!important;min-width:0!important}
+.playoff-team-card.v17-playoff-team-card>.playoff-logo{grid-column:1;grid-row:1!important}
+.playoff-team-card.v17-playoff-team-card>div:nth-child(2){grid-column:2;grid-row:1;min-width:0!important}
+.playoff-team-card.v17-playoff-team-card>div:nth-child(2) h3{font-size:20px!important;line-height:1.2!important;white-space:normal!important;word-break:keep-all!important;margin:0 0 5px!important}
+.playoff-team-card.v17-playoff-team-card>div:nth-child(2) p{margin:0!important;white-space:normal!important;line-height:1.5!important}
+.playoff-team-card.v17-playoff-team-card>.v7101-playoff-path{grid-column:1/-1!important;grid-row:2!important;margin-top:0!important}
+.playoff-team-card.v17-playoff-team-card>.v772-playoff-mini-status{grid-column:3!important;grid-row:1!important;justify-self:end!important;align-self:center!important}
+.v17-playoff-team-card .v7101-playoff-path-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+.v17-playoff-team-card .v7101-playoff-result{width:auto!important;justify-content:space-between!important;min-width:0!important}
+.v17-playoff-team-card .v7101-playoff-result b,.v17-playoff-team-card .v7101-playoff-result em{white-space:normal!important;line-height:1.35!important}
+
+/* Season hero mastery now sits immediately after the schedule/actions, not below the entire career-status history. */
+#seasonScreen #v74HeroDevelopmentPanel{margin-top:14px!important;margin-bottom:14px!important}
+
+.v17-share-preview{padding:10px;border:1px solid var(--line);border-radius:18px;background:#111722}
+.v17-share-preview img{display:block;width:100%;height:auto;border-radius:12px}
+.v17-share-actions{display:flex;gap:10px;margin-top:14px;align-items:center}.v17-share-actions a{text-decoration:none;text-align:center;display:inline-flex;align-items:center;justify-content:center}
+.v17-share-note{color:var(--muted);font-size:10px;margin:8px 0 0}
+
+@media(max-width:900px){
+  .v17-market-layout .v16-market-self{display:block!important;float:none!important;margin:10px 0 14px!important;width:auto!important}
+  .playoff-team-card.v17-playoff-team-card{grid-template-columns:64px minmax(0,1fr)!important}
+  .playoff-team-card.v17-playoff-team-card>div:nth-child(2){grid-column:2!important}
+  .playoff-team-card.v17-playoff-team-card>.v772-playoff-mini-status{grid-column:1/-1!important;grid-row:2!important;justify-self:stretch!important}
+  .playoff-team-card.v17-playoff-team-card>.v7101-playoff-path{grid-row:3!important}
+  .v17-playoff-team-card .v7101-playoff-path-list{grid-template-columns:1fr!important}
+}
+@media(max-width:620px){.v17-share-actions{display:grid;grid-template-columns:1fr}.v17-share-actions>*{width:100%}}
+
+/* RC25 · All-Star progressive details */
+.v25-allstar-actions{display:grid!important;grid-template-columns:minmax(132px,180px) minmax(0,1fr);gap:10px;align-items:stretch}
+.v25-allstar-actions>.secondary-btn{min-height:48px;border-radius:12px;font-weight:800}
+.v25-allstar-actions>.season-event-choice{min-width:0}
+.v25-allstar-detail{margin-top:16px;padding:16px;border:1px solid rgba(255,128,72,.26);border-radius:16px;background:linear-gradient(180deg,rgba(255,112,60,.055),rgba(255,255,255,.018));text-align:left}
+.v25-allstar-detail[hidden]{display:none!important}
+.v25-allstar-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.v25-allstar-detail-head>div{display:grid;gap:3px}.v25-allstar-detail-head span{font-size:9px;letter-spacing:.13em;color:var(--accent);font-weight:900}.v25-allstar-detail-head strong{font-size:15px;color:var(--text)}
+.v25-allstar-detail-head em{font-size:10px;color:var(--muted);font-style:normal;text-align:right}
+.v25-allstar-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.v25-allstar-detail-grid>div{min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);display:grid;gap:4px}
+.v25-allstar-detail-grid span{font-size:9px;color:var(--muted)}.v25-allstar-detail-grid strong{font-size:11px;color:var(--text);line-height:1.35;overflow-wrap:anywhere}
+.v25-allstar-detail-grid.compact{margin-top:8px}
+.v25-allstar-section{margin-top:12px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(5,9,15,.18)}
+.v25-allstar-section h4{margin:0 0 7px;font-size:11px;color:var(--text)}.v25-allstar-section p{margin:4px 0;font-size:10px;line-height:1.65;color:var(--muted)}.v25-allstar-section p b{color:var(--text)}.v25-allstar-section small{display:block;margin-top:7px;font-size:9px;line-height:1.55;color:var(--muted)}
+@media(max-width:620px){.v25-allstar-actions{grid-template-columns:1fr!important}.v25-allstar-detail{padding:12px}.v25-allstar-detail-head{display:grid;gap:7px}.v25-allstar-detail-head em{text-align:left}.v25-allstar-detail-grid{grid-template-columns:1fr}.v25-allstar-section{padding:10px}}

@@ -1,0 +1,8 @@
+
+/* V7.8.0 · Career Story Layer */
+.v78-story-moments{display:grid;gap:8px;margin:10px 0 12px}
+.v78-story-moment{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border:1px solid rgba(255,143,84,.28);border-radius:11px;background:rgba(255,112,67,.055);font-size:12px;line-height:1.6;color:var(--text)}
+.v78-story-moment b{color:var(--accent-2);white-space:nowrap}.v78-story-moment span{color:var(--muted)}
+.v78-story-echo{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.45}
+.v78-nickname-chip{display:inline-flex;align-items:center;gap:5px;margin-left:7px;padding:2px 7px;border-radius:999px;border:1px solid rgba(255,143,84,.35);color:var(--accent-2);font-size:10px;vertical-align:middle}
+@media(max-width:520px){.v78-story-moment{font-size:11px}.v78-story-moment b{white-space:normal}}

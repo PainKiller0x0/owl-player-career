@@ -1,0 +1,14 @@
+
+/* V7.9.0 · Living Career Memory */
+.v79-memory-callbacks{display:grid;gap:8px;margin:10px 0 12px}
+.v79-memory-callback{padding:10px 12px;border-radius:12px;border:1px solid rgba(121,199,255,.28);background:rgba(76,151,214,.07);line-height:1.55}
+.v79-memory-callback b{display:block;color:#a9dcff;font-size:12px;margin-bottom:3px}
+.v79-memory-callback span{display:block;color:var(--muted);font-size:11px}
+.v79-active-memories{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.v79-memory-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.025);font-size:10px;color:var(--muted)}
+.v79-memory-chip strong{color:var(--text);font-weight:700}
+.v79-memory-chip.hot{border-color:rgba(255,124,76,.38);background:rgba(255,102,64,.06)}
+@media(max-width:520px){
+  .v79-memory-callback{padding:9px 10px}
+  .v79-memory-chip{font-size:9px;padding:4px 7px}
+}

@@ -1,0 +1,10 @@
+/* Public Beta 1.5 RC1 · Talent Pipeline / Golden Generation */
+.v15-talent-boom-card{
+  margin:12px 0;padding:14px 16px;border:1px solid rgba(231,180,62,.48);border-radius:16px;
+  background:linear-gradient(135deg,rgba(231,180,62,.12),rgba(255,122,67,.07));
+}
+.v15-talent-boom-card span{display:block;color:#c99526;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase}
+.v15-talent-boom-card strong{display:block;margin-top:4px;font-size:16px;color:var(--ink)}
+.v15-talent-boom-card p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.65}
+html[data-theme="dark"] .v15-talent-boom-card{background:linear-gradient(135deg,rgba(231,180,62,.10),rgba(255,122,67,.05));border-color:rgba(231,180,62,.34)}
+@media(max-width:760px){.v15-talent-boom-card{padding:12px 13px}.v15-talent-boom-card strong{font-size:15px}.v15-talent-boom-card p{font-size:10px}}

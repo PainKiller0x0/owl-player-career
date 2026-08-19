@@ -1,0 +1,6 @@
+/* 1.8 RC1 */
+.vwc-mode-note{margin:9px 0 0;color:var(--muted);font-size:10px;line-height:1.55}
+.vwc-actions{align-items:center;flex-wrap:wrap}
+.v18-year-hero-training h4{margin-bottom:5px}.v18-year-hero-training p{line-height:1.65}
+.season-stage-stats .stat-grid,.season-summary-stats .stat-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+@media(max-width:720px){.vwc-actions .primary-btn,.vwc-actions .secondary-btn{flex:1 1 100%}.v18-year-hero-training .v800-hero-picks{grid-template-columns:1fr 1fr}}

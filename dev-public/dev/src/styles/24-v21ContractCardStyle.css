@@ -1,0 +1,110 @@
+/* Public Beta 1.9 RC22 · contract-market card integration + roster modal containment */
+.v21-offer-card-shell{
+  display:flex!important;
+  flex-direction:column;
+  gap:0!important;
+  min-width:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:#fffdf9;
+  transition:.18s ease;
+}
+.v21-offer-card-shell:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(86,63,34,.09)}
+.v21-offer-card-shell:has(>.offer-card.selected){border-color:var(--accent);box-shadow:inset 0 0 0 1px rgba(255,100,56,.25),0 14px 28px rgba(255,100,56,.13);background:#fff7f0}
+.v21-offer-card-shell>.offer-card{
+  width:100%;
+  height:auto!important;
+  min-width:0;
+  flex:1 1 auto;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.v21-offer-card-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  padding:0 17px 16px;
+}
+.v21-offer-card-actions .secondary-btn{
+  width:100%!important;
+  min-width:0!important;
+  min-height:36px;
+  padding:8px 10px!important;
+  font-size:11px!important;
+  line-height:1.2;
+  white-space:normal;
+}
+.v21-offer-detail-panel{
+  display:none;
+  margin:0 17px 16px;
+  min-width:0;
+}
+.v21-offer-detail-panel[open]{display:block}
+.v21-offer-detail-panel>summary{display:none!important}
+.v21-offer-detail-panel .v19-offer-details-body{padding:12px;min-width:0}
+.v21-offer-detail-btn[aria-expanded="true"]{border-color:rgba(255,100,56,.45);background:rgba(255,100,56,.07)}
+
+/* Roster/contract modal: the old six-column row was wider than the 560px modal. */
+.v16-game-modal.roster{
+  width:min(860px,calc(100vw - 32px))!important;
+  max-width:860px!important;
+}
+.v16-game-modal.roster .v16-modal-body{min-width:0;max-width:100%;overflow-x:hidden}
+.v18-roster-head>div:last-child{min-width:0}
+.v18-roster-head strong,.v18-roster-head span{overflow-wrap:anywhere}
+.v18-roster-columns,
+.v18-roster-row{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(70px,.72fr) 56px 58px minmax(96px,.95fr) minmax(88px,.9fr);
+  gap:8px;
+  align-items:center;
+}
+.v18-roster-columns{
+  padding:0 12px 6px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.03em;
+}
+.v18-roster-list{min-width:0;max-width:100%;overflow-y:auto!important;overflow-x:hidden!important}
+.v18-roster-row{padding:10px 12px!important}
+.v18-roster-row .role,.v18-roster-row .age,.v18-roster-row .contract-col{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v18-roster-row .contract-col{color:var(--text);font-weight:750}
+.v18-roster-status{min-width:0;justify-content:flex-start!important}
+.v18-roster-status-empty{color:var(--muted);font-size:11px}
+
+html[data-theme="dark"] .v21-offer-card-shell{background:#20252d;border-color:#3a424f}
+html[data-theme="dark"] .v21-offer-card-shell:hover{background:#232a33}
+html[data-theme="dark"] .v21-offer-card-shell:has(>.offer-card.selected){background:#2b2928;border-color:#ff7547}
+
+@media(max-width:640px){
+  .v21-offer-card-actions{padding:0 13px 13px;gap:7px}
+  .v21-offer-detail-panel{margin:0 13px 13px}
+  .v16-game-modal.roster{width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important}
+  .v16-game-modal.roster .v16-modal-head{grid-template-columns:auto minmax(0,1fr) auto}
+  .v18-roster-columns{display:none}
+  .v18-roster-row{
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    grid-template-areas:
+      "name ovr status"
+      "role age status"
+      "contract contract status";
+    gap:3px 9px!important;
+    align-items:center;
+  }
+  .v18-roster-row>strong{grid-area:name}
+  .v18-roster-row>.role{grid-area:role}
+  .v18-roster-row>.ovr{grid-area:ovr}
+  .v18-roster-row>.age{grid-area:age!important;grid-row:auto!important}
+  .v18-roster-row>.contract-col{grid-area:contract!important;grid-row:auto!important;margin-top:2px}
+  .v18-roster-row>.v18-roster-status{grid-area:status!important;grid-column:auto!important;grid-row:auto!important;align-self:center;justify-self:end}
+  .v18-roster-tag{white-space:normal;text-align:center;line-height:1.25}
+}

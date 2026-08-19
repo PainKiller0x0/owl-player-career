@@ -1,0 +1,19 @@
+/* Public Beta 1.5 RC1 · Career Flow & UX */
+#v13RulebookBtn{white-space:nowrap}
+#v768SeasonPrimaryAction{margin:12px 0 10px!important}
+#seasonScreen .season-actions{margin-top:10px!important}
+#seasonScreen .v75-story-recap{margin-top:14px!important}
+.v13-rule-summary{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-weight:750}
+.v13-real{color:#35c98b!important}.v13-fiction{color:#ff9a63!important}
+.v800-hero-pick{position:relative;text-align:left!important}
+.v800-hero-pick-top{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%}
+.v800-hero-role-tag{flex:0 0 auto;font-style:normal;font-size:9px;font-weight:900;letter-spacing:.04em;border-radius:999px;padding:2px 7px;border:1px solid currentColor}
+.v800-hero-role-tag.primary{color:#ff7b47;background:rgba(255,123,71,.10)}
+.v800-hero-role-tag.secondary{color:#62c7ff;background:rgba(98,199,255,.09)}
+.v800-hero-gain{display:block;margin-top:4px;color:var(--muted);font-size:10px}.v800-hero-gain b{color:var(--ink)}.v800-hero-gain i{font-style:normal;font-weight:900;color:#35c98b;margin-left:5px}
+.v800-hero-result-summary{display:grid;gap:6px;margin:10px 0;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(53,201,139,.06)}
+.v800-hero-result-summary>b{font-size:10px;color:var(--muted)}.v800-hero-result-summary span{font-size:11px}.v800-hero-result-summary em{font-style:normal;font-weight:900;margin-right:8px;color:var(--accent)}.v800-hero-result-summary strong{color:#35c98b;margin-left:5px}
+@media(max-width:720px){#seasonScreen .top-actions{gap:5px!important}#v13RulebookBtn{font-size:10px!important;padding-left:8px!important;padding-right:8px!important}.v800-hero-pick-top{align-items:flex-start}}
+/* Cover watermark must never sit on top of the actual save controls. */
+.cover-main::after{pointer-events:none!important}
+#v800CoverSaves,.cover-actions{position:relative;z-index:2}

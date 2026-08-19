@@ -1,0 +1,4 @@
+/* Public Beta 1.9 RC8 · career continuity */
+.v22-season-thread{margin-top:4px;font-size:10px;color:var(--muted);line-height:1.4}
+.v22-season-thread strong{color:var(--ink);font-weight:700}
+@media(max-width:520px){.v22-season-thread{font-size:9px}}

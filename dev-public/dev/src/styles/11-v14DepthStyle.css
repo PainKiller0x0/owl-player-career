@@ -1,0 +1,17 @@
+/* Public Beta 1.5 RC1 · Career Depth / Feed / World Cup readability */
+@media(min-width:761px){
+  #seasonScreen .v75-story-head span{font-size:11px!important}
+  #seasonScreen .v75-story-head strong{font-size:16px!important}
+  #seasonScreen .v75-story-head small{font-size:11px!important}
+  #seasonScreen .v75-story-lines{gap:6px!important}
+  #seasonScreen .v75-story-lines p{font-size:13px!important;line-height:1.45;padding:8px 10px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #seasonScreen .v75-story-lines p small{display:inline!important;margin:0 0 0 8px!important;font-size:11px!important;white-space:nowrap}
+  #seasonScreen .v79-memory-callback b{font-size:14px!important}
+  #seasonScreen .v79-memory-callback span{font-size:13px!important}
+  #seasonScreen .v79-memory-chip{font-size:11px!important}
+}
+.v14-special-hero-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 6px}.v14-special-hero{border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:rgba(127,127,127,.05);color:inherit;text-align:left;cursor:pointer}.v14-special-hero:hover{border-color:var(--accent);transform:translateY(-1px)}.v14-special-hero strong,.v14-special-hero span{display:block}.v14-special-hero span{font-size:11px;color:var(--muted);margin-top:3px}
+.vwc-head p{max-width:760px;line-height:1.45}.vwc-big{font-size:28px}.vwc-card p{line-height:1.55}.vwc-roster{grid-template-columns:1fr}.vwc-player{grid-template-columns:44px minmax(0,1fr) 36px}.vwc-player div{min-width:0}.vwc-player strong,.vwc-player small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vwc-decline-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}.vwc-decline-row span{font-size:11px;color:var(--muted)}
+.vwc-observer-list{display:grid;gap:8px;margin-top:10px}.vwc-observer-match{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(127,127,127,.04)}.vwc-observer-match span{font-size:11px;color:var(--muted)}.vwc-observer-match strong{font-size:13px}.vwc-observer-match em{font-size:11px;color:var(--muted);font-style:normal}
+@media(min-width:900px){.vwc-hero{grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr)}.vwc-shell{width:min(1120px,100%)}}
+@media(max-width:760px){.v14-special-hero-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vwc-decline-row{align-items:flex-start;flex-direction:column}.vwc-observer-match{grid-template-columns:60px 1fr}.vwc-observer-match em{grid-column:2}.vwc-head p{font-size:12px}.vwc-big{font-size:24px}.vwc-player strong,.vwc-player small{white-space:normal}}

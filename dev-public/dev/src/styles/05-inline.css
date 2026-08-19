@@ -1,0 +1,29 @@
+
+/* V7.10.0 · Career Identity Portrait */
+.v710-portrait{
+  margin:16px 0;padding:16px 18px;border-radius:16px;
+  border:1px solid rgba(122,190,255,.28);
+  background:linear-gradient(145deg,rgba(57,122,181,.10),rgba(255,255,255,.025));
+}
+.v710-portrait-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:9px}
+.v710-portrait-kicker{font-size:10px;letter-spacing:.16em;color:#8fcfff;font-weight:800;text-transform:uppercase}
+.v710-portrait-title{font-size:20px;line-height:1.25;margin:4px 0 0;color:var(--text)}
+.v710-portrait-era{font-size:10px;color:var(--muted);white-space:nowrap;padding-top:3px}
+.v710-portrait-copy{font-size:13px;line-height:1.8;color:var(--muted);margin:0}
+.v710-portrait-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.v710-portrait-tag{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;
+  border:1px solid var(--border);background:rgba(255,255,255,.025);font-size:10px;color:var(--muted)
+}
+.v710-portrait-tag strong{color:var(--text)}
+.v710-portrait-tag.gold{border-color:rgba(247,195,75,.38);background:rgba(247,195,75,.07)}
+.v710-portrait-tag.hot{border-color:rgba(255,121,76,.38);background:rgba(255,121,76,.07)}
+.v710-portrait-evidence{margin-top:10px;font-size:10px;color:var(--muted);opacity:.8}
+#retirementScreen .v710-portrait,#retiredCareerScreen .v710-portrait{margin:18px 0}
+@media(max-width:520px){
+  .v710-portrait{padding:13px 14px}
+  .v710-portrait-head{display:block}
+  .v710-portrait-era{margin-top:4px}
+  .v710-portrait-title{font-size:17px}
+  .v710-portrait-copy{font-size:12px}
+}

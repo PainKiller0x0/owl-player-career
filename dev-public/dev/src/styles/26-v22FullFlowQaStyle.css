@@ -1,0 +1,58 @@
+/* Public Beta 1.9 RC22 · Full-flow QA fixes */
+.summary-bottom-actions.v22-summary-compact{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(210px,240px) !important;
+  grid-template-areas:"brief actions" "footer footer" !important;
+  gap:10px 12px !important;
+  align-items:stretch !important;
+}
+.summary-bottom-actions.v22-summary-compact>.v20-summary-brief{
+  grid-area:brief !important;
+  margin:0 !important;
+  min-width:0;
+  height:auto !important;
+}
+.v22-summary-side-actions{
+  grid-area:actions;
+  display:grid;
+  grid-template-rows:1fr auto;
+  gap:8px;
+  min-width:0;
+}
+.v22-summary-side-actions #summaryOffseasonBtn{
+  width:100% !important;
+  min-width:0 !important;
+  min-height:52px;
+  height:auto !important;
+  padding:12px 14px !important;
+  font-size:16px !important;
+  margin:0 !important;
+}
+.v22-summary-side-actions #v20CareerArchiveBtn{
+  width:100% !important;
+  min-width:0 !important;
+  min-height:42px;
+  padding:9px 12px !important;
+  margin:0 !important;
+}
+.summary-bottom-actions.v22-summary-compact>#summaryFooterCopy{
+  grid-area:footer !important;
+  margin:0 !important;
+  padding:0 4px !important;
+  min-height:0 !important;
+  line-height:1.45;
+}
+@media(max-width:700px){
+  .summary-bottom-actions.v22-summary-compact{
+    grid-template-columns:1fr !important;
+    grid-template-areas:"brief" "actions" "footer" !important;
+  }
+  .v22-summary-side-actions{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-rows:auto;
+  }
+  .v22-summary-side-actions #summaryOffseasonBtn,
+  .v22-summary-side-actions #v20CareerArchiveBtn{
+    min-height:48px;
+  }
+}

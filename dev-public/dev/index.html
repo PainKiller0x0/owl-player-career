@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>OWL 选手之路 · 2.0 Alpha 1</title>
+  <link rel="stylesheet" href="src/styles/00-main.css">
+</head>
+<body>
+  <button class="settings-toggle" id="settingsToggle" aria-label="打开游戏设置" title="游戏设置">⚙️</button>
+  <button class="theme-toggle ui-hidden" id="themeToggle" aria-label="切换夜间模式" title="切换夜间模式">🌙</button>
+  <div class="settings-overlay ui-hidden" id="settingsOverlay" aria-modal="true" role="dialog">
+    <section class="settings-card">
+      <div class="settings-head"><h2>⚙️ 游戏设置</h2><button class="settings-close" id="settingsCloseBtn" aria-label="关闭设置">×</button></div>
+      <div class="settings-body">
+        <div class="setting-row">
+          <div class="setting-copy"><strong>比赛详情</strong><span id="matchDetailsSettingCopy">首个角色退役后解锁。默认使用快速结算。</span></div>
+          <button class="setting-switch" id="matchDetailsToggle" disabled>未解锁</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-copy"><strong>常规赛自动处理事件</strong><span id="autoSeasonEventsSettingCopy">默认关闭。关键事件会暂停自动模拟；年终季后赛不会自动处理。</span></div>
+          <button class="setting-switch" id="autoSeasonEventsToggle">已关闭</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-copy"><strong>外观模式</strong><span>切换日间 / 夜间主题。</span></div>
+          <button class="setting-switch" id="appearanceModeToggle">夜间模式</button>
+        </div>
+        <div class="setting-row" id="developerSettingRow">
+          <div class="setting-copy"><strong>开发者模式</strong><span>显示流程跳过、事件测试、刷新报价等调试入口。</span></div>
+          <button class="setting-switch" id="developerModeToggle">已关闭</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-copy"><strong>当前版本</strong><span></span></div>
+          <div style="font-weight:950;color:var(--accent);white-space:nowrap">2.0 Alpha 1 · Living World Foundation</div>
+        </div>
+        <div class="setting-lock-note" id="settingsHint">完成第一段完整职业生涯后，可在新角色中开启逐图比赛和关键团战决策。</div>
+      </div>
+    </section>
+  </div>
+  <div class="random-fx-overlay ui-hidden" id="randomFxOverlay" aria-hidden="true">
+    <div class="random-fx-card"><div class="random-fx-rings"></div><h3 id="randomFxTitle">正在随机</h3><p id="randomFxText">命运正在洗牌</p></div>
+  </div>
+
+  <!-- 对外演示封面 -->
+
+  <section class="screen active" id="coverScreen">
+    <div class="cover-screen">
+      <div class="cover-shell">
+        <div class="cover-topline">
+          <div class="cover-version"><span>●</span><b>OWL 2.0 · ALPHA 1</b><span>职业世界测试版</span></div>
+          <div class="cover-disclaimer">非 OWL 官方作品 · 2019 战队 / 选手资料用于粉丝向生涯模拟</div>
+        </div>
+        <div class="cover-hero">
+          <section class="cover-main">
+            <div class="cover-kicker">From Rookie to Legend</div>
+            <h1>OWL<br><span>选手之路</span></h1>
+            <p>从16–26岁选择职业起点，经历签约、赛季、国家队、转会、成长与退役。</p>
+            <div class="cover-actions">
+              <button class="primary-btn" id="coverStartBtn">开始新生涯 →</button>
+              <button class="secondary-btn" id="coverGuideBtn">查看试玩说明</button>
+            </div>
+            <div class="cover-guide ui-hidden" id="coverGuide">
+              <strong>试玩说明</strong>
+              <p>第一段生涯默认使用快速比赛结算。</p>
+              <p>首个角色退役后，可在设置中开启逐图比赛与关键团战决策。</p>
+            </div>
+          </section>
+          <aside class="cover-preview">
+            <div class="cover-preview-head"><h2>这段生涯包含什么</h2><span>16–26岁自选起点 · 30岁退役</span></div>
+            <div class="cover-feature"><div class="cover-feature-icon">🎲</div><div><strong>构筑你的选手</strong><p>选择位置，从候选选手身上继承12项能力，并面对顺位衰减。</p></div></div>
+            <div class="cover-feature"><div class="cover-feature-icon">🏆</div><div><strong>经历完整赛季</strong><p>历史模拟沿真实OWL时间线推进；梦幻模拟可从2019–2023任意赛季开局。</p></div></div>
+            <div class="cover-feature"><div class="cover-feature-icon">📈</div><div><strong>成长与职业选择</strong><p>训练点分配、年龄衰退、伤病、转位置、续约和转会共同改变轨迹。</p></div></div>
+            <div class="cover-feature"><div class="cover-feature-icon">📚</div><div><strong>留下生涯档案</strong><p>记录累计数据、荣誉与逐季履历。</p></div></div>
+          </aside>
+        </div>
+        <div class="cover-footer">建议使用手机竖屏或桌面浏览器体验 · 2019-2023战队与选手名单取自OWL历史资料，能力值为玩法化估算</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- V7.6：生涯模式选择 -->
+  <section class="screen" id="modeScreen">
+    <div class="mode-screen">
+      <div class="mode-shell">
+        <div class="mode-topline">
+          <div class="step-pill"><span class="step-dot"></span>新生涯 · 选择时间线</div>
+          <button class="ghost-btn" id="modeBackBtn">← 返回封面</button>
+        </div>
+        <header class="mode-hero">
+          <div class="role-kicker">Choose Your Timeline</div>
+          <h1>你想进入哪一种OWL？</h1>
+          <p>两种模式共用比赛、成长、合同与2024+规则；区别在2019–2023的历史走向。</p>
+        </header>
+        <div class="mode-grid">
+          <button class="mode-card selected" id="fantasyModeCard" data-mode="fantasy">
+            <div class="mode-icon">🌌</div><h2>梦幻模拟</h2>
+            <p>从真实阵容出发，后续名单由这个存档自行演化。</p>
+            <div class="mode-points"><span>✓ 2019–2023任意赛季开档</span><span>✓ 开局使用该年真实队伍与名单</span><span>✓ 后续不再强制现实重组</span><span>✓ 真实新人按首次出现年份进入市场，由AI决定去向</span></div>
+          </button>
+          <button class="mode-card" id="historyModeCard" data-mode="history">
+            <div class="mode-icon">📜</div><h2>历史模拟</h2>
+            <p>比赛结果可被改变，但2019–2023名单变化尽量贴近史实。</p>
+            <div class="mode-points"><span>✓ 固定从2019赛季开始</span><span>✓ 真实名单按赛季切换</span><span>✓ 真实重组、退役与联盟变化优先</span><span>✓ 2024后汇入同一套OWL 2.0架空世界</span></div>
+          </button>
+        </div>
+        <div class="mode-year-panel" id="fantasyYearPanel">
+          <div class="mode-year-head"><strong>🌌 选择梦幻模拟开局赛季</strong><span>只决定世界分叉的起点</span></div>
+          <div class="mode-year-list" id="fantasyYearList">
+            <button class="mode-year-btn active" data-start-year="2019">2019</button><button class="mode-year-btn" data-start-year="2020">2020</button><button class="mode-year-btn" data-start-year="2021">2021</button><button class="mode-year-btn" data-start-year="2022">2022</button><button class="mode-year-btn" data-start-year="2023">2023</button>
+          </div>
+        </div>
+        <div class="mode-history-note" id="modeRuleNote"><b>梦幻模拟：</b>开档后不再强制套用下一年真实名单；现实新人仍按正确年份加入。</div>
+        <div class="mode-actions"><button class="secondary-btn" id="modeCancelBtn">返回</button><button class="primary-btn" id="modeConfirmBtn">从2019开启梦幻时间线 →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第一步：位置选择 -->
+
+  <section class="screen" id="roleScreen">
+    <div class="role-screen">
+      <div class="role-shell">
+        <div class="role-topline">
+          <div class="step-pill"><span class="step-dot"></span>创建选手 · 第一步</div>
+          <button class="ghost-btn" id="coverBackBtn">← 返回封面</button>
+        </div>
+
+        <header class="role-hero">
+          <div class="role-kicker">Begin Your Pro Career</div>
+          <h1>你想站在哪个位置？</h1>
+          <p>选择职责，决定初始能力倾向。</p>
+        </header>
+
+        <div class="role-grid" id="roleGrid"></div>
+
+        <div class="role-footer ui-hidden">
+          <div class="selected-copy" id="selectedRoleCopy">请选择一个位置</div>
+          <button class="primary-btn" id="confirmRoleBtn" disabled>确认位置 →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第一点五步：角色命名 -->
+  <section class="screen" id="nameScreen">
+    <div class="name-screen">
+      <div class="name-shell">
+        <div class="role-topline">
+          <div class="step-pill"><span class="step-dot"></span>创建选手 · 第二步</div>
+          <button class="ghost-btn" id="backRoleFromNameBtn">← 返回位置</button>
+        </div>
+        <section class="name-card">
+          <div class="name-icon">ID</div>
+          <div class="role-kicker">Choose Your Player ID</div>
+          <h1>你的职业ID叫什么？</h1>
+          <p>ID会出现在阵容、战报与荣誉记录中；留空则使用 Rookie。</p>
+          <label class="name-input-wrap">
+            <span>选手ID</span>
+            <input id="playerNameInput" maxlength="16" autocomplete="off" placeholder="Rookie" />
+            <small>最多16个字符 · 支持中文与英文</small>
+          </label>
+          <label class="name-input-wrap country-input-wrap">
+            <span>国籍 / 地区</span>
+            <div class="country-select-control">
+              <span class="country-flag-preview" id="playerCountryFlagPreview" aria-hidden="true"></span>
+              <select id="playerCountrySelect" aria-label="选择国籍或地区">
+                <option value="cn" selected>中国</option>
+                <option value="kr">韩国</option>
+                <option value="us">美国</option>
+                <option value="ca">加拿大</option>
+                <option value="fr">法国</option>
+                <option value="gb">英国</option>
+                <option value="fi">芬兰</option>
+                <option value="se">瑞典</option>
+                <option value="dk">丹麦</option>
+                <option value="de">德国</option>
+                <option value="nl">荷兰</option>
+                <option value="be">比利时</option>
+                <option value="es">西班牙</option>
+                <option value="pt">葡萄牙</option>
+                <option value="at">奥地利</option>
+                <option value="ie">爱尔兰</option>
+                <option value="il">以色列</option>
+                <option value="sa">沙特阿拉伯</option>
+                <option value="th">泰国</option>
+                <option value="au">澳大利亚</option>
+                <option value="nz">新西兰</option>
+                <option value="tw">中国台湾</option>
+              </select>
+            </div>
+            <small>仅提供2019–2023 OWL真实选手数据库中出现过的国籍/地区</small>
+          </label>
+          <label class="name-input-wrap age-input-wrap">
+            <span>开局年龄</span>
+            <div class="age-select-control">
+              <span class="age-badge-preview" id="playerAgeBadgePreview" aria-hidden="true">16</span>
+              <select id="playerAgeSelect" aria-label="选择开局年龄">
+                <option value="16" selected>16岁</option>
+                <option value="17">17岁</option>
+                <option value="18">18岁</option>
+                <option value="19">19岁</option>
+                <option value="20">20岁</option>
+                <option value="21">21岁</option>
+                <option value="22">22岁</option>
+                <option value="23">23岁</option>
+                <option value="24">24岁</option>
+                <option value="25">25岁</option>
+                <option value="26">26岁</option>
+              </select>
+            </div>
+            <small id="playerAgeHint">16岁 · 成长窗口最长，但2019世界杯年龄不足</small>
+          </label>
+          <div class="name-preview">赛场显示：<span id="playerCountryPreview" class="name-preview-flag"></span><strong id="playerNamePreview">Rookie</strong><span class="name-preview-age" id="playerAgePreview">· 16岁</span></div>
+          <div class="name-actions">
+            <button class="secondary-btn" id="skipPlayerNameBtn">跳过，使用 Rookie</button>
+            <button class="primary-btn" id="confirmPlayerNameBtn">确认名字 →</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第二步：属性创建 -->
+  <section class="screen" id="builderScreen">
+    <main class="builder-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">OWL</div>
+          <div>
+            <h1>选手之路 · 属性创建</h1>
+            <p>随机战队 → 选择选手 → 锁定能力</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backRoleBtn">← 返回命名</button>
+          <button class="ghost-btn" id="resetBtn">清空属性</button>
+          <button class="primary-btn dev-only" id="quickMatchBtn">跳过至比赛</button>
+        </div>
+      </header>
+
+      <section class="builder-hero">
+        <div>
+          <div class="eyebrow">Step 2 · Build Your Player</div>
+          <h2>从联盟群星中，拼出你的选手</h2>
+          <p>点击“随机战队”开始属性构筑。</p>
+        </div>
+        <div class="hero-side-actions">
+          <div class="role-badge">
+            <span>已选择位置</span>
+            <strong id="currentRole">—</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="progress-wrap">
+        <div class="progress-head">
+          <span id="roundText">尚未开始随机</span>
+          <strong><span id="progressNow">0</span> / 12</strong>
+        </div>
+        <div class="bar"><i id="progressBar"></i></div>
+        <div class="inheritance-strip"><span id="inheritanceNote">继承顺位越晚，能力折损越明显。</span><strong id="inheritanceRateText">第1顺位 · 100%继承</strong></div>
+      </section>
+
+      <section class="main-grid">
+        <aside class="panel builder-attrs-panel">
+          <h2 class="panel-title">我的选手 <small>选择选手后，点击属性锁定</small></h2>
+          <div class="ovr-card">
+            <div>
+              <div class="ovr-number" id="myOvr">--</div>
+              <div class="ovr-label">OVR</div>
+            </div>
+            <div class="build-tag">
+              <strong id="buildType">尚未成型</strong>
+              <span id="buildSub">十二项能力等待继承</span>
+            </div>
+          </div>
+          <div class="attr-list" id="lockedAttrList"></div>
+          <div class="tiny-note">选择选手后，点击左侧属性锁定。</div>
+        </aside>
+
+        <section class="panel builder-draw-panel">
+          <div class="round-panel-head">
+            <h2>本轮候选池 <span id="roundBadge">等待你亲手开始第 1 轮</span></h2>
+            <div class="round-head-actions">
+              <button class="primary-btn roll-main-btn" id="rollTeamBtn">🎲 随机战队</button>
+              <button class="secondary-btn roll-attrs-btn" id="rollAttrsBtn" title="一键随机生成整套初始属性">⚡ 一键随机</button>
+            </div>
+          </div>
+
+          <div id="roundContent"></div>
+          <div class="status" id="statusText"></div>
+        </section>
+      </section>
+    </main>
+  </section>
+
+  <!-- 第二点五步：揭幕与开局流程 -->
+  <section class="screen" id="revealScreen">
+    <main class="reveal-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">NEW</div>
+          <div>
+            <h1>选手之路 · 揭幕</h1>
+            <p>开局事件 · 选手模板 · 正式开启职业生涯</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backBuilderFromRevealBtn">← 返回属性</button>
+        </div>
+      </header>
+      <div id="revealContent"></div>
+    </main>
+  </section>
+
+
+  <!-- 第三步：签约入队与阵容确认 -->
+
+  <section class="screen" id="teamScreen">
+    <main class="team-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">TEAM</div>
+          <div>
+            <h1>选手之路 · 生涯战队</h1>
+            <p>签约揭晓 · 阵容确认 · 开启新秀赛季</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backBuilderFromTeamBtn">← 返回属性</button>
+          <button class="ghost-btn" id="rerollCareerTeamBtn">重新随机战队</button>
+        </div>
+      </header>
+
+      <div class="season-chip" id="careerSeasonChip">🏆 2019 新秀赛季</div>
+      <div class="team-title">
+        <h2>生涯战队</h2>
+        <p>确认签约与阵容，正式开启新赛季。</p>
+      </div>
+
+      <section class="team-pick-card ui-hidden" id="careerTeamPickCard">
+        <div class="team-pick-title">
+          <h3>🎰 选择我的生涯队伍</h3>
+          <p>选择生涯起点。</p>
+        </div>
+        <div class="team-pick-wheel" id="careerTeamWheel"></div>
+        <div class="team-pick-actions">
+          <button class="primary-btn" id="randomCareerTeamBtn">🎲 随机队伍</button>
+          <button class="secondary-btn" id="manualCareerTeamBtn">🎯 自选队伍</button>
+        </div>
+        <div class="team-manual-grid ui-hidden" id="careerTeamManualGrid"></div>
+        <div class="team-pick-confirm"><button class="primary-btn" id="confirmCareerTeamBtn">查看队伍阵容 →</button></div>
+      </section>
+
+      <section class="contract-card" id="careerContractCard">
+        <div class="contract-meta" id="careerContractMeta">OWL · 新秀合同 · 季前排名第 7</div>
+        <div class="contract-team-line">
+          <div class="contract-logo" id="careerTeamLogo">—</div>
+          <div class="contract-team-name" id="careerTeamName">等待签约</div>
+        </div>
+        <div class="contract-role">你将以 <strong id="careerRoleText">首发选手</strong> 的身份进入新赛季</div>
+        <button class="primary-btn start-season-btn" id="startSeasonBtn">开始新赛季 →</button>
+        <div class="team-summary-grid">
+          <div class="team-summary-item"><span>队伍目标</span><strong id="careerGoal">冲击季后赛</strong></div>
+          <div class="team-summary-item"><span>主打体系</span><strong id="careerTactic">—</strong></div>
+          <div class="team-summary-item"><span>阵容平均</span><strong id="careerRosterOvr">—</strong></div>
+        </div>
+      </section>
+
+      <section class="squad-card" id="careerSquadCard">
+        <div class="squad-title"><h3>完整阵容名单</h3><span>首发 5 人 · 替补 4 人</span></div>
+        <div class="squad-section-label">🎯 首发阵容</div>
+        <div class="squad-list" id="careerStarterList"></div>
+        <div class="squad-section-label">↪ 替补阵容</div>
+        <div class="squad-list bench-list" id="careerBenchList"></div>
+        <div class="team-note">首发身份只代表赛季起点，后续会随表现变化。</div>
+      </section>
+    </main>
+  </section>
+
+
+  <!-- 第四步：常规赛推进 -->
+  <section class="screen" id="seasonScreen">
+    <main class="season-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <div>
+            <h1>选手之路 · 常规赛</h1>
+            <p>赛季进度 · 战绩追踪 · 关键比赛</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backTeamFromSeasonBtn">👥 查看阵容</button>
+          <button class="ghost-btn dev-only" id="resetSeasonBtn">重开本赛季</button>
+        </div>
+      </header>
+
+      <div class="season-overview">
+        <section class="season-score-card">
+          <div class="season-score-top">
+            <div class="season-team-box">
+              <div class="season-team-logo" id="seasonTeamLogo">—</div>
+              <div class="season-team-copy"><strong id="seasonTeamName">等待开赛</strong><span id="seasonLeagueText">OWL</span></div>
+            </div>
+            <div class="season-year-chip" id="seasonYearChip">🏆 2019 新秀赛季</div>
+            <div class="season-record"><strong><span id="seasonWins">0</span>-<em id="seasonLosses">0</em></strong><span id="seasonWinRate">0.0%</span></div>
+          </div>
+          <div class="season-player-strip" id="seasonPlayerStrip">你的赛季数据将在比赛开始后记录</div>
+        </section>
+
+        <section class="season-track-card">
+          <div class="season-track-head"><div><h3>常规赛赛程</h3><span>20 支队伍 · 4 个 Stage × 7 场 · 共 28 场</span></div><span id="seasonNextOpponent">下一场：待定</span></div>
+          <div class="season-dots" id="seasonDots"></div>
+          <div class="season-progress-copy" id="seasonProgressCopy">赛季尚未开始 · <strong>Stage 1 · 0 / 7</strong></div>
+          <div class="season-actions season-actions-three">
+            <button class="primary-btn" id="playNextSeasonMatchBtn">⚡ 模拟单场</button>
+            <button class="secondary-btn" id="fastSimSeasonBtn">⏩ 模拟本赛段</button>
+            <button class="secondary-btn" id="fullSimSeasonBtn">🚀 模拟全部常规赛</button>
+          </div>
+          <div class="season-sim-note" id="seasonSimNote"></div>
+          <div class="season-legend"><span><i class="w"></i>胜利</span><span><i class="l"></i>失利</span><span><i class="p"></i>尚未进行</span></div>
+        </section>
+
+        <div class="season-mini-panels">
+          <div class="season-mini"><span>当前排名</span><strong id="seasonRankText">—</strong></div>
+          <div class="season-mini"><span>平均评分</span><strong id="seasonAvgRating">未出场</strong></div>
+          <div class="season-mini"><span>关键决策成功率</span><strong id="seasonDecisionRate">—</strong></div>
+        </div>
+
+        <section class="career-status-card">
+          <div class="career-status-head">
+            <div><h3>职业状态</h3><span>随机事件会影响状态、关系与后续比赛</span></div>
+            <div class="demo-tools dev-only"><button class="secondary-btn" id="testSeasonEventBtn">🎲 测试随机事件</button><button class="secondary-btn" id="testInjuryEventBtn">🩹 测试伤病询问</button></div>
+          </div>
+          <div class="career-status-grid">
+            <div class="career-status-item"><span>竞技状态</span><strong id="careerConditionText">—</strong><div class="career-status-meter"><i id="careerConditionBar"></i></div></div>
+            <div class="career-status-item"><span>教练信任</span><strong id="careerTrustText">—</strong><div class="career-status-meter"><i id="careerTrustBar"></i></div></div>
+            <div class="career-status-item"><span>队友关系</span><strong id="careerBondText">—</strong><div class="career-status-meter"><i id="careerBondBar"></i></div></div>
+            <div class="career-status-item"><span>公众关注</span><strong id="careerPopularityText">—</strong><div class="career-status-meter"><i id="careerPopularityBar"></i></div></div>
+          </div>
+          <div class="season-event-history">
+            <div class="season-event-history-head"><strong>赛季事件记录</strong><span id="seasonEventCount">0 件</span></div>
+            <div class="season-event-history-list" id="seasonEventHistory"></div>
+          </div>
+        </section>
+        <div id="seasonCompleteArea"></div>
+      </div>
+    </main>
+  </section>
+
+
+  <div class="season-event-overlay hidden" id="seasonEventOverlay" aria-modal="true" role="dialog">
+    <section class="season-event-card">
+      <div id="seasonEventContent"></div>
+    </section>
+  </div>
+
+  <div class="injury-overlay ui-hidden" id="injuryOverlay" aria-modal="true" role="dialog">
+    <section class="injury-card"><div id="injuryContent"></div></section>
+  </div>
+
+  <div class="retirement-press-overlay ui-hidden" id="retirementPressOverlay" aria-modal="true" role="dialog">
+    <section class="retirement-press-card"><div id="retirementPressContent"></div></section>
+  </div>
+
+
+  <!-- 常规赛收官：赛季奖项 -->
+
+  <section class="screen" id="awardsScreen">
+    <main class="awards-app">
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark">AWD</div><div><h1>选手之路 · 常规赛奖项</h1><p>MVP · 职责之星 · 最佳新秀 · 社区之星</p></div></div>
+        <div class="top-actions"><button class="ghost-btn" id="backSeasonFromAwardsBtn">← 返回常规赛</button></div>
+      </header>
+      <div class="season-chip" id="awardsSeasonChip">🏆 2019 赛季</div>
+      <div class="awards-heading"><h2>📊 常规赛奖项</h2><p>赛季荣誉揭晓。</p></div>
+      <section class="awards-stack" id="regularAwardsContent"></section>
+      <div class="awards-actions">
+        <button class="secondary-btn" id="awardsSummaryBtn">查看赛季结算</button>
+        <button class="primary-btn" id="awardsContinueBtn">继续 →</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- 第五步：季后赛 -->
+  <section class="screen" id="playoffScreen">
+    <main class="playoff-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">PO</div>
+          <div>
+            <h1>选手之路 · 季后赛</h1>
+            <p>八强双败赛 · 两次失利出局</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backSeasonFromPlayoffBtn">← 返回常规赛</button>
+        </div>
+      </header>
+
+      <div class="playoff-heading">
+        <div class="season-chip" id="playoffSeasonChip">🏆 2019 季后赛</div>
+        <h2>冠军之路</h2>
+        <p>八强双败淘汰；胜者组与败者组 FT3，总决赛 FT4。</p>
+      </div>
+
+      <section class="playoff-summary">
+        <div class="playoff-team-card">
+          <div class="playoff-logo" id="playoffTeamLogo">—</div>
+          <div>
+            <h3 id="playoffTeamName">等待晋级</h3>
+            <p id="playoffSeedText">常规赛排名待确认</p>
+          </div>
+        </div>
+        <div class="playoff-stage-card">
+          <div class="playoff-stage-copy"><span>当前阶段</span><strong id="playoffStageText">胜者组首轮</strong></div>
+          <div class="playoff-stage-pips" id="playoffStagePips"><i class="playoff-stage-pip current"></i><i class="playoff-stage-pip"></i><i class="playoff-stage-pip"></i></div>
+        </div>
+      </section>
+
+      <section class="bracket-card">
+        <div class="bracket-head"><div><h3>季后赛对阵</h3><span>8 支队伍 · 双败淘汰 · 总决赛 FT4</span></div><span id="playoffRecordText">已完成 0 场</span></div>
+        <div class="bracket-grid" id="playoffBracket"></div>
+      </section>
+
+      <section class="playoff-next-card">
+        <div class="playoff-next-kicker" id="playoffNextKicker">ELIMINATION MATCH</div>
+        <h3 id="playoffNextTitle">准备胜者组首轮</h3>
+        <p id="playoffNextDesc">对手和晋级路线将在这里展示。</p>
+        <div class="playoff-match-actions" id="playoffMatchActions">
+          <button class="primary-btn" id="playNextPlayoffMatchBtn">⚡ 快速模拟</button>
+          <button class="secondary-btn" id="simulateWholePlayoffsBtn">🚀 模拟整个季后赛</button>
+          <button class="secondary-btn" id="playDetailedMatchBtn">🎮 比赛详情</button>
+        </div>
+        <div class="playoff-mode-note" id="playoffModeNote">每轮可选择快速结算或比赛详情。</div>
+        <div id="playoffCompleteArea"></div>
+      </section>
+    </main>
+  </section>
+
+  <!-- 第五点五步：赛季结算 -->
+
+  <section class="screen" id="summaryScreen">
+    <main class="summary-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">结</div>
+          <div>
+            <h1>选手之路 · 赛季结算</h1>
+            <p>赛季总览 · 季后赛结果 · 最终能力快照</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backFromSummaryBtn">← 返回上一页</button>
+          <button class="ghost-btn dev-only" id="restartFromSummaryBtn">重开本赛季</button>
+        </div>
+      </header>
+
+      <section class="summary-hero">
+        <div class="summary-season-chip">🏆 <span id="summarySeasonChip">2026 新秀赛季</span></div>
+        <h2 id="summaryTeamName">热火</h2>
+        <div class="summary-record" id="summaryRecord">0-0</div>
+        <div class="summary-subcopy" id="summaryStageText">赛季尚未结束</div>
+      </section>
+
+      <section class="summary-card">
+        <h3>🧑‍💻 我的选手信息</h3>
+        <div class="summary-info-grid">
+          <div class="summary-info-label">位置</div><div class="summary-info-value" id="summaryRole">—</div>
+          <div class="summary-info-label">总评</div><div class="summary-info-value" id="summaryOvr">—</div>
+          <div class="summary-info-label">选手</div><div class="summary-info-value" id="summaryPlayerName">Rookie</div>
+          <div class="summary-info-label">队伍</div><div class="summary-info-value" id="summaryTeamText">—</div>
+        </div>
+      </section>
+
+      <section class="summary-card">
+        <h3 id="summaryRegularTitle">📈 常规赛 · 0 场</h3>
+        <div class="summary-stat-grid" id="summaryRegularStats"></div>
+        <div class="summary-stat-line" id="summaryRegularLine"></div>
+      </section>
+
+      <section class="summary-card">
+        <h3 id="summaryPlayoffTitle">🏆 季后赛数据</h3>
+        <div id="summaryPlayoffWrap"></div>
+      </section>
+
+      <section class="summary-card">
+        <h3>🏷️ 最终属性</h3>
+        <div class="summary-attrs" id="summaryAttrGrid"></div>
+      </section>
+
+      <div class="summary-bottom-actions">
+        <button class="primary-btn" id="summaryOffseasonBtn" style="width:100%;padding:16px 20px;font-size:18px">进入休赛期 →</button>
+        <div class="summary-footer-copy" id="summaryFooterCopy">赛季结束。</div>
+      </div>
+    </main>
+  </section>
+
+
+  <!-- 生涯档案：概览 / 荣誉墙 / 休赛期入口 -->
+  <section class="screen" id="careerScreen">
+    <main class="career-data-app">
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark">DATA</div><div><h1>选手之路 · 生涯档案</h1><p>累计数据 · 荣誉墙 · 每赛季履历</p></div></div>
+        <div class="top-actions"><button class="ghost-btn" id="backSummaryFromCareerBtn">← 返回赛季结算</button></div>
+      </header>
+      <div class="season-chip" id="careerDataSeasonChip">🏆 2019 赛季</div>
+      <div class="career-data-heading"><h2>📊 生涯数据</h2><p id="careerDataSubcopy">职业生涯第 1 年 · 16岁 · OVR —</p></div>
+      <nav class="career-tabs" id="careerTabs">
+        <button class="career-tab active" data-career-tab="overview">📊 生涯概览</button>
+        <button class="career-tab" data-career-tab="honors">🏆 荣誉墙</button>
+      </nav>
+      <section id="careerTabContent"></section>
+    </main>
+  </section>
+
+
+  <!-- 第七步：休赛期 -->
+  <section class="screen" id="offseasonScreen">
+    <main class="offseason-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">OFF</div>
+          <div>
+            <h1>选手之路 · 休赛期</h1>
+            <p>退役 · 训练 · 位置规划 · 续约 / 转会</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backSummaryFromOffseasonBtn">← 返回赛季结算</button>
+        </div>
+      </header>
+
+      <section class="offseason-hero">
+        <div>
+          <div class="offseason-kicker" id="offseasonYearText">OFFSEASON · 2026</div>
+          <h2>决定下一段职业生涯</h2>
+          <p>训练并决定下一赛季去向。</p>
+        </div>
+        <div class="offseason-result"><span>上赛季成绩</span><strong id="offseasonResultText">—</strong></div>
+      </section>
+
+      <div class="offseason-steps" id="offseasonSteps">
+        <div class="offseason-step active" data-off-step="review">01<strong>赛季总结会</strong></div>
+        <div class="offseason-step" data-off-step="retirement">02<strong>退役决定</strong></div>
+        <div class="offseason-step" data-off-step="training">03<strong>休赛期训练</strong></div>
+        <div class="offseason-step" data-off-step="role">04<strong>位置规划</strong></div>
+        <div class="offseason-step" data-off-step="market">05<strong>续约 / 转会</strong></div>
+      </div>
+
+      <section class="offseason-panel" id="offseasonContent"></section>
+    </main>
+  </section>
+
+
+  <!-- 生涯终点：退役结算 -->
+
+  <section class="screen" id="retirementScreen">
+    <main class="retirement-app">
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark">END</div><div><h1>选手之路 · 退役</h1><p>职业生涯总览 · 最终履历</p></div></div>
+      </header>
+      <section class="retirement-hero">
+        <div class="icon">🏅</div>
+        <h2 id="retirementTitle">职业生涯落幕</h2>
+        <p id="retirementCopy">从你第一次踏进职业赛场，到最后一次摘下耳机。</p>
+      </section>
+      <div class="retirement-grid" id="retirementStats"></div>
+      <section class="retirement-honors"><h3>🏆 生涯荣誉总览</h3><div class="honor-badges" id="retirementHonorSummary"></div></section>
+      <section class="retirement-final-attrs"><h3>🏷️ 退役时最终属性</h3><div class="retirement-attr-grid" id="retirementFinalAttrs"></div></section>
+      <section class="career-timeline"><h3 style="margin:0 0 8px">生涯赛季记录</h3><div id="retirementTimeline"></div></section>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px"><button class="secondary-btn" id="viewRetiredCareerBtn" style="padding:16px;font-size:16px">查看完整生涯履历</button><button class="primary-btn" id="restartCareerBtn" style="padding:16px;font-size:16px">开启新职业生涯</button></div>
+    </main>
+  </section>
+
+
+  <!-- V4.1：退役专属完整生涯履历 -->
+  <section class="screen" id="retiredCareerScreen">
+    <main class="retired-career-app">
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark">HOF</div><div><h1>选手之路 · 完整生涯履历</h1><p>退役档案 · 生涯数据 · 荣誉与逐年记录</p></div></div>
+      </header>
+      <section class="retired-resume-hero">
+        <div>
+          <div class="retired-resume-kicker">CAREER RESUME · RETIRED</div>
+          <h2 id="retiredResumeTitle">Rookie 的职业生涯</h2>
+          <p id="retiredResumeCopy">完整记录从新人赛季到退役的每一年。</p>
+        </div>
+        <div class="retired-resume-score"><span>历史分</span><strong id="retiredResumeHistoryScore">0</strong></div>
+      </section>
+      <div class="retired-resume-grid" id="retiredResumeTotals"></div>
+      <section class="retired-resume-section">
+        <h3>🏆 生涯荣誉</h3>
+        <div class="honor-badges" id="retiredResumeHonors"></div>
+      </section>
+      <section class="retired-resume-section">
+        <h3>📋 完整赛季履历</h3>
+        <div class="retired-resume-season-list" id="retiredResumeSeasons"></div>
+      </section>
+      <div class="retired-resume-bottom">
+        <button class="primary-btn" id="backRetirementDecisionBtn">← 回到退役决定</button>
+      </div>
+    </main>
+  </section>
+
+
+  <!-- 第六步：比赛模拟 -->
+
+  <section class="screen" id="matchScreen">
+    <main class="match-app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">VS</div>
+          <div>
+            <h1>选手之路 · 比赛中心</h1>
+            <p>5V5 · BO5 · 关键团战决策模拟</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="backBuilderBtn">← 返回</button>
+          <button class="ghost-btn dev-only" id="newMatchBtn">更换对手</button>
+        </div>
+      </header>
+
+      <section class="match-hero">
+        <div>
+          <div class="role-kicker" id="matchKicker">Career Debut · Match Simulation V0.2</div>
+          <h2 id="matchTitle">职业生涯首秀</h2>
+          <p id="matchDesc">关键团战会暂停，由你的选择与属性决定结果。</p>
+        </div>
+        <div class="match-week"><span>OWL · 常规赛</span><strong id="matchWeekText">第 1 周</strong></div>
+      </section>
+
+      <section class="versus-board">
+        <div class="versus-team">
+          <div class="versus-logo" id="homeLogo">我</div>
+          <div style="min-width:0">
+            <div class="versus-name" id="homeTeamName">—</div>
+            <div class="versus-meta">队伍战力 <span class="power-number" id="homePower">--</span> · <span id="homeVenueLabel">你的队伍</span></div>
+          </div>
+        </div>
+        <div class="series-center">
+          <div class="series-label" id="seriesTargetLabel">FIRST TO 3</div>
+          <div class="series-score"><span id="homeSeriesScore">0</span><i>:</i><span id="awaySeriesScore">0</span></div>
+          <div class="map-track" id="mapTrack"></div>
+        </div>
+        <div class="versus-team away">
+          <div class="versus-logo" id="awayLogo">敌</div>
+          <div style="min-width:0">
+            <div class="versus-name" id="awayTeamName">—</div>
+            <div class="versus-meta">对手战力 <span class="power-number" id="awayPower">--</span> · <span id="awayVenueLabel">对手</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="match-grid">
+        <div class="match-side">
+          <div class="roster-block">
+            <div class="roster-head"><h3>我方首发</h3><span>5 人阵容</span></div>
+            <div class="roster-list" id="homeRoster"></div>
+          </div>
+          <div class="roster-block">
+            <div class="roster-head"><h3>对方首发</h3><span>AI 队伍</span></div>
+            <div class="roster-list" id="awayRoster"></div>
+          </div>
+        </div>
+
+        <div class="match-main-panel">
+          <div id="mapControlArea"></div>
+          <div class="live-box">
+            <div class="live-head"><strong>比赛文字直播</strong><span>记录关键团战</span></div>
+            <div class="live-log" id="liveLog"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ratings-panel hidden" id="ratingsPanel">
+        <div class="ratings-title"><h3>赛后选手评分</h3></div>
+        <div id="ratingsTable"></div>
+      </section>
+    </main>
+  </section>
+
+  <script src="src/bundle/00_runtime_preamble.js"></script>
+  <script src="src/bundle/data/base.js"></script>
+  <script src="src/bundle/data/competitions.js"></script>
+  <script src="src/bundle/engine/runtime.js"></script>
+  <script src="src/bundle/systems/tournament.js"></script>
+  <script src="src/bundle/systems/creation.js"></script>
+  <script src="src/bundle/systems/career_team.js"></script>
+  <script src="src/bundle/systems/season_events.js"></script>
+  <script src="src/bundle/systems/regular_season.js"></script>
+  <script src="src/bundle/systems/playoffs.js"></script>
+  <script src="src/bundle/systems/season_summary.js"></script>
+  <script src="src/bundle/ui/theme_fx.js"></script>
+  <script src="src/bundle/systems/career_history.js"></script>
+  <script src="src/bundle/systems/offseason.js"></script>
+  <script src="src/bundle/systems/match_engine.js"></script>
+  <script src="src/bundle/legacy/v30_2019_rules.js"></script>
+  <script src="src/bundle/legacy/v32_2019_calibration.js"></script>
+  <script src="src/bundle/legacy/v35_scoring_events.js"></script>
+  <script src="src/bundle/legacy/v36_division_flags_role.js"></script>
+  <script src="src/bundle/legacy/v37_transfer_fit.js"></script>
+  <script src="src/bundle/legacy/v38_event_retirement.js"></script>
+  <script src="src/bundle/legacy/v40_dev_playoffs.js"></script>
+  <script src="src/bundle/legacy/v42_stage_results.js"></script>
+  <script src="src/bundle/data/history_2019_2023.js"></script>
+  <script src="src/bundle/ui/offline_assets.js"></script>
+  <script src="src/bundle/systems/dynamic_world_2024.js"></script>
+  <script src="src/modules/026-simulation.series-projection.js"></script>
+  <script src="src/bundle/systems/tournament_integration_2019.js"></script>
+  <script src="src/bundle/systems/v71_owl2_competitive_layer.js"></script>
+  <script src="src/bundle/systems/v72_map_lineup_rotation.js"></script>
+  <script src="src/bundle/systems/v73_hero_ban_plan_b.js"></script>
+  <script src="src/bundle/systems/v74_dynamic_hero_mastery.js"></script>
+
+<!-- V7.6.6 HOTFIX: robust cross-season entry.
+     The team screen could display the new season year while seasonState.active still
+     belonged to the previous season. In that case enterSeasonHub() correctly refused
+     to call setupSeason(), making the "开始 XXXX 赛季" button look dead. -->
+<script src="src/patches/032-inline.js"></script>
+
+
+
+<!-- V7.6.5 HOTFIX: disable legacy V4.2 Stage-result card on 2020-2023 historical/fantasy seasons.
+     V7.6.2+ has its own year-aware tournament milestone flow; the old card still used
+     stage * 7 and therefore surfaced Stage 3 at 21/24 in 2022, causing a one-frame flash. -->
+<script src="src/patches/033-inline.js"></script>
+
+
+<script src="src/patches/034-inline.js"></script>
+
+
+
+
+<script src="src/patches/035-inline.js"></script>
+
+
+<script src="src/patches/036-inline.js"></script>
+
+
+<script src="src/patches/037-inline.js"></script>
+
+
+<link rel="stylesheet" href="src/styles/01-inline.css">
+<script src="src/patches/038-inline.js"></script>
+
+
+<link rel="stylesheet" href="src/styles/02-v772Style.css">
+<script src="src/patches/039-inline.js"></script>
+
+
+<link rel="stylesheet" href="src/styles/03-inline.css">
+<script src="src/patches/040-inline.js"></script>
+
+
+<link rel="stylesheet" href="src/styles/04-inline.css">
+<script src="src/patches/041-inline.js"></script>
+
+
+<link rel="stylesheet" href="src/styles/05-inline.css">
+<script src="src/patches/042-inline.js"></script>
+
+<link rel="stylesheet" href="src/styles/06-inline.css">
+<script src="src/patches/043-inline.js"></script>
+
+
+<link rel="stylesheet" href="src/styles/07-inline.css">
+<link rel="stylesheet" href="src/styles/08-vwcStyle.css">
+
+<div class="v800-toast" id="v800Toast"></div>
+<div class="v800-save-indicator" id="v800SaveIndicator"></div>
+
+<div class="v800-overlay ui-hidden" id="v800SaveOverlay">
+  <section class="v800-modal">
+    <div class="v800-modal-head"><div><h2>💾 生涯存档</h2><p>3个档位 · 自动保存 · JSON导入导出 · 主档损坏时自动尝试备份与紧急恢复点</p></div><button class="v800-close" id="v800SaveClose">×</button></div>
+    <div class="v800-save-grid" id="v800SaveGrid"></div>
+    <div class="v800-save-tools"><small id="v800SaveHint">关键节点自动保存；删除槽位会同步删除该槽位的备份/恢复点。</small><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary-btn" id="v800ImportBtn">📥 导入存档</button><button class="secondary-btn" id="v800ClearAllSaves">🗑 清空全部存档</button></div></div>
+    <input type="file" id="v800ImportInput" accept=".json,application/json" hidden>
+  </section>
+</div>
+
+<div class="v800-overlay ui-hidden" id="v800Onboarding">
+  <section class="v800-modal" style="max-width:720px">
+    <div class="v800-onboard-body" id="v800OnboardBody"></div>
+    <div class="v800-onboard-dots" id="v800OnboardDots"></div>
+    <div class="v800-onboard-actions"><button class="secondary-btn" id="v800OnboardSkip">跳过</button><button class="primary-btn" id="v800OnboardNext">下一页 →</button></div>
+  </section>
+</div>
+
+<div class="v800-overlay ui-hidden" id="v800TradeOverlay">
+  <section class="v800-modal v800-trade-card" id="v800TradeContent"></section>
+</div>
+
+<div class="vwc-overlay ui-hidden" id="vwcOverlay" aria-modal="true" role="dialog">
+  <section class="vwc-shell">
+    <header class="vwc-head">
+      <div class="vwc-brand"><div class="vwc-mark">🌍</div><div><h2 id="vwcTitle">Overwatch World Cup</h2><p id="vwcSub">国家队生涯 · 世界杯</p></div></div>
+      <button class="vwc-close" id="vwcClose" aria-label="关闭">×</button>
+    </header>
+    <div class="vwc-body" id="vwcBody"></div>
+  </section>
+</div>
+
+<script src="src/patches/044-inline.js"></script>
+
+
+<script src="src/patches/045-inline.js"></script>
+
+
+<script src="src/patches/046-inline.js"></script>
+
+<script src="src/patches/047-inline.js"></script>
+<link rel="stylesheet" href="src/styles/09-potentialStyle.css">
+<script src="src/patches/048-inline.js"></script>
+<link rel="stylesheet" href="src/styles/10-v13FlowStyle.css">
+<script src="src/patches/049-inline.js"></script>
+<link rel="stylesheet" href="src/styles/11-v14DepthStyle.css">
+<script src="src/patches/050-inline.js"></script>
+<link rel="stylesheet" href="src/styles/12-v15TalentStyle.css">
+<script src="src/patches/051-inline.js"></script>
+<link rel="stylesheet" href="src/styles/13-v16RotationStyle.css">
+<script src="src/patches/052-inline.js"></script>
+<link rel="stylesheet" href="src/styles/14-v17RealismStyle.css">
+<script src="src/patches/053-inline.js"></script>
+<link rel="stylesheet" href="src/styles/15-v18WorldCupMatchStyle.css">
+<script src="src/patches/054-inline.js"></script>
+<script src="src/patches/055-inline.js"></script>
+<link rel="stylesheet" href="src/styles/16-v20CareerMarketStyle.css">
+<script src="src/patches/056-inline.js"></script>
+<link rel="stylesheet" href="src/styles/17-v21ExperienceStyle.css">
+<script src="src/patches/057-inline.js"></script>
+<link rel="stylesheet" href="src/styles/18-v22ContinuityStyle.css">
+<script src="src/patches/058-inline.js"></script>
+<link rel="stylesheet" href="src/styles/19-v23FrictionStyle.css">
+<script src="src/patches/059-inline.js"></script>
+<script src="src/patches/060-inline.js"></script>
+
+<script src="src/patches/061-inline.js"></script>
+
+<script src="src/patches/062-inline.js"></script>
+<link rel="stylesheet" href="src/styles/20-v27CareerValueStyle.css">
+<script src="src/patches/063-inline.js"></script>
+<script src="src/modules/064-league.future-rules-config.js"></script>
+<script src="src/patches/065-inline.js"></script>
+<script src="src/modules/066-world.expansion-draft-policy.js"></script>
+<script src="src/patches/067-inline.js"></script>
+<script src="src/modules/068-contracts.roster-inspector.js"></script>
+<link rel="stylesheet" href="src/styles/21-v18FeedbackIntegrityStyle.css">
+<script src="src/patches/069-inline.js"></script>
+<link rel="stylesheet" href="src/styles/22-v19ProgressiveInfoStyle.css">
+<script src="src/patches/070-inline.js"></script>
+<link rel="stylesheet" href="src/styles/23-v20TournamentPathStyle.css">
+<script src="src/patches/071-inline.js"></script>
+
+<!-- RC20 · Stable modular API boundary for Player Career + future OWL Manager extraction. -->
+<script src="src/modules/072-kernel.registry.js"></script>
+<script src="src/modules/073-api.data.js"></script>
+<script src="src/modules/074-api.state.js"></script>
+<script src="src/modules/075-api.league.js"></script>
+<script src="src/modules/076-api.world.js"></script>
+<script src="src/modules/077-api.players.js"></script>
+<script src="src/modules/078-api.simulation.js"></script>
+<script src="src/modules/079-api.contracts.js"></script>
+<script src="src/modules/080-api.persistence.js"></script>
+<script src="src/modules/081-api.career.js"></script>
+<script src="src/modules/082-api.manager.js"></script>
+<script src="src/modules/083-api.bootstrap.js"></script>
+<link rel="stylesheet" href="src/styles/24-v21ContractCardStyle.css">
+<script src="src/patches/084-inline.js"></script>
+<link rel="stylesheet" href="src/styles/25-v21CareerFlowUiStyle.css">
+<script src="src/patches/085-inline.js"></script>
+<link rel="stylesheet" href="src/styles/26-v22FullFlowQaStyle.css">
+<script src="src/patches/086-inline.js"></script>
+<link rel="stylesheet" href="src/styles/27-v24TacticalIdentityStyle.css">
+<script src="src/patches/087-inline.js"></script>
+<script src="src/patches/088-inline.js"></script>
+<script src="src/patches/089-inline.js"></script>
+
+<link rel="stylesheet" href="src/styles/28-owl2Alpha1Batch1Style.css">
+<script id="owl2Alpha1Batch1Script" src="src/patches/090-inline.js"></script>
+
+<!-- ===== OWL Alpha1 Batch 2 · Feedback 10-18 ===== -->
+<link rel="stylesheet" href="src/styles/29-owlAlpha1Batch2Style.css">
+<script src="src/patches/091-inline.js"></script>
+</body>
+</html>

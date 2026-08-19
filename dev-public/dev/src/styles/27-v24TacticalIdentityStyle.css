@@ -1,0 +1,367 @@
+/* Public Beta 1.9 RC23 · career systems */
+.training-natural-delta{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;font-style:normal;font-size:11px;font-weight:800;line-height:1.35;white-space:nowrap;background:rgba(139,151,171,.12);color:var(--muted)}
+.training-natural-delta.up{color:#73d6ad;background:rgba(42,166,116,.14)}
+.training-natural-delta.down{color:#ff927c;background:rgba(230,91,62,.14)}
+.training-natural-delta.flat{color:var(--muted)}
+.v23-tactic-profile{margin:0 0 12px;padding:12px;border:1px solid rgba(255,126,77,.22);border-radius:14px;background:rgba(255,126,77,.045)}
+.v23-tactic-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:8px 0}
+.v23-tactic-item{min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
+.v23-tactic-item.primary{border-color:rgba(255,126,77,.34)}
+.v23-tactic-item span,.v23-tactic-item small{display:block;color:var(--muted);font-size:11px}
+.v23-tactic-item strong{display:block;margin:3px 0;font-size:14px;color:var(--text);white-space:normal}
+.v23-tactic-profile>p{margin:6px 0 0;color:var(--muted);font-size:12px}
+.v23-tactic-profile>p strong{color:var(--accent,#ff7849)}
+@media(max-width:620px){.v23-tactic-grid{grid-template-columns:1fr}.training-attr-name span{display:flex;gap:4px;align-items:center;flex-wrap:wrap}}
+/* RC24 · Tactical Identity */
+.v24-tactic-profile .v23-tactic-item>small{margin-top:5px;font-size:12px;line-height:1.45}
+.v24-tactic-profile .v23-tactic-item>small em{color:var(--text);font-style:normal;font-weight:900}
+.v24-tactic-traits{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--muted)}
+.v24-tactic-traits u{text-decoration:none;color:var(--muted);margin-right:2px}
+.v24-tactic-traits b{display:inline-flex;padding:3px 7px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.035);color:var(--text);font-size:10px;line-height:1.2}
+.v24-tactic-traits i{display:none}
+.v24-hero-fit{margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);color:var(--muted);font-size:10px;line-height:1.45}
+@media(max-width:620px){.v24-tactic-profile .v23-tactic-item>strong{font-size:15px}.v24-tactic-traits{gap:4px}.v24-tactic-traits b{font-size:10px}}
+
+/* RC26 · release polish */
+.rc26-inline-detail-hidden{display:none!important}
+.rc26-modal-overlay{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,8,13,.72);backdrop-filter:blur(8px)}
+.rc26-modal-overlay.ui-hidden{display:none!important}.rc26-offer-modal{width:min(760px,calc(100vw - 28px));max-height:min(88vh,850px);overflow:auto;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 24px 90px rgba(0,0,0,.42);padding:20px}
+.rc26-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}.rc26-modal-head>div>span{display:block;color:var(--accent);font-size:10px;font-weight:950;letter-spacing:.11em}.rc26-modal-head h2{display:flex;align-items:center;gap:10px;margin:6px 0 0;font-size:24px}.rc26-modal-team-logo{width:40px;height:40px;object-fit:contain;border-radius:10px}.rc26-close-x{width:38px;height:38px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);font-size:22px;cursor:pointer}
+.rc26-offer-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}.rc26-offer-summary>div{padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025)}.rc26-offer-summary small,.rc26-offer-summary strong{display:block}.rc26-offer-summary small{font-size:9px;color:var(--muted);margin-bottom:3px}.rc26-offer-summary strong{font-size:15px}.rc26-offer-reason{display:grid;grid-template-columns:88px 1fr;gap:10px;align-items:center;margin:10px 0 14px;padding:11px 12px;border-radius:13px;background:rgba(255,122,67,.07);border:1px solid rgba(255,122,67,.2)}.rc26-offer-reason span{font-size:9px;color:var(--muted)}.rc26-offer-reason strong{font-size:11px;line-height:1.6}.rc26-offer-detail-slot .v19-offer-details-body{padding:0!important}.rc26-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.rc26-modal-actions button{min-width:120px}
+.rc26-season-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}.rc26-season-meta span{padding:2px 7px;border-radius:999px;background:rgba(93,157,209,.08);border:1px solid rgba(93,157,209,.18);font-size:8px;color:var(--muted)}.rc26-season-meta b{color:var(--ink)}
+.rc26-roster-tactics{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02)}.rc26-section-title{font-size:9px;font-weight:950;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}.rc26-tactic-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rc26-tactic-side{padding:10px 11px;border:1px solid var(--line);border-radius:13px}.rc26-tactic-side.primary{border-color:rgba(255,122,67,.35);background:rgba(255,122,67,.05)}.rc26-tactic-side>span,.rc26-tactic-side>strong,.rc26-tactic-side>small{display:block}.rc26-tactic-side>span{font-size:8px;color:var(--muted)}.rc26-tactic-side>strong{font-size:16px;margin:2px 0}.rc26-tactic-side>small{font-size:9px;color:var(--muted)}.rc26-tactic-side p{margin:7px 0 0;display:flex;gap:5px;flex-wrap:wrap}.rc26-tactic-side p b{font-size:8px;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.05);font-weight:700}.rc26-tactic-side p i{font-style:normal;color:var(--muted)}
+.rc26-trophy{display:inline-block;margin-right:6px}.rc26-trophy.silver{filter:grayscale(1) brightness(1.45)}.rc26-result-team-logo{width:22px;height:22px;object-fit:contain;vertical-align:middle;margin-right:7px}.stage-break-stats strong[data-rc26-team-decorated]{display:flex;align-items:center;justify-content:center;gap:2px}
+.rc26-award-team-logo{width:15px;height:15px;object-fit:contain;vertical-align:-3px;margin-right:5px}.award-winner-copy>span[data-rc26-logo],.award-role-winner>span[data-rc26-logo]{display:flex;align-items:center;gap:2px}.rc26-user-mvp{border-color:rgba(244,188,55,.65)!important;box-shadow:0 0 0 1px rgba(244,188,55,.18),0 12px 36px rgba(244,188,55,.11)!important;background:linear-gradient(135deg,rgba(244,188,55,.11),rgba(255,122,67,.05))!important}.rc26-user-mvp .award-avatar{box-shadow:0 0 0 3px rgba(244,188,55,.24)}
+.rc26-summary-team-logo{width:44px;height:44px;object-fit:contain;vertical-align:middle;margin-right:9px}.summary-hero #summaryTeamName{display:flex;align-items:center;justify-content:center}.rc26-inline-team-logo{width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:6px}#summaryTeamText{display:flex;align-items:center}.rc26-kda-box strong{font-size:clamp(23px,3.2vw,36px)!important;white-space:nowrap;letter-spacing:-.035em}
+.v826-hero-band{display:inline-flex!important;vertical-align:1px;margin-left:5px;padding:1px 5px;border-radius:999px;font-size:7px!important;font-style:normal;font-weight:900;line-height:1.5;border:1px solid currentColor}.v826-hero-band.master{color:#f4bc37;background:rgba(244,188,55,.10)}.v826-hero-band.elite{color:#ff7b47;background:rgba(255,123,71,.09)}.v826-hero-band.skilled{color:#42c997;background:rgba(66,201,151,.09)}.v826-hero-band.regular{color:#62b8ef;background:rgba(98,184,239,.08)}.v826-hero-band.develop{color:#9ba4b3;background:rgba(155,164,179,.08)}
+.v15-talent-boom-card p{text-wrap:balance;max-width:900px;margin-left:auto!important;margin-right:auto!important}
+@media(max-width:720px){.rc26-offer-modal{padding:14px;border-radius:18px}.rc26-offer-summary{grid-template-columns:1fr 1fr}.rc26-offer-reason{grid-template-columns:1fr}.rc26-modal-actions{display:grid;grid-template-columns:1fr 1fr}.rc26-modal-actions button{min-width:0}.rc26-tactic-grid{grid-template-columns:1fr}.rc26-kda-box strong{font-size:24px!important}.rc26-summary-team-logo{width:34px;height:34px}}
+
+.team-app>.season-chip{margin:14px auto 6px;padding:6px 14px;font-size:11px}.team-app>.team-title{margin:6px 0 14px}.team-app>.team-title h2{font-size:clamp(30px,4.5vw,40px)}.team-app>.team-title h2::after{width:66px;height:4px;margin:9px auto 7px}.team-app>.team-title p{font-size:12px}
+/* RC27 · Career UI consolidation */
+#careerContractCard.rc27-contract-card{padding:24px 26px 22px;text-align:left;background:var(--panel);border-color:var(--line);box-shadow:0 20px 60px rgba(0,0,0,.20)}
+#careerContractCard.rc27-contract-card::before{width:210px;height:210px;right:-96px;top:-112px;background:rgba(255,107,61,.08)}
+.rc27-legacy-meta{display:none!important}.rc27-team-context{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:0 0 14px}.rc27-team-context span{font-size:9px;font-weight:850;color:var(--muted);padding:5px 9px;border:1px solid rgba(127,143,165,.22);border-radius:999px;background:rgba(255,255,255,.025)}
+.rc27-contract-card .contract-team-line{margin:8px 0 6px;justify-content:center}.rc27-contract-card .contract-team-name{font-size:clamp(34px,5vw,52px)}.rc27-contract-card .contract-logo{width:62px;height:62px;border-radius:18px}.rc27-contract-role{text-align:center;margin:10px 0 14px!important;font-size:13px!important}.rc27-contract-role strong{font-size:14px}
+.rc27-contract-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:720px;margin:0 auto 14px}.rc27-contract-facts>div{padding:10px 12px;border:1px solid rgba(127,143,165,.22);border-radius:13px;background:rgba(255,255,255,.025);text-align:center}.rc27-contract-facts span,.rc27-contract-facts strong{display:block}.rc27-contract-facts span{font-size:8px;color:var(--muted);margin-bottom:3px}.rc27-contract-facts strong{font-size:13px;color:var(--ink)}
+.rc27-summary-grid{max-width:850px;margin:0 auto!important;gap:8px!important}.rc27-summary-grid .team-summary-item{padding:10px 12px!important;border-color:rgba(127,143,165,.20)!important;background:rgba(255,255,255,.025)!important;text-align:center}.rc27-summary-grid .team-summary-item span{font-size:8px!important}.rc27-summary-grid .team-summary-item strong{font-size:13px!important;margin-top:2px!important}
+.rc27-tactic-summary{max-width:850px;margin:10px auto 0;padding:11px 12px;display:grid;grid-template-columns:minmax(180px,1.35fr) minmax(160px,1fr) auto;gap:12px;align-items:center;border:1px solid rgba(127,143,165,.20);border-radius:15px;background:rgba(12,16,23,.16)}.rc27-tactic-summary-main span,.rc27-tactic-summary-main strong,.rc27-tactic-summary-main small{display:block}.rc27-tactic-summary-main span{font-size:8px;color:var(--muted);font-weight:900;letter-spacing:.08em}.rc27-tactic-summary-main strong{font-size:13px;margin:2px 0}.rc27-tactic-summary-main small{font-size:9px;color:var(--muted)}.rc27-tactic-summary-traits{display:flex;gap:5px;flex-wrap:wrap}.rc27-tactic-summary-traits b{font-size:8px;font-weight:800;color:var(--muted);padding:3px 7px;border-radius:999px;border:1px solid rgba(127,143,165,.18);background:rgba(255,255,255,.025)}.rc27-tactic-summary button{min-width:132px;padding:9px 12px;font-size:10px}
+.rc27-start-season{display:block!important;width:min(310px,100%)!important;min-width:0!important;margin:14px auto 0!important;padding:12px 20px!important;font-size:14px!important;border-radius:14px!important}
+#careerContractCard .rc26-roster-tactics{display:none!important}
+
+.rc27-squad-card{padding:16px!important;background:var(--panel)!important;border-color:var(--line)!important}.rc27-squad-card .squad-title{margin-bottom:9px}.rc27-squad-card .squad-title h3{font-size:17px}.rc27-squad-card .squad-title span{font-size:9px}.rc27-roster-context{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:12px;padding:10px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(127,143,165,.18)}.rc27-roster-context>div{min-width:0}.rc27-roster-context span,.rc27-roster-context strong,.rc27-roster-context small{display:block}.rc27-roster-context span{font-size:8px;color:var(--muted)}.rc27-roster-context strong{font-size:13px;margin-top:2px}.rc27-roster-context small{font-size:8px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rc27-roster-context button{min-width:116px;font-size:9px;padding:8px 10px}
+.rc27-roster-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px}.rc27-roster-col{min-width:0}.rc27-roster-col .squad-section-label{margin:0 3px 7px;font-size:10px}.rc27-squad-card .squad-list{background:rgba(255,255,255,.018);border-color:rgba(127,143,165,.20)}.rc27-squad-card .squad-row{grid-template-columns:38px 74px minmax(0,1fr) auto;min-height:54px;padding:7px 9px}.rc27-squad-card .squad-avatar{width:36px;height:36px;border-radius:11px}.rc27-squad-card .squad-role{font-size:9px}.rc27-squad-card .squad-name{font-size:12px}.rc27-squad-card .squad-ovr{font-size:17px}.rc27-squad-card .team-note{margin-top:10px;font-size:9px}
+
+.rc27-season-score-card{padding:20px 22px!important}.rc27-season-score-card .season-score-top{gap:14px}.rc27-season-score-card .season-team-logo{width:58px;height:58px;border-radius:17px}.rc27-season-score-card .season-team-copy strong{font-size:24px}.rc27-season-score-card .season-year-chip{padding:8px 13px;font-size:11px}.rc27-season-score-card .season-record strong{font-size:36px}.rc27-season-identity{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:7px;align-items:stretch;margin-top:13px;padding-top:12px;border-top:1px solid rgba(127,143,165,.18)}.rc27-season-identity>div{min-width:0;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.025)}.rc27-season-identity span,.rc27-season-identity strong,.rc27-season-identity small{display:block}.rc27-season-identity span{font-size:7px;color:var(--muted);font-weight:900}.rc27-season-identity strong{font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc27-season-identity small{font-size:8px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc27-identity-detail{min-width:92px;border:0;border-left:1px solid rgba(127,143,165,.18);background:transparent;color:var(--accent);font-size:9px;font-weight:900;cursor:pointer;padding:8px 10px}.rc27-season-player-strip{margin-top:10px!important;padding:10px 12px!important;font-size:11px!important;text-align:left!important;background:rgba(255,255,255,.025)!important}
+
+.rc27-modal-overlay{position:fixed;inset:0;z-index:12500;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,8,13,.76);backdrop-filter:blur(9px)}.rc27-modal-overlay.ui-hidden{display:none!important}.rc27-tactic-modal{width:min(760px,calc(100vw - 28px));max-height:min(88vh,820px);overflow:auto;border:1px solid rgba(127,143,165,.28);border-radius:22px;background:var(--panel);box-shadow:0 26px 90px rgba(0,0,0,.46);padding:20px}.rc27-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding-bottom:13px;border-bottom:1px solid var(--line)}.rc27-modal-head>div>span{display:block;color:var(--accent);font-size:9px;font-weight:950;letter-spacing:.12em}.rc27-modal-head h2{margin:5px 0 3px;font-size:22px}.rc27-modal-head p{margin:0;color:var(--muted);font-size:10px}.rc27-close-x{width:36px;height:36px;flex:0 0 auto;border:1px solid var(--line);border-radius:11px;background:transparent;color:var(--ink);font-size:21px;cursor:pointer}.rc27-tactic-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.rc27-tactic-modal-side{padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02)}.rc27-tactic-modal-side.primary{border-color:rgba(255,122,67,.36);background:rgba(255,122,67,.045)}.rc27-tactic-side-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.rc27-tactic-side-head span{font-size:9px;color:var(--muted)}.rc27-tactic-side-head strong{font-size:18px}.rc27-tactic-style{margin-top:13px}.rc27-tactic-style small,.rc27-tactic-traits small,.rc27-tactic-fit small{display:block;font-size:8px;color:var(--muted);margin-bottom:4px}.rc27-tactic-style strong{font-size:14px}.rc27-tactic-traits{margin-top:12px}.rc27-tactic-traits>div{display:flex;gap:5px;flex-wrap:wrap}.rc27-tactic-traits b{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.05);font-size:8px}.rc27-tactic-fit{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(127,143,165,.22)}.rc27-tactic-fit strong{font-size:9px;line-height:1.55}.rc27-tactic-modal-foot{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}.rc27-tactic-modal-foot span{font-size:8px;color:var(--muted)}.rc27-tactic-modal-foot strong{font-size:11px}.rc27-tactic-modal-foot button{min-width:100px}
+
+@media(max-width:720px){
+  #careerContractCard.rc27-contract-card{padding:17px 12px 16px}.rc27-team-context{margin-bottom:10px}.rc27-contract-card .contract-team-line{flex-direction:row!important}.rc27-contract-card .contract-logo{width:48px;height:48px}.rc27-contract-card .contract-team-name{font-size:29px}.rc27-contract-facts{gap:5px}.rc27-contract-facts>div{padding:8px 5px}.rc27-contract-facts strong{font-size:11px}.rc27-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.rc27-tactic-summary{grid-template-columns:1fr auto;gap:8px}.rc27-tactic-summary-traits{grid-column:1/-1;order:3}.rc27-tactic-summary button{min-width:112px;font-size:9px}.rc27-start-season{width:min(260px,100%)!important}
+  .rc27-roster-context{grid-template-columns:1fr 1fr}.rc27-roster-context button{grid-column:1/-1;width:100%}.rc27-roster-grid{grid-template-columns:1fr}.rc27-squad-card .squad-row{grid-template-columns:34px 64px minmax(0,1fr) auto}.rc27-squad-card .squad-avatar{width:32px;height:32px}
+  .rc27-season-score-card{padding:14px 12px!important}.rc27-season-score-card .season-score-top{grid-template-columns:minmax(0,1fr) auto!important}.rc27-season-score-card .season-year-chip{display:none}.rc27-season-score-card .season-team-logo{width:48px;height:48px}.rc27-season-score-card .season-team-copy strong{font-size:19px}.rc27-season-score-card .season-record strong{font-size:29px}.rc27-season-identity{grid-template-columns:1fr 1fr;gap:5px}.rc27-season-identity>div:nth-child(3){display:none}.rc27-identity-detail{border-left:0;border-top:1px solid rgba(127,143,165,.18);grid-column:1/-1;width:100%;padding:7px}.rc27-season-player-strip{font-size:10px!important}
+  .rc27-tactic-modal{padding:14px;border-radius:18px}.rc27-tactic-modal-grid{grid-template-columns:1fr}.rc27-tactic-modal-foot{grid-template-columns:1fr auto}.rc27-tactic-modal-foot span{display:none}
+}
+
+/* Public Beta 1.9 RC28 · UI Truth & Historical Integrity */
+
+/* 1 · season summary: every value column aligns to the same right edge */
+#summaryScreen #summaryTeamText.rc28-summary-team-value,
+#summaryScreen #summaryTeamText{justify-content:flex-end!important;text-align:right!important;width:100%;}
+
+/* 2 · hero market summary becomes a real summary card + real button */
+#offseasonContent .v21-market-profile-row>.v772-personal-hero-market.rc28-hero-market-card{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:14px!important;padding:14px 16px!important;
+}
+#offseasonContent .rc28-hero-market-card>.v19-hero-profile-details{display:none!important}
+#offseasonContent .rc28-hero-market-card>div:first-child{min-width:0}
+#offseasonContent .rc28-hero-market-card>div:first-child>span{font-size:9px!important;color:var(--muted)!important}
+#offseasonContent .rc28-hero-market-card>div:first-child>strong{display:block;font-size:15px!important;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#offseasonContent .rc28-hero-details-btn{display:flex!important;align-items:center;justify-content:space-between;gap:16px;min-width:166px!important;min-height:38px;padding:9px 12px!important;border-radius:12px!important;font-size:10px!important;font-weight:900!important}
+#offseasonContent .rc28-hero-details-btn b{color:var(--accent);font-size:14px}
+.rc28-modal-overlay{position:fixed;inset:0;z-index:12800;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,7,12,.78);backdrop-filter:blur(10px)}
+.rc28-modal-overlay.ui-hidden{display:none!important}.rc28-hero-modal{width:min(650px,calc(100vw - 28px));max-height:min(88vh,760px);overflow:auto;border:1px solid rgba(127,143,165,.30);border-radius:22px;background:var(--panel);box-shadow:0 28px 90px rgba(0,0,0,.48);padding:20px}
+.rc28-modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.rc28-modal-head>div>span{display:block;color:var(--accent);font-size:9px;font-weight:950;letter-spacing:.12em}.rc28-modal-head h2{margin:5px 0 3px;font-size:23px}.rc28-modal-head p{margin:0;color:var(--muted);font-size:10px}.rc28-close-x{width:36px;height:36px;flex:0 0 auto;border:1px solid var(--line);border-radius:11px;background:transparent;color:var(--ink);font-size:21px;cursor:pointer}
+.rc28-hero-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}.rc28-hero-metrics>div{padding:11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025)}.rc28-hero-metrics span,.rc28-hero-metrics strong{display:block}.rc28-hero-metrics span{font-size:8px;color:var(--muted)}.rc28-hero-metrics strong{font-size:17px;margin-top:3px}
+.rc28-hero-list{display:grid;gap:7px}.rc28-hero-row{display:grid;grid-template-columns:34px minmax(0,1fr) 58px 58px;align-items:center;gap:8px;padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.018)}.rc28-hero-order{color:var(--muted);font-size:9px}.rc28-hero-row>strong{font-size:12px}.rc28-hero-row>b{text-align:right;font-size:13px}.rc28-hero-band{justify-self:end;padding:3px 7px;border-radius:999px;font-size:8px;font-style:normal;font-weight:900}.rc28-hero-band.master{color:#b67200;background:#fff0bf}.rc28-hero-band.elite{color:#1c7d5c;background:#dff5eb}.rc28-hero-band.skilled{color:#276f9b;background:#e1f1fb}.rc28-hero-band.regular{color:#6f6489;background:#eee9f8}.rc28-hero-band.develop{color:#8c6f69;background:#f2e9e6}
+html[data-theme="dark"] .rc28-hero-band.master{color:#ffd36c;background:#4c3c13}html[data-theme="dark"] .rc28-hero-band.elite{color:#77dfba;background:#173b30}html[data-theme="dark"] .rc28-hero-band.skilled{color:#86c9ee;background:#19364a}html[data-theme="dark"] .rc28-hero-band.regular{color:#c5b9e6;background:#342f44}html[data-theme="dark"] .rc28-hero-band.develop{color:#d0b2aa;background:#40322f}.rc28-modal-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}.rc28-modal-foot small{color:var(--muted);font-size:9px;line-height:1.5}.rc28-modal-foot button{min-width:100px}
+
+/* 3 · selected offer: same card, restrained selection ring */
+#offseasonContent .v21-offer-card-shell:has(>.offer-card.selected),
+#offseasonContent .v21-offer-card-shell.rc28-selected-offer{background:#fffdf9!important;border-color:rgba(255,100,56,.82)!important;box-shadow:0 0 0 1px rgba(255,100,56,.16)!important;transform:none!important}
+html[data-theme="dark"] #offseasonContent .v21-offer-card-shell:has(>.offer-card.selected),
+html[data-theme="dark"] #offseasonContent .v21-offer-card-shell.rc28-selected-offer{background:#20252d!important;border-color:#ff7547!important;box-shadow:0 0 0 1px rgba(255,117,71,.14)!important}
+#offseasonContent .v21-offer-card-shell:has(>.offer-card.selected):hover{transform:translateY(-1px)!important}
+
+/* 4 · champion / runner-up visual lock-up */
+#seasonScreen .stage-break-stats>.rc28-podium-cell{position:relative;overflow:hidden;padding:12px 14px!important;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
+#seasonScreen .stage-break-stats>.rc28-podium-cell.champion{border-color:rgba(209,156,46,.46);background:linear-gradient(135deg,rgba(209,156,46,.10),rgba(209,156,46,.025))}
+#seasonScreen .stage-break-stats>.rc28-podium-cell.runner{border-color:rgba(154,168,188,.38);background:linear-gradient(135deg,rgba(154,168,188,.08),rgba(154,168,188,.018))}
+#seasonScreen .rc28-podium-team{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;margin-top:6px;font-size:13px!important;text-align:left!important}
+#seasonScreen .rc28-trophy-mark{width:23px;height:23px;display:grid;place-items:center;flex:0 0 auto;color:#d9a62f}#seasonScreen .rc28-podium-cell.runner .rc28-trophy-mark{color:#aeb8c8}#seasonScreen .rc28-trophy-mark svg{width:21px;height:21px;display:block}
+#seasonScreen .rc28-podium-logo{width:28px!important;height:28px!important;object-fit:contain!important;flex:0 0 auto}
+#seasonScreen .rc28-podium-cell>span:first-child{font-size:8px!important;text-transform:uppercase;letter-spacing:.04em}
+
+/* 5 · MVP uses the same visual language as a role-star row owned by the player */
+#regularAwardsContent .award-card.rc26-user-mvp{background:var(--panel)!important;border-color:var(--line)!important;box-shadow:none!important}
+#regularAwardsContent .award-main-row.rc28-mvp-mine{position:relative;border-radius:13px;box-shadow:inset 4px 0 0 var(--accent);background:#fff4ed!important;padding-left:14px!important}
+html[data-theme="dark"] #regularAwardsContent .award-main-row.rc28-mvp-mine{background:#302827!important}
+#regularAwardsContent .award-main-row.rc28-mvp-mine .award-rank-box{border-left-color:rgba(255,100,56,.28)}
+#regularAwardsContent .award-main-row.rc28-mvp-mine .award-rank-box strong{color:#c98511!important;font-size:18px!important}
+html[data-theme="dark"] #regularAwardsContent .award-main-row.rc28-mvp-mine .award-rank-box strong{color:#ffd063!important}
+
+/* 6 · historical memorial node */
+.rc28-alarm-history{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0;padding:14px 16px;border:1px solid rgba(127,143,165,.26);border-radius:16px;background:rgba(127,143,165,.055)}.rc28-alarm-history>div{min-width:0}.rc28-alarm-history span{display:block;color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.1em}.rc28-alarm-history h4{margin:4px 0 4px;font-size:16px}.rc28-alarm-history p{margin:0;color:var(--muted);font-size:10px;line-height:1.55}.rc28-alarm-history>b{display:grid;place-items:center;min-width:46px;height:46px;border:1px solid rgba(127,143,165,.30);border-radius:14px;color:var(--muted);font-size:17px}
+
+/* 7 · late Stage/Major/EWC cards stay in the primary season slot */
+#seasonScreen #v768SeasonPrimaryAction.rc28-has-milestone{display:block!important;margin:14px 0!important}
+#seasonScreen #v768SeasonPrimaryAction.rc28-has-milestone>.stage-break-card,
+#seasonScreen #v768SeasonPrimaryAction.rc28-has-milestone>.season-complete-banner{margin:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+#seasonScreen #seasonCompleteArea:empty{display:none!important}
+
+/* 8 · team marks in career-season history */
+#careerTabContent .career-season-row>div:nth-child(2)>strong{display:flex;align-items:center;gap:8px;min-width:0}.rc28-career-team-logo{width:23px;height:23px;object-fit:contain;flex:0 0 auto}
+
+@media(max-width:640px){
+  #offseasonContent .v21-market-profile-row>.v772-personal-hero-market.rc28-hero-market-card{grid-template-columns:1fr!important;gap:9px!important}.rc28-hero-details-btn{width:100%!important;min-width:0!important}.rc28-hero-modal{padding:14px}.rc28-hero-metrics{grid-template-columns:1fr 1fr}.rc28-hero-row{grid-template-columns:28px minmax(0,1fr) 48px 54px}.rc28-modal-foot{align-items:stretch;flex-direction:column}.rc28-modal-foot button{width:100%}
+  #seasonScreen .rc28-podium-team{font-size:12px!important}.rc28-alarm-history{align-items:flex-start}.rc28-alarm-history>b{min-width:40px;height:40px}
+}
+
+/* Public Beta 1.9 RC29 · Changelog */
+.cover-version.rc29-version-entry{
+  cursor:pointer;
+  user-select:none;
+  transition:border-color .18s ease,background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.cover-version.rc29-version-entry:hover,
+.cover-version.rc29-version-entry:focus-visible{
+  border-color:color-mix(in srgb,var(--accent) 58%,var(--line));
+  background:color-mix(in srgb,var(--panel) 88%,var(--accent) 12%);
+  box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 12%,transparent);
+  outline:none;
+}
+.cover-version.rc29-version-entry:active{transform:translateY(1px)}
+.cover-version.rc29-version-entry::after{
+  content:'›';
+  color:var(--accent);
+  font-size:16px;
+  line-height:1;
+  font-weight:1000;
+  margin-left:1px;
+}
+
+.rc29-changelog-overlay{
+  position:fixed;
+  inset:0;
+  z-index:18000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(5,8,13,.72);
+  backdrop-filter:blur(8px);
+}
+.rc29-changelog-overlay.ui-hidden{display:none!important}
+.rc29-changelog-modal{
+  width:min(780px,100%);
+  max-height:min(82vh,820px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--panel);
+  box-shadow:0 32px 90px rgba(0,0,0,.38);
+}
+.rc29-changelog-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  padding:24px 26px 20px;
+  border-bottom:1px solid var(--line);
+}
+.rc29-changelog-kicker{
+  margin:0 0 7px;
+  color:var(--accent);
+  font-size:11px;
+  line-height:1.2;
+  font-weight:1000;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.rc29-changelog-head h2{
+  margin:0;
+  color:var(--text);
+  font-size:26px;
+  line-height:1.15;
+  font-weight:1000;
+}
+.rc29-changelog-head p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+.rc29-changelog-close{
+  flex:0 0 auto;
+  width:40px;
+  height:40px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--panel-2,#252c37);
+  color:var(--text);
+  font-size:22px;
+  font-weight:800;
+  cursor:pointer;
+}
+.rc29-changelog-close:hover{border-color:var(--accent);color:var(--accent)}
+.rc29-changelog-body{
+  overflow:auto;
+  padding:18px 26px 24px;
+  overscroll-behavior:contain;
+}
+.rc29-release-current{
+  border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line));
+  border-radius:18px;
+  padding:18px 20px;
+  margin-bottom:16px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel));
+}
+.rc29-release-current .rc29-release-top,
+.rc29-release-history summary{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.rc29-release-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:23px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:var(--accent);
+  color:white;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.04em;
+}
+.rc29-release-current h3{
+  margin:0;
+  color:var(--text);
+  font-size:18px;
+  font-weight:1000;
+}
+.rc29-release-subtitle{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+.rc29-release-points{
+  display:grid;
+  gap:8px;
+  margin:14px 0 0;
+  padding:0;
+  list-style:none;
+}
+.rc29-release-points li{
+  position:relative;
+  padding-left:17px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.65;
+}
+.rc29-release-points li::before{
+  content:'•';
+  position:absolute;
+  left:2px;
+  top:0;
+  color:var(--accent);
+  font-weight:1000;
+}
+.rc29-history-label{
+  margin:20px 2px 10px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:.08em;
+}
+.rc29-release-history{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:color-mix(in srgb,var(--panel) 92%,var(--text) 8%);
+  overflow:hidden;
+  margin-top:8px;
+}
+.rc29-release-history summary{
+  min-height:52px;
+  padding:0 15px;
+  cursor:pointer;
+  list-style:none;
+  color:var(--text);
+  font-size:13px;
+  font-weight:950;
+}
+.rc29-release-history summary::-webkit-details-marker{display:none}
+.rc29-release-history summary::after{
+  content:'＋';
+  margin-left:auto;
+  color:var(--muted);
+  font-size:16px;
+}
+.rc29-release-history[open] summary::after{content:'－';color:var(--accent)}
+.rc29-release-history .rc29-release-version{
+  color:var(--accent);
+  min-width:118px;
+}
+.rc29-release-history .rc29-release-name{
+  min-width:0;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  color:var(--muted);
+  font-weight:850;
+}
+.rc29-release-history .rc29-release-points{
+  margin:0;
+  padding:2px 16px 15px;
+  border-top:1px solid var(--line);
+  padding-top:12px;
+}
+.rc29-changelog-foot{
+  padding:13px 26px 17px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+html[data-theme="dark"] .rc29-changelog-modal{background:#1c222c;border-color:#394454}
+html[data-theme="dark"] .rc29-release-history{background:#222934}
+
+@media(max-width:600px){
+  .cover-version.rc29-version-entry::after{font-size:14px}
+  .rc29-changelog-overlay{padding:12px}
+  .rc29-changelog-modal{max-height:88vh;border-radius:18px}
+  .rc29-changelog-head{padding:19px 18px 16px}
+  .rc29-changelog-head h2{font-size:22px}
+  .rc29-changelog-head p{font-size:12px}
+  .rc29-changelog-body{padding:14px 16px 18px}
+  .rc29-release-current{padding:15px 14px;border-radius:15px}
+  .rc29-release-current h3{font-size:16px}
+  .rc29-release-history summary{padding:0 12px;gap:7px}
+  .rc29-release-history .rc29-release-version{min-width:84px;font-size:12px}
+  .rc29-release-history .rc29-release-name{font-size:11px}
+  .rc29-changelog-foot{padding:11px 16px 14px}
+}
+
+/* ===== OWL选手之路 2.0 Alpha 1 · Living World Foundation ===== */
+.v20-world-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:8px;margin:10px 0 0;padding:10px;border:1px solid color-mix(in srgb,var(--line) 84%,#56d6a1 16%);border-radius:14px;background:color-mix(in srgb,var(--panel) 92%,#153728 8%);align-items:stretch}.v20-world-strip>div{min-width:0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--panel-2) 92%,transparent);display:flex;flex-direction:column;justify-content:center}.v20-world-strip span,.v20-team-world-preview span,.v20-offer-world span{font-size:10px;color:var(--muted)}.v20-world-strip strong{font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v20-world-strip small{font-size:9px;color:var(--muted);margin-top:2px}.v20-world-open-btn,.v20-team-world-preview button{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:10px;padding:0 14px;font-weight:800;cursor:pointer;white-space:nowrap}.v20-world-open-btn:hover,.v20-team-world-preview button:hover{border-color:var(--accent);color:var(--accent)}
+.v20-team-world-preview{display:grid;grid-template-columns:1.25fr 1fr 1.3fr auto;gap:8px;padding:10px;margin:10px 0;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 95%,#153728 5%)}.v20-team-world-preview>div{padding:7px 9px;border-right:1px solid var(--line);min-width:0}.v20-team-world-preview>div:last-of-type{border-right:0}.v20-team-world-preview strong,.v20-team-world-preview small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v20-team-world-preview strong{font-size:12px;margin-top:3px}.v20-team-world-preview small{font-size:9px;color:var(--muted);margin-top:2px}
+.v20-offer-world{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:9px;border:1px solid color-mix(in srgb,var(--line) 86%,#56d6a1 14%);border-radius:11px;background:color-mix(in srgb,var(--panel-2) 94%,#153728 6%);margin-bottom:8px}.v20-offer-world>div{min-width:0}.v20-offer-world b{display:block;font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v20-match-reason,.v20-detailed-reason{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:color-mix(in srgb,var(--panel) 94%,#16352c 6%)}.v20-match-reason.win{border-color:color-mix(in srgb,#48d597 35%,var(--line))}.v20-match-reason.loss{border-color:color-mix(in srgb,#ff6b6b 28%,var(--line))}.v20-reason-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.v20-reason-head>div{min-width:0}.v20-reason-head span{display:block;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.08em}.v20-reason-head strong{display:block;font-size:13px;margin-top:3px}.v20-reason-head em{font-style:normal;font-size:10px;color:var(--muted);white-space:nowrap}.v20-reason-factors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}.v20-reason-factors>div{padding:8px 9px;border-radius:10px;background:var(--panel-2);min-width:0}.v20-reason-factors b{display:block;font-size:10px}.v20-reason-factors span{display:block;color:var(--muted);font-size:9px;line-height:1.45;margin-top:3px}.v20-reason-factors .good b{color:#55d6a0}.v20-reason-factors .bad b{color:#ff8b7a}.v20-detailed-reason{margin:10px 0 14px}
+.v20-world-overlay{position:fixed;inset:0;z-index:10080;background:rgba(5,8,13,.78);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}.v20-world-overlay.ui-hidden{display:none}.v20-world-modal{width:min(900px,96vw);max-height:min(820px,92vh);overflow:auto;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 30px 90px rgba(0,0,0,.42)}.v20-world-modal>header{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;gap:16px;padding:18px 20px 14px;background:color-mix(in srgb,var(--panel) 96%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.v20-world-modal h2{margin:4px 0 2px;font-size:22px}.v20-world-modal header p{margin:0;color:var(--muted);font-size:11px}.v20-world-modal header button{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--text);font-size:20px;cursor:pointer}.v20-world-body{padding:16px 20px 22px}.v20-world-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.v20-world-card{border:1px solid var(--line);border-radius:15px;background:var(--panel-2);padding:14px;min-width:0}.v20-world-card h3{margin:5px 0 5px;font-size:16px}.v20-world-card p{margin:0;color:var(--muted);font-size:10px;line-height:1.65}.v20-world-kicker{font-size:9px;font-weight:900;letter-spacing:.09em;color:var(--accent)}.v20-world-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.v20-world-tags span{padding:4px 7px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,var(--panel));border:1px solid var(--line);font-size:9px}.v20-coach-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}.v20-coach-stats span{font-size:9px;color:var(--muted);background:var(--panel);padding:7px;border-radius:9px;text-align:center}.v20-coach-stats strong{display:block;color:var(--text);font-size:14px;margin-top:2px}.v20-chem-summary{display:flex;align-items:center;gap:10px;margin:8px 0 10px}.v20-chem-summary>strong{font-size:28px;color:#55d6a0}.v20-chem-summary div b,.v20-chem-summary div span{display:block}.v20-chem-summary div b{font-size:12px}.v20-chem-summary div span{font-size:9px;color:var(--muted);margin-top:2px}.v20-rel-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}.v20-rel-list>div{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:7px 8px;border-radius:9px;background:var(--panel)}.v20-rel-list>div.competition{box-shadow:inset 2px 0 #ff8855}.v20-rel-list span{font-size:10px;font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v20-rel-list span small{display:block;color:var(--muted);font-size:8px;font-weight:500}.v20-rel-list b{font-size:11px}.v20-rel-list em{font-style:normal;font-size:8px;color:var(--muted);white-space:nowrap}.v20-story-beats{display:grid;gap:5px;margin-top:10px}.v20-story-beats>div{display:grid;grid-template-columns:34px 1fr;gap:7px;padding:7px;border-radius:9px;background:var(--panel)}.v20-story-beats b{font-size:9px;color:var(--muted)}.v20-story-beats span{font-size:9px;line-height:1.45}.v20-story-beats .good b{color:#55d6a0}.v20-story-beats .bad b{color:#ff8b7a}.v20-summary-story{margin-top:12px}.v20-summary-story>h3{margin:6px 0}.v20-summary-story>p{color:var(--muted);font-size:10px;line-height:1.6}
+html.v20-world-open,html.v20-world-open body{overflow:hidden}
+@media(max-width:760px){.v20-world-strip{grid-template-columns:1fr 1fr}.v20-world-strip .v20-world-open-btn{grid-column:1/-1;min-height:40px}.v20-team-world-preview{grid-template-columns:1fr 1fr}.v20-team-world-preview button{grid-column:1/-1;min-height:40px}.v20-offer-world{grid-template-columns:1fr}.v20-reason-factors{grid-template-columns:1fr}.v20-world-grid{grid-template-columns:1fr}.v20-rel-list{grid-template-columns:1fr}.v20-world-overlay{padding:8px}.v20-world-modal{width:100%;max-height:94vh;border-radius:16px}.v20-world-modal>header{padding:14px}.v20-world-body{padding:12px}.v20-coach-stats{grid-template-columns:repeat(2,1fr)}}

@@ -1,0 +1,35 @@
+
+/* V7.7.2 · postseason compact view + offseason UX */
+#playoffScreen.v772-playoff-collapsed .playoff-summary{grid-template-columns:1fr}
+#playoffScreen.v772-playoff-collapsed .playoff-stage-card,
+#playoffScreen.v772-playoff-collapsed .bracket-card{display:none!important}
+.v772-playoff-mini-status{
+  margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;
+}
+.v772-playoff-mini-copy{display:flex;flex-direction:column;gap:2px;text-align:right}
+.v772-playoff-mini-copy span{font-size:10px;color:var(--muted)}
+.v772-playoff-mini-copy strong{font-size:13px;color:var(--ink)}
+.v772-playoff-toggle{
+  padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel-solid);
+  color:var(--ink);font-weight:900;cursor:pointer;white-space:nowrap;
+}
+.v772-playoff-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.v772-personal-hero-market{
+  margin:12px 0 14px;padding:13px 14px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(135deg,rgba(44,110,170,.07),rgba(255,122,67,.04));
+  display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+}
+.v772-personal-hero-market span,.v772-personal-hero-market small{display:block;color:var(--muted);font-size:10px}
+.v772-personal-hero-market strong{display:block;margin:3px 0;font-size:15px}
+.v772-personal-hero-market .v772-hero-stats{text-align:right}
+.v772-auto-training{background:linear-gradient(135deg,#356fcd,#6b8ff0)!important;color:#fff!important;border-color:transparent!important}
+html[data-theme="dark"] .v772-personal-hero-market{background:rgba(255,255,255,.04)}
+@media(max-width:620px){
+  .playoff-team-card{align-items:flex-start}
+  .v772-playoff-mini-status{width:100%;margin-left:0;justify-content:space-between}
+  .v772-playoff-mini-copy{text-align:left}
+  .v772-playoff-toggle{width:100%;margin-top:5px}
+  .v772-personal-hero-market{grid-template-columns:1fr}
+  .v772-personal-hero-market .v772-hero-stats{text-align:left}
+}
+.v773-game-no{display:inline-block;min-width:28px;color:var(--accent-2);font-size:.88em;letter-spacing:.04em}

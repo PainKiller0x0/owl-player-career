@@ -1,0 +1,8 @@
+/* RC13 · archive-only career contribution and ordinary-career story cues */
+.v33-usage-badge{display:inline-flex;margin-left:7px;padding:2px 6px;border:1px solid var(--line);border-radius:999px;font-size:9px;color:var(--muted);vertical-align:1px;white-space:nowrap}
+.v33-usage-badge.starter{color:var(--text);border-color:color-mix(in srgb,var(--accent) 42%,var(--line))}
+.v33-usage-badge.rotation,.v33-usage-badge.fringe{opacity:.92}
+.v33-career-node{margin-top:5px;font-size:10px;color:var(--muted)}
+.v33-career-node strong{color:var(--text);font-weight:700}
+.v33-champ-role{border-style:dashed!important}
+@media(max-width:520px){.v33-usage-badge{margin-left:0;margin-top:4px}.v33-career-node{line-height:1.45}}
