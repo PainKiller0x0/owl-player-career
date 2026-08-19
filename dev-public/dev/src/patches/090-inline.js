@@ -150,9 +150,9 @@
     body.querySelectorAll('.vwc-choice[data-vwc-select]').forEach(btn=>{const em=btn.querySelector('em'),copy=wcChoiceCopy[btn.dataset.vwcSelect];if(em&&copy&&em.textContent!==copy)em.textContent=copy;});
     const api=window.__OWL_WORLD_CUP,rec=api?.ensure?.();
     if(!rec||!rec.completed||rec.result!=='世界杯冠军'||!body.querySelector('.vwc-result'))return;
-    careerState.owl2B1WorldCupBursts=Array.isArray(careerState.owl2B1WorldCupBursts)?careerState.owl2B1WorldCupBursts:[];
-    if(careerState.owl2B1WorldCupBursts.includes(Number(rec.year)))return;
-    careerState.owl2B1WorldCupBursts.push(Number(rec.year));
+    careerState.owl2B1WorldCupBurstsV2=Array.isArray(careerState.owl2B1WorldCupBurstsV2)?careerState.owl2B1WorldCupBurstsV2:[];
+    if(careerState.owl2B1WorldCupBurstsV2.includes(Number(rec.year)))return;
+    careerState.owl2B1WorldCupBurstsV2.push(Number(rec.year));
     if(typeof playChampionBurst==='function')setTimeout(()=>playChampionBurst(),60);
   }
   const wcBody=document.getElementById('vwcBody');if(wcBody)new MutationObserver(()=>patchWorldCupUi()).observe(wcBody,{childList:true,subtree:true});
@@ -338,4 +338,3 @@
   installWholePlayoffButton();renderPlayoffFeed();
   window.__OWL_ALPHA1_BATCH1={patch:PATCH,repairSeasonTrack,repairCareerSeasonAction,heroRanking,hawelkaUserEligible,simulateWholePlayoffs:simulateWholePlayoffsB1,showFinalSettlement,patchWorldCupUi};
 })();
-
