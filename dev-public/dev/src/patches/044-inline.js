@@ -41,7 +41,7 @@
     return TEAMS.map(t=>({short:t.short,name:t.name,active:t.active!==false,strength:Number(t.strength||80),division:t.division||null,conference:t.conference||null}));
   }
   function captureSave(reason='auto'){
-    if(restoring||(!state.role&&!careerState.team&&!careerState.contract))return null;
+    if(restoring||!isResumablePayload({state,careerState,seasonState}))return null;
     return{
       saveVersion:SAVE_VERSION,gameVersion:GAME_VERSION,internalVersion:INTERNAL_VERSION,savedAt:nowIso(),reason,screen:safeScreen(),
       state:clone(state),careerState:clone(careerState),seasonState:clone(seasonState),playoffState:clone(playoffState),offseasonState:clone(offseasonState),
@@ -58,7 +58,16 @@
     };
   }
   function isResumablePayload(p){
-    return !!(p?.state?.role||p?.careerState?.team||p?.careerState?.contract);
+    const s=p?.state||{},c=p?.careerState||{},season=p?.seasonState||{};
+    return !!(
+      s.role||c.team||c.contract||c.retired||
+      Object.keys(s.locked||{}).length||
+      (Array.isArray(c.careerArchive)&&c.careerArchive.length)||
+      (Array.isArray(c.roleHistory)&&c.roleHistory.length)||
+      season.active||Number(season.played)>0||
+      Number(c.careerYears)>1||Number(c.peakOvr)>0||
+      (s.playerName&&s.playerName!=='Rookie')
+    );
   }
   function migrateSave(raw){
     if(typeof raw==='string'){try{raw=JSON.parse(raw)}catch(_){throw new Error('存档JSON无法解析')}}
@@ -139,7 +148,7 @@
     }
   }
   function autosave(reason='auto',delay=100){
-    if(restoring||!state.role&& !careerState.team)return;
+    if(restoring||!isResumablePayload({state,careerState,seasonState}))return;
     // 先在触发点抓快照，再延迟写盘。否则玩家从赛季页切回封面后，
     // 上一个页面排队中的 autosave 会把 screen 错写成 cover，导致“继续生涯”看似无效。
     const payload=captureSave(reason);if(!payload)return;
