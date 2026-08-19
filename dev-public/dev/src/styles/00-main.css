@@ -1660,7 +1660,7 @@
     @keyframes rouletteFlash { from{filter:brightness(.9);transform:translateY(-1px)} to{filter:brightness(1.16);transform:translateY(1px)} }
     .champion-burst::after {
       content:"🏆 ✦ 🎉 ✦ 🏆"; position:fixed; left:50%; top:18%; transform:translateX(-50%);
-      z-index:6100; font-size:clamp(28px,7vw,58px); pointer-events:none; animation:champBurst 1.4s ease both;
+      z-index:10120; font-size:clamp(28px,7vw,58px); pointer-events:none; animation:champBurst 1.4s ease both;
     }
     @keyframes champBurst { 0%{opacity:0;transform:translate(-50%,28px) scale(.7)} 30%{opacity:1;transform:translate(-50%,0) scale(1.12)} 100%{opacity:0;transform:translate(-50%,-46px) scale(1)} }
 
@@ -3066,4 +3066,5 @@
     html[data-theme="dark"] .mode-year-panel,html[data-theme="dark"] .mode-points span,html[data-theme="dark"] .v76-mode-pill{background:rgba(255,255,255,.04)}
     @media(max-width:720px){.mode-screen{padding:16px 12px}.mode-grid{grid-template-columns:1fr}.mode-card{padding:16px}.mode-year-list{grid-template-columns:repeat(5,1fr)}.mode-actions{display:grid;grid-template-columns:1fr 1fr}.mode-actions button{width:100%}}
 
-  
+    /* OWL Alpha 1 Batch 2 · keep standings tab labels vertically centered */
+    .b2-standings-tab{display:inline-flex;align-items:center;justify-content:center;line-height:1.2}
