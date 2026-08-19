@@ -41,7 +41,7 @@
     return TEAMS.map(t=>({short:t.short,name:t.name,active:t.active!==false,strength:Number(t.strength||80),division:t.division||null,conference:t.conference||null}));
   }
   function captureSave(reason='auto'){
-    if(restoring)return null;
+    if(restoring||(!state.role&&!careerState.team&&!careerState.contract))return null;
     return{
       saveVersion:SAVE_VERSION,gameVersion:GAME_VERSION,internalVersion:INTERNAL_VERSION,savedAt:nowIso(),reason,screen:safeScreen(),
       state:clone(state),careerState:clone(careerState),seasonState:clone(seasonState),playoffState:clone(playoffState),offseasonState:clone(offseasonState),
@@ -56,6 +56,9 @@
       year:Number(c.seasonYear||p?.fantasyWorld?.selection?.startYear||2019),age:Number(c.age||16),careerYears:Number(c.careerYears||1),
       mode:c.simulationMode==='history'?'历史模拟':'梦幻模拟',savedAt:p?.savedAt||null,retired:!!c.retired,screen:p?.screen||'cover'
     };
+  }
+  function isResumablePayload(p){
+    return !!(p?.state?.role||p?.careerState?.team||p?.careerState?.contract);
   }
   function migrateSave(raw){
     if(typeof raw==='string'){try{raw=JSON.parse(raw)}catch(_){throw new Error('存档JSON无法解析')}}
@@ -183,7 +186,7 @@
     return keys;
   }
   function latestSlot(){
-    const rows=[];for(let i=1;i<=SLOT_COUNT;i++){const r=readSlot(i);if(r.payload)rows.push({slot:i,p:r.payload})}
+    const rows=[];for(let i=1;i<=SLOT_COUNT;i++){const r=readSlot(i);if(r.payload&&isResumablePayload(r.payload))rows.push({slot:i,p:r.payload})}
     return rows.sort((a,b)=>String(b.p.savedAt||'').localeCompare(String(a.p.savedAt||'')))[0]||null;
   }
   function downloadText(name,text,type='application/json'){
@@ -250,7 +253,7 @@
       // Any restored save represents an already-created career. This migration makes the next newly-created character
       // eligible for role training even when the restored first career has not retired yet.
       markCareerStartedOnce();
-      renderGameSettings();renderRestoredScreen(p.screen||'season');
+      renderGameSettings();renderRestoredScreen(p.screen==='cover'?(careerState.team?'season':state.role?'builder':'role'):(p.screen||'season'));
       refreshCoverSavePanel();ok=true;
     }finally{restoring=false}
     // 必须在 restoring=false 后重新抓取，否则 captureSave 会返回 null 并把槽位写坏。
@@ -261,6 +264,7 @@
   function loadSlot(n){
     const r=readSlot(n);
     if(!r.payload){toast(r.error?'存档损坏且没有可用备份':'这个槽位还没有存档');return false}
+    if(!isResumablePayload(r.payload)){toast('这个槽位还没有开始生涯，不能继续');return false}
     try{
       const ok=restorePayload(r.payload,n);closeSaveManager();
       if(r.backup)toast('⚠️ 主存档不可用，已恢复上一份备份');
@@ -297,7 +301,7 @@
     const grid=$('#v800SaveGrid');if(!grid)return;const current=getCurrentSlot();
     grid.innerHTML=Array.from({length:SLOT_COUNT},(_,i)=>{
       const n=i+1,r=readSlot(n),p=r.payload;
-      if(!p)return`<div class="v800-save-card ${current===n?'active':''}"><div class="slot">SLOT ${n}</div><div class="v800-save-empty"><div>空档位<br><small>${r.error?'检测到损坏数据，可覆盖':'可以开始一段新生涯'}</small></div></div><div class="v800-save-actions"><button class="primary-btn" data-new-slot="${n}">新生涯</button><button class="secondary-btn" data-import-slot="${n}">导入</button></div></div>`;
+       if(!p||!isResumablePayload(p))return`<div class="v800-save-card ${current===n?'active':''}"><div class="slot">SLOT ${n}</div><div class="v800-save-empty"><div>空档位<br><small>${p?'尚未开始生涯，可直接覆盖':r.error?'检测到损坏数据，可覆盖':'可以开始一段新生涯'}</small></div></div><div class="v800-save-actions"><button class="primary-btn" data-new-slot="${n}">新生涯</button><button class="secondary-btn" data-import-slot="${n}">导入</button></div></div>`;
       const s=summaryFromPayload(p),time=s.savedAt?new Date(s.savedAt).toLocaleString():'—';
       return`<div class="v800-save-card ${current===n?'active':''}"><div class="slot">SLOT ${n}${r.backup?' · BACKUP RECOVERED':r.recovery?' · RECOVERY POINT':''}</div><h3>${s.retired?'🏁 ':''}${s.name}</h3><p>${s.year} · ${s.team}<br>${s.role} · ${s.age}岁 · 第${s.careerYears}赛季<br>${s.mode} · ${time}</p><div class="v800-save-actions"><button class="primary-btn" data-load-slot="${n}">继续</button><button class="secondary-btn" data-export-slot="${n}">导出</button><button class="secondary-btn" data-new-slot="${n}">覆盖新建</button><button class="secondary-btn" data-delete-slot="${n}">删除</button></div></div>`;
     }).join('');
@@ -306,7 +310,7 @@
     grid.querySelectorAll('[data-delete-slot]').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.deleteSlot);if(confirm(`删除槽位 ${n}？该操作只删除本机浏览器里的这份存档。`))deleteSlot(n)});
     grid.querySelectorAll('[data-import-slot]').forEach(b=>b.onclick=()=>{importTargetSlot=Number(b.dataset.importSlot);$('#v800ImportInput').click()});
     grid.querySelectorAll('[data-new-slot]').forEach(b=>b.onclick=()=>{
-      const n=Number(b.dataset.newSlot),has=!!readSlot(n).payload;
+      const n=Number(b.dataset.newSlot),has=isResumablePayload(readSlot(n).payload);
       if(has&&!confirm(`槽位 ${n} 已有生涯。确定覆盖并开始新生涯？`))return;
       deleteSlot(n);deletedSlots.delete(n);setCurrentSlot(n);closeSaveManager();showScreen('mode');toast(`新生涯将使用槽位 ${n}`);
     });
@@ -346,7 +350,7 @@
   // Intercept only when necessary. Existing V7.6 cover handler still owns normal new-career routing.
   document.addEventListener('click',e=>{
     if(!e.target?.closest?.('#coverStartBtn'))return;
-    const empty=Array.from({length:SLOT_COUNT},(_,i)=>i+1).find(n=>!readSlot(n).payload);
+    const empty=Array.from({length:SLOT_COUNT},(_,i)=>i+1).find(n=>!isResumablePayload(readSlot(n).payload));
     if(empty){deletedSlots.delete(empty);setCurrentSlot(empty);}
     else{
       e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openSaveManager('new');toast('3个档位都已有生涯，请选择要覆盖的槽位');return;
