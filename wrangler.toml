@@ -1,8 +1,13 @@
-name = "owl-game"
-main = "src/worker.js"
-compatibility_date = "2026-08-10"
+name = "owl-game-dev"
+main = "src/worker-dev.js"
+compatibility_date = "2026-08-08"
 account_id = "70d5f584114b9d0bd8d2fabdb9f941ed"
 
+[[routes]]
+pattern = "owl-game.painkiller.eu.org/dev*"
+zone_name = "painkiller.eu.org"
+
 [assets]
-directory = "./public"
+directory = "./dev-public"
 binding = "ASSETS"
+run_worker_first = true
