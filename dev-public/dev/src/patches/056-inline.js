@@ -119,6 +119,44 @@
     return{team,tactic,teamPower,fitBreakdown,fit,interest,starterBase,renewal};
   }
   function v20PushUnique(out,row,angle){if(!row||out.some(x=>x.row.team.short===row.team.short))return false;out.push({row,angle});return true;}
+  function v20TeamByName(name){return (typeof TEAMS!=='undefined'?TEAMS:[]).find(t=>t.name===name||t.short===name)||null;}
+  function v20RosterNames(team,year){
+    try{
+      if(team?.name===careerState.team?.name&&Number(year)===Number(careerState.seasonYear||2019))return new Set([...careerState.starters||[],...(careerState.bench||[])].filter(p=>!p?.isUser&&p?.name).map(p=>p.name));
+      const entries=typeof v50RosterEntriesFor==='function'?v50RosterEntriesFor(team,year):[];
+      return new Set((entries||[]).map(e=>Array.isArray(e)?e[0]:e?.name).filter(Boolean));
+    }catch(_){return new Set();}
+  }
+  function v20CareerTeammates(){
+    const names=v20RosterNames(careerState.team,careerState.seasonYear);
+    (careerState.careerArchive||[]).forEach(record=>{
+      const team=v20TeamByName(record?.team);if(!team)return;
+      v20RosterNames(team,Number(record.year)||careerState.seasonYear).forEach(name=>names.add(name));
+    });
+    return names;
+  }
+  function v20CoachWasSeen(team,year){
+    try{
+      const api=globalThis.__OWL_V20_ALPHA1,coach=api?.coachFor?.(team,year),handle=coach?.handle;if(!handle)return false;
+      const seasons=[{team:careerState.team,year:careerState.seasonYear},...(careerState.careerArchive||[])];
+      return seasons.some(record=>{const oldTeam=record.team?.name?record.team:v20TeamByName(record.team),old=api.coachFor?.(oldTeam,Number(record.year)||careerState.seasonYear);return old?.handle===handle;});
+    }catch(_){return false;}
+  }
+  function v20OfferTags(row,nextYear,rolePromise){
+    const relation=[];
+    if(row?.renewal)relation.push('熟悉环境');
+    else{
+      const former=(careerState.careerArchive||[]).some(record=>record?.team===row?.team?.name);
+      const targetNames=v20RosterNames(row.team,nextYear),shared=[...v20CareerTeammates()].filter(name=>targetNames.has(name)).length;
+      if(former)relation.push('重返故地');
+      else if(shared>=2)relation.push('老队友重聚');
+      else if(shared===1)relation.push('熟悉队友');
+      else if(v20CoachWasSeen(row.team,nextYear))relation.push('熟悉教练');
+    }
+    const promise=String(rolePromise||'');
+    const opportunity=Number(row?.teamPower||0)>=85?'冠军窗口':Number(row?.fit||0)>=88?'体系适配':/核心首发/.test(promise)&&Number(row?.fitBreakdown?.rosterNeed||0)>=84?'建队核心':/核心首发|稳定首发/.test(promise)?'更大角色':'';
+    return [...relation,opportunity].filter(Boolean).slice(0,2);
+  }
 
   generateContractOffers=function(){
     const avg=seasonState.userRatings?.length?seasonState.userRatings.reduce((a,b)=>a+b,0)/seasonState.userRatings.length:6.8,ovr=Number(getMyOvr()==='--'?78:getMyOvr()),rank=estimateSeasonRank(),post=playoffState.round==='champion'?2:playoffState.results?.length?1:0;
@@ -141,8 +179,8 @@
     const hero=v20HeroProfile(),heroLift=Number(hero?.premium||0);
     offseasonState.offers=chosen.slice(0,count).map(({row,angle},index)=>{
       let starterScore=row.starterBase+rand(-3,3)+heroLift*.62;
-      const salary=Math.max(8,Math.round((market-55)*.8+(row.teamPower-78)*.82+row.fit*.05+row.fitBreakdown.rosterNeed*.035+rand(-3,5)));
-      return{id:`offer-${index}-${Date.now()}-${Math.random()}`,team:row.team,renewal:row.renewal,tactic:row.tactic,fit:row.fit,fitBreakdown:row.fitBreakdown,years:rand(1,3),salary,rolePromise:v20Promise(starterScore),teamPower:row.teamPower,starterScore,note:v37OfferNote(row.renewal,row.fitBreakdown,row.teamPower),marketAngle:angle,v75HeroAdjusted:true,heroMarket:hero?{label:hero.label,premium:hero.premium,breadth:hero.breadth,elite:hero.elite,fragility:hero.fragility}:null};
+      const rolePromise=v20Promise(starterScore),salary=Math.max(8,Math.round((market-55)*.8+(row.teamPower-78)*.82+row.fit*.05+row.fitBreakdown.rosterNeed*.035+rand(-3,5)));
+      return{id:`offer-${index}-${Date.now()}-${Math.random()}`,team:row.team,renewal:row.renewal,tactic:row.tactic,fit:row.fit,fitBreakdown:row.fitBreakdown,years:rand(1,3),salary,rolePromise,teamPower:row.teamPower,starterScore,note:v37OfferNote(row.renewal,row.fitBreakdown,row.teamPower),marketAngle:angle,marketTags:v20OfferTags(row,nextYear,rolePromise),v75HeroAdjusted:true,heroMarket:hero?{label:hero.label,premium:hero.premium,breadth:hero.breadth,elite:hero.elite,fragility:hero.fragility}:null};
     });
   };
 
@@ -152,7 +190,11 @@
     if(offseasonState.contractExpired){
       (offseasonState.offers||[]).forEach(o=>{
         const card=wrap?.querySelector(`[data-offer-id="${o.id}"]`);if(!card||card.querySelector('.v20-market-angle'))return;
-        const badge=document.createElement('div');badge.className='v20-market-angle';badge.textContent=`路线 · ${o.marketAngle||'综合邀请'}`;card.insertBefore(badge,card.firstChild?.nextSibling||card.firstChild);
+        o.marketTags=v20OfferTags(o,Number(careerState.seasonYear||2019)+1,o.rolePromise);
+        const tags=o.marketTags?.length?o.marketTags:[o.marketAngle||'综合邀请'],badge=document.createElement('div');badge.className='v20-market-angle';
+        const label=document.createElement('span');label.className='v20-market-angle-label';label.textContent='路线';badge.appendChild(label);
+        tags.slice(0,2).forEach(tag=>{const node=document.createElement('b');node.className='v20-market-tag';node.textContent=tag;badge.appendChild(node);});
+        card.insertBefore(badge,card.firstChild?.nextSibling||card.firstChild);
         const t=document.createElement('div');t.className='v20-market-tradeoff';
         const need=o.fitBreakdown?.rosterNeed??0,competition=o.fitBreakdown?.roster?.best||0;
         t.textContent=`选择重点：队伍实力 ${o.teamPower} · 阵容需求 ${need} · 同位置最高 OVR ${competition||'空缺'} · ${o.rolePromise}`;card.appendChild(t);
