@@ -122,19 +122,15 @@
     const explicitWrite=['manual','import','new-career'].includes(reason);
     if(deletedSlots.has(n)&&!explicitWrite)return false;
     if(explicitWrite)deletedSlots.delete(n);
+    const key=slotKey(n),serialized=JSON.stringify(payload);
+    const commit=()=>{localStorage.setItem(key,serialized);localStorage.setItem(RECOVERY_KEY,serialized);localStorage.setItem(RECOVERY_SLOT_KEY,String(n));setCurrentSlot(n);const ind=$('#v800SaveIndicator');if(ind)ind.textContent=`💾 槽位${n} · ${reason==='auto'?'已自动保存':'已保存'}`;if(reason!=='auto'||activeScreen()!=='cover')refreshCoverSavePanel();return true;};
     try{
-      const key=slotKey(n),old=localStorage.getItem(key);
+      const old=localStorage.getItem(key);
       if(old)localStorage.setItem(backupKey(n),old);
-      localStorage.setItem(key,JSON.stringify(payload));
-      localStorage.setItem(RECOVERY_KEY,JSON.stringify(payload));
-      localStorage.setItem(RECOVERY_SLOT_KEY,String(n));
-      setCurrentSlot(n);
-      const ind=$('#v800SaveIndicator');if(ind)ind.textContent=`💾 槽位${n} · ${reason==='auto'?'已自动保存':'已保存'}`;
-      // 封面上的“继续生涯”不能被一个延迟自动保存正好在点击时重建掉。
-      // 自动保存发生在封面时只更新数据，不重绘封面卡；下次显式进入/管理存档再刷新即可。
-      if(reason!=='auto'||activeScreen()!=='cover')refreshCoverSavePanel();
-      return true;
+      return commit();
     }catch(err){
+      const quota=err?.name==='QuotaExceededError'||Number(err?.code)===22||/quota|exceed/i.test(`${err?.name||''} ${err?.message||''}`);
+      if(quota){try{localStorage.removeItem(backupKey(n));localStorage.removeItem(RECOVERY_KEY);localStorage.removeItem(RECOVERY_SLOT_KEY);return commit();}catch(retryErr){err=retryErr;}}
       console.error('[save]',err);
       const ind=$('#v800SaveIndicator');if(ind){ind.textContent='⚠️ 本地存储暂不可用';ind.title=String(err?.message||err||'浏览器存储不可用');}
       // 自动保存、切后台和关页失败时不再反复飘字。只在明确手动保存/导入/新建时提示，

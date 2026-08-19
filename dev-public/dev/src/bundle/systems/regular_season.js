@@ -276,7 +276,7 @@
     }
 
     function awardSpotlightCard(icon,title,subtitle,result,eligible=true) {
-      const winner=result.winner;
+      const winner=result?.winner||{isUser:false,name:'暂无符合条件的选手',team:'联盟数据不足',role:'—'};
       const won=eligible&&result.userRank===1;
       return `<article class="award-card">
         <div class="award-card-head"><h3>${icon} ${title}</h3><span>${subtitle}</span></div>
@@ -500,7 +500,6 @@
       }
       seasonState.timer=setTimeout(fastSeasonStep,420);
     }
-
 
 
 

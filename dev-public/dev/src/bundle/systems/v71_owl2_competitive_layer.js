@@ -498,7 +498,7 @@
   }
   const _v71EnsureAwardsBase=ensureRegularSeasonAwards;
   ensureRegularSeasonAwards=function(){
-    if(!v71IsOwl2())return _v71EnsureAwardsBase();if(seasonState.awards?.v71)return seasonState.awards;
+    if(!v71IsOwl2())return _v71EnsureAwardsBase();const cached=seasonState.awards;if(cached?.v71&&Number(cached.generatedYear)===v71Year()&&cached.mvp?.winner&&cached.rookie?.winner&&cached.mip?.winner&&cached.hawelka?.winner&&['tank','damage','support'].every(g=>cached.roleStars?.[g]?.winners?.length))return cached;
     const pool=buildRegularAwardLeaguePool();
     const mvp=rankAwardCandidates(pool,p=>p.rating*10+p.ovr*.16+p.wins*.50);
     const rookiePool=pool.filter(p=>p.rookie),rookie=rankAwardCandidates(rookiePool.length?rookiePool:pool.slice(0,1),p=>p.rating*10+p.ovr*.15+p.wins*.4);rookie.userEligible=careerState.careerYears===1;if(!rookie.userEligible)rookie.userRank=null;
@@ -506,8 +506,8 @@
     const groupRows={tank:pool.filter(p=>v71RoleGroup(p.role)==='tank'),damage:pool.filter(p=>v71RoleGroup(p.role)==='damage'),support:pool.filter(p=>v71RoleGroup(p.role)==='support')};
     const roleStars={};Object.entries(groupRows).forEach(([g,list])=>{const ranked=list.map(p=>({...p,awardScore:p.rating*9+p.ovr*.20+p.wins*.28+p.roleQuality*.08+randomCentered(.5)})).sort((a,b)=>b.awardScore-a.awardScore),count=g==='tank'?3:4,userIndex=ranked.findIndex(p=>p.isUser);roleStars[g]={winners:ranked.slice(0,count),userRank:userIndex>=0?userIndex+1:null};});
     const prev=careerState.careerArchive?.[careerState.careerArchive.length-1],userPrev=prev?.ovr||Number(getMyOvr()==='--'?78:getMyOvr())-1;
-    const mipPool=pool.filter(p=>!p.rookie).map(p=>({...p,improvement:p.isUser?(p.ovr-userPrev):Math.round((v71Hash01(`${p.name}|mip|${v71Year()}`)*12)-3)}));
-    const mip=rankAwardCandidates(mipPool,p=>p.improvement*8+p.rating*2+p.ovr*.04);mip.userEligible=careerState.careerYears>1;if(!mip.userEligible)mip.userRank=null;
+    const mipPool=pool.filter(p=>!p.rookie).map(p=>({...p,improvement:p.isUser?(p.ovr-userPrev):Math.round((v71Hash01(`${p.name}|mip|${v71Year()}`)*12)-3)})),mipCandidates=mipPool.length?mipPool:pool.map(p=>({...p,improvement:0}));
+    const mip=rankAwardCandidates(mipCandidates,p=>p.improvement*8+p.rating*2+p.ovr*.04);mip.userEligible=careerState.careerYears>1;if(!mip.userEligible)mip.userRank=null;
     seasonState.awards={mvp,rookie,community:hawelka,hawelka,roleStars,mip,generatedYear:v71Year(),v71:true};return seasonState.awards;
   };
   const _v71RenderAwardsBase=renderRegularSeasonAwards;
@@ -700,5 +700,3 @@
 
   // runtime CSS
   if(!document.getElementById('v71Owl2Style')){const st=document.createElement('style');st.id='v71Owl2Style';st.textContent=`.v71-hero-mini{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}.v71-hero-mini span{font-size:9px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:1px 4px}.v71-hero-mini b{margin-left:3px;color:var(--ink)}.v71-pregame{padding:15px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.42);line-height:1.65}.v71-pregame-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.v71-pregame-grid>div{padding:9px;border-radius:12px;background:rgba(0,0,0,.035)}.v71-pregame-grid span{display:block;color:var(--muted);font-size:10px}.v71-pregame-grid strong{display:block;margin-top:3px}.v71-ban-summary{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:9px 12px;margin-bottom:10px;border:1px solid var(--line);border-radius:12px;background:#fff8ef;font-size:12px}.v71-ban-summary span{color:var(--muted)}html[data-theme="dark"] .v71-pregame,html[data-theme="dark"] .v71-ban-summary{background:rgba(255,255,255,.05)}@media(max-width:720px){.v71-pregame-grid{grid-template-columns:1fr}.v71-ban-summary{display:block}}`;document.head.appendChild(st);}
-
-
