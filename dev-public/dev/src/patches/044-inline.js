@@ -120,6 +120,10 @@
   function isQuotaError(err){return err?.name==='QuotaExceededError'||Number(err?.code)===22||/quota|exceed/i.test(`${err?.name||''} ${err?.message||''}`)}
   function removeStored(key){try{localStorage.removeItem(key)}catch(_){}
   }
+  function clearRedundantCopies(){
+    for(let i=1;i<=SLOT_COUNT;i++)removeStored(backupKey(i));
+    removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY);
+  }
   function writeSlot(n,payload,reason='auto'){
     n=Number(n);
     const explicitWrite=['manual','import','new-career'].includes(reason);
@@ -133,7 +137,8 @@
       removeStored(backupKey(n));removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY);
       try{localStorage.setItem(key,serialized)}catch(err){
         if(!isQuotaError(err))throw err;
-        removeStored(backupKey(n));removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY);localStorage.setItem(key,serialized);
+        // 其他槽位的备份也可能占满配额；它们都是可重建副本，不能阻塞主档保存。
+        clearRedundantCopies();localStorage.setItem(key,serialized);
       }
       if(old){try{localStorage.setItem(backupKey(n),old)}catch(_){removeStored(backupKey(n))}}
       let recoverySaved=true;
