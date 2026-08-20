@@ -513,7 +513,7 @@
   function showTradeOffer(type,candidate=null,forced=false){
     const root=tradeRoot(),c=candidate||tradeCandidates(1)[0];if(!c)return;
     root.pending={type,team:c.team.name,power:c.power,forced,afterGame:seasonState.played};
-    root.resumeWhole=!!seasonState.v13WholeSimActive;
+    root.resumeWhole=!!(seasonState.v13WholeSimActive||seasonState.v17WholeActive||seasonState.v18WholeActive||seasonState.b2WholeActive||seasonState.v34WholeActive);
     seasonState.simulating=false;if(seasonState.timer){clearTimeout(seasonState.timer);seasonState.timer=null}
     const avg=avgRating(),content=$('#v800TradeContent'),poor=type==='team',request=type==='request',proj=c.projection||tradeProjection(c);
     if(type==='poach'&&proj&&careerState.contract?.rolePromise&&v826RoleRank(proj.role)<v826RoleRank(careerState.contract.rolePromise)){
