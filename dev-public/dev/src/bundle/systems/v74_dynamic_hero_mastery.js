@@ -665,8 +665,7 @@
   function v743SkipCurrentSeason(){
     if(!gameSettings.developerMode)return;
     const year=careerState.seasonYear;
-    if(!confirm(`开发者跳季：直接结算 ${year} 赛季与季后赛，并停在休赛期。\n\n训练、转位置与合同仍由你手动测试；该操作不可撤销。继续？`))return;
-    try{
+    const proceed=()=>{try{
       if(!seasonState.active)setupSeason(false);
       v743FinishRegularSilently();
       v743FinishPlayoffsSilently();
@@ -683,7 +682,8 @@
       window.scrollTo({top:0,behavior:'smooth'});
     }catch(err){
       console.error('[V7.4.3 dev skip]',err);if(window.__OWL_V16_MODAL?.result)window.__OWL_V16_MODAL.result({icon:'⚠️',kicker:'DEVELOPER · 调试操作',title:'跳过赛季失败',body:`<p>${String(err?.message||err)}</p>`,confirmText:'知道了',tone:'warning'});
-    }
+    }};
+    if(!window.__OWL_CONFIRM?.({icon:'⏭️',kicker:'DEVELOPER · 调试操作',title:`跳过 ${year} 赛季？`,body:`<p>将直接结算 ${year} 赛季与季后赛，并停在休赛期。</p><p>训练、转位置与合同仍由你手动测试；该操作不可撤销。</p>`,confirmText:'跳过并进入休赛期',cancelText:'取消',tone:'warning',onConfirm:proceed}))return;
   }
 
   function v743EnsureDevSkipButton(){
@@ -1618,5 +1618,4 @@
     }
   `;document.head.appendChild(st);}
 })();
-
 

@@ -117,20 +117,33 @@
     }
     return{payload:null,backup:false,recovery:false,error:primaryError||backupError};
   }
+  function isQuotaError(err){return err?.name==='QuotaExceededError'||Number(err?.code)===22||/quota|exceed/i.test(`${err?.name||''} ${err?.message||''}`)}
+  function removeStored(key){try{localStorage.removeItem(key)}catch(_){}
+  }
   function writeSlot(n,payload,reason='auto'){
     n=Number(n);
     const explicitWrite=['manual','import','new-career'].includes(reason);
     if(deletedSlots.has(n)&&!explicitWrite)return false;
     if(explicitWrite)deletedSlots.delete(n);
     const key=slotKey(n),serialized=JSON.stringify(payload);
-    const commit=()=>{localStorage.setItem(key,serialized);localStorage.setItem(RECOVERY_KEY,serialized);localStorage.setItem(RECOVERY_SLOT_KEY,String(n));setCurrentSlot(n);const ind=$('#v800SaveIndicator');if(ind)ind.textContent=`💾 槽位${n} · ${reason==='auto'?'已自动保存':'已保存'}`;if(reason!=='auto'||activeScreen()!=='cover')refreshCoverSavePanel();return true;};
     try{
       const old=localStorage.getItem(key);
-      if(old)localStorage.setItem(backupKey(n),old);
-      return commit();
+      // 主档、备份和恢复点都保存完整快照时会形成三份大对象；先清理旧的
+      // 可重建副本，再优先写入主档，避免恢复点把主档一起挤出 quota。
+      removeStored(backupKey(n));removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY);
+      try{localStorage.setItem(key,serialized)}catch(err){
+        if(!isQuotaError(err))throw err;
+        removeStored(backupKey(n));removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY);localStorage.setItem(key,serialized);
+      }
+      if(old){try{localStorage.setItem(backupKey(n),old)}catch(_){removeStored(backupKey(n))}}
+      let recoverySaved=true;
+      try{localStorage.setItem(RECOVERY_KEY,serialized);localStorage.setItem(RECOVERY_SLOT_KEY,String(n))}catch(_){recoverySaved=false;removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY)}
+      try{setCurrentSlot(n)}catch(_){/* 主档已经成功写入；当前槽位键失败不应覆盖成功状态。 */}
+      const ind=$('#v800SaveIndicator');if(ind){ind.textContent=`💾 槽位${n} · ${recoverySaved?(reason==='auto'?'已自动保存':'已保存'):'已保存（恢复点未写入）'}`;if(!recoverySaved)ind.title='主档已保存，但本次未能生成紧急恢复点，请导出 JSON 作为额外备份。';}
+      if(reason!=='auto'||activeScreen()!=='cover')refreshCoverSavePanel();
+      if(!recoverySaved&&explicitWrite)toast('⚠️ 主档已保存，但恢复点未写入；请导出 JSON');
+      return true;
     }catch(err){
-      const quota=err?.name==='QuotaExceededError'||Number(err?.code)===22||/quota|exceed/i.test(`${err?.name||''} ${err?.message||''}`);
-      if(quota){try{localStorage.removeItem(backupKey(n));localStorage.removeItem(RECOVERY_KEY);localStorage.removeItem(RECOVERY_SLOT_KEY);return commit();}catch(retryErr){err=retryErr;}}
       console.error('[save]',err);
       const ind=$('#v800SaveIndicator');if(ind){ind.textContent='⚠️ 本地存储暂不可用';ind.title=String(err?.message||err||'浏览器存储不可用');}
       // 自动保存、切后台和关页失败时不再反复飘字。只在明确手动保存/导入/新建时提示，
@@ -312,19 +325,19 @@
     }).join('');
     grid.querySelectorAll('[data-load-slot]').forEach(b=>b.onclick=()=>loadSlot(Number(b.dataset.loadSlot)));
     grid.querySelectorAll('[data-export-slot]').forEach(b=>b.onclick=()=>exportSlot(Number(b.dataset.exportSlot)));
-    grid.querySelectorAll('[data-delete-slot]').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.deleteSlot);if(confirm(`删除槽位 ${n}？该操作只删除本机浏览器里的这份存档。`))deleteSlot(n)});
+    grid.querySelectorAll('[data-delete-slot]').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.deleteSlot);window.__OWL_CONFIRM?.({icon:'🗑️',kicker:'SAVE SLOT · 本机存档',title:`删除槽位 ${n}？`,body:'<p>该操作只删除本机浏览器里的这份存档。</p>',confirmText:'删除槽位',cancelText:'保留存档',tone:'warning',onConfirm:()=>deleteSlot(n)})});
     grid.querySelectorAll('[data-import-slot]').forEach(b=>b.onclick=()=>{importTargetSlot=Number(b.dataset.importSlot);$('#v800ImportInput').click()});
     grid.querySelectorAll('[data-new-slot]').forEach(b=>b.onclick=()=>{
-      const n=Number(b.dataset.newSlot),has=isResumablePayload(readSlot(n).payload);
-      if(has&&!confirm(`槽位 ${n} 已有生涯。确定覆盖并开始新生涯？`))return;
-      deleteSlot(n);deletedSlots.delete(n);setCurrentSlot(n);closeSaveManager();showScreen('mode');toast(`新生涯将使用槽位 ${n}`);
+      const n=Number(b.dataset.newSlot),has=isResumablePayload(readSlot(n).payload),start=()=>{deleteSlot(n);deletedSlots.delete(n);setCurrentSlot(n);closeSaveManager();showScreen('mode');toast(`新生涯将使用槽位 ${n}`)};
+      if(has){window.__OWL_CONFIRM?.({icon:'🆕',kicker:'NEW CAREER · 覆盖存档',title:`覆盖槽位 ${n}？`,body:`<p>槽位 ${n} 已有一段生涯，覆盖后原存档将被删除。</p>`,confirmText:'覆盖并开始新生涯',cancelText:'保留原存档',tone:'warning',onConfirm:start});return;}
+      start();
     });
   }
   function openSaveManager(mode='manage'){saveManagerMode=mode;renderSaveManager();$('#v800SaveOverlay').classList.remove('ui-hidden')}
   function closeSaveManager(){$('#v800SaveOverlay').classList.add('ui-hidden')}
   $('#v800SaveClose').onclick=closeSaveManager;
   $('#v800ImportBtn').onclick=()=>{importTargetSlot=getCurrentSlot();$('#v800ImportInput').click()};
-  $('#v800ClearAllSaves').onclick=()=>{if(confirm('彻底清空本文件可见的所有OWL生涯存档？\n\n会删除3个槽位、备份、紧急恢复点，以及可识别的旧版本存档残留；主题和玩法设置会保留。此操作不可撤销。'))clearAllLocalSaves()};
+  $('#v800ClearAllSaves').onclick=()=>window.__OWL_CONFIRM?.({icon:'🧹',kicker:'SAVE STORAGE · 存档管理',title:'彻底清空全部生涯存档？',body:'<p>会删除3个槽位、备份、紧急恢复点，以及可识别的旧版本存档残留；主题和玩法设置会保留。</p><p><strong>此操作不可撤销。</strong></p>',confirmText:'清空全部存档',cancelText:'保留存档',tone:'warning',onConfirm:clearAllLocalSaves});
   $('#v800ImportInput').onchange=async e=>{
     const f=e.target.files?.[0];e.target.value='';if(!f)return;
     try{

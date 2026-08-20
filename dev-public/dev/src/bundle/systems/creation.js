@@ -68,16 +68,15 @@
 
       const currentCount = Object.keys(state.locked).length;
       const hasManualProgress = currentCount > 0 && Object.values(state.locked).some(item => item.player !== '系统Roll');
-      if (hasManualProgress && !confirm('Roll 属性点会覆盖当前手动选择的属性，确定继续？')) return;
+      const proceed=()=>{
+        state.rolling = true;
+        els.rollAttrsBtn.disabled = true;
+        els.rollAttrsBtn.classList.add('rolling');
+        els.rollAttrsBtn.textContent = '⚡ 随机中…';
+        setStatus('正在生成初始属性。', '');
+        showRandomFx('正在生成能力倾向',ATTRS.map(a=>a.name));
 
-      state.rolling = true;
-      els.rollAttrsBtn.disabled = true;
-      els.rollAttrsBtn.classList.add('rolling');
-      els.rollAttrsBtn.textContent = '⚡ 随机中…';
-      setStatus('正在生成初始属性。', '');
-      showRandomFx('正在生成能力倾向',ATTRS.map(a=>a.name));
-
-      setTimeout(() => {
+        setTimeout(() => {
         const rolled = generateAttributes(state.role);
         state.locked = {};
         const priority=getSystemRollPriority(state.role);
@@ -112,7 +111,10 @@
         hideRandomFx();
         setStatus(`属性 Roll 完成：OVR ${getMyOvr()}。`, 'success');
         renderAll();
-      }, 520);
+        }, 520);
+      };
+      if(hasManualProgress){if(!window.__OWL_CONFIRM?.({icon:'🎲',kicker:'ATTRIBUTE ROLL · 初始属性',title:'覆盖手动属性？',body:'<p>Roll 属性点会覆盖当前手动选择的属性。</p>',confirmText:'覆盖并重新 Roll',cancelText:'继续手动选择',tone:'warning',onConfirm:proceed}))return;return;}
+      proceed();
     }
 
     function beginRoll() {
@@ -463,7 +465,6 @@
       }
       return array;
     }
-
 
 
 

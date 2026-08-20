@@ -299,19 +299,14 @@
       els.skipPlayerNameBtn.addEventListener('click', () => confirmPlayerName(true));
       els.confirmPlayerNameBtn.addEventListener('click', () => confirmPlayerName(false));
       els.backRoleBtn.addEventListener('click', () => {
-        if (Object.keys(state.locked).length > 0 && !confirm('返回角色命名会清空当前属性，确定继续？')) return;
-        resetBuildOnly();
-        els.playerNameInput.value=state.playerName==='Rookie'?'':state.playerName;
-        updatePlayerNamePreview();
-        showScreen('name');
+        const proceed=()=>{resetBuildOnly();els.playerNameInput.value=state.playerName==='Rookie'?'':state.playerName;updatePlayerNamePreview();showScreen('name');};
+        if(Object.keys(state.locked).length>0){if(!window.__OWL_CONFIRM?.({icon:'🧹',kicker:'BUILD RESET · 建角进度',title:'返回角色命名？',body:'<p>当前已锁定的属性会被清空。</p>',confirmText:'清空并返回命名',cancelText:'继续编辑',tone:'warning',onConfirm:proceed}))return;return;}
+        proceed();
       });
       els.resetBtn.addEventListener('click', () => {
-        if (Object.keys(state.locked).length > 0 && !confirm('确定清空当前建角进度？位置与名字会保留。')) return;
-        resetBuildOnly();
-        els.currentRole.textContent=state.role||'—';
-        renderAll();
-        setStatus('属性已清空，可以重新手动继承或直接 Roll 整套属性。','success');
-        showScreen('builder');
+        const proceed=()=>{resetBuildOnly();els.currentRole.textContent=state.role||'—';renderAll();setStatus('属性已清空，可以重新手动继承或直接 Roll 整套属性。','success');showScreen('builder');};
+        if(Object.keys(state.locked).length>0){if(!window.__OWL_CONFIRM?.({icon:'🧹',kicker:'BUILD RESET · 建角进度',title:'清空当前建角进度？',body:'<p>位置与名字会保留，已锁定的属性会被清空。</p>',confirmText:'清空属性',cancelText:'继续编辑',tone:'warning',onConfirm:proceed}))return;return;}
+        proceed();
       });
       els.rollTeamBtn.addEventListener('click', beginRoll);
       els.rollAttrsBtn.addEventListener('click', rollAllAttributes);
@@ -487,6 +482,5 @@
       showScreen('role');
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
-
 
 

@@ -113,12 +113,12 @@
   b2BindStandingsTrigger();
 
   /* 16 · 整季模拟性能：快速模式不再偷偷跑完整地图/选图/Ban内核 */
-  const B2_oldChance=typeof getRegularSeasonWinChance==='function'?getRegularSeasonWinChance:null;const B2_oldSilent=typeof v32SilentRegularGame==='function'?v32SilentRegularGame:null;let B2_wholeToken=0;const B2_rosterCache=new Map();const B2_heroFitCache=new WeakMap();
+  const B2_oldChance=typeof getRegularSeasonWinChance==='function'?getRegularSeasonWinChance:null;let B2_wholeToken=0;const B2_rosterCache=new Map();const B2_heroFitCache=new WeakMap();
   function b2QuickRoster(team){const key=`${b2Year()}|${team?.short||team?.name}`;if(!B2_rosterCache.has(key))B2_rosterCache.set(key,createRoster(team,false));return B2_rosterCache.get(key);}
   function b2RosterHeroFit(roster){if(!roster||!roster.length||typeof v71HeroPool!=='function')return 80;let sub=B2_heroFitCache.get(roster);const stage=typeof v71StageNo==='function'?v71StageNo():1,key=`${b2Year()}|${stage}`;if(sub?.has(key))return sub.get(key);if(!sub){sub=new Map();B2_heroFitCache.set(roster,sub)}const vals=[];for(const p of roster){const pool=v71HeroPool(p).slice(0,4);if(!pool.length)continue;const best=Math.max(...pool.map(h=>Number(h.value||78)+(typeof v74MetaRaw==='function'?Number(v74MetaRaw(h,b2Year(),stage)||0)*1.1:0)));vals.push(best)}const v=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:80;sub.set(key,v);return v;}
   if(B2_oldChance)getRegularSeasonWinChance=function(ourRoster,theirRoster,careerBonus=0,venue='home'){if(!window.__OWL_B2_FAST_BATCH)return B2_oldChance.apply(this,arguments);const diff=teamDisplayPower(ourRoster)-teamDisplayPower(theirRoster)+Number(careerBonus||0)*.85,rank=Number(careerState.rank||10),teamContext=b2Clamp((11-rank)*.003,-.018,.018),rookie=Number(careerState.careerYears||1)===1?.012:0,venueSwing=venue==='home'?.02:-.02;let chance=b2Clamp(.56+diff*.022+teamContext+rookie+venueSwing,.28,.84);try{const hook=window.__OWL_V20_ALPHA1?.adjustRegularChance;if(typeof hook==='function')chance=hook(chance,{ourRoster,theirRoster,careerBonus,venue,index:Number(seasonState.played||0),opponent:seasonState.opponents?.[seasonState.played]||null});}catch(_){}const heroSwing=b2Clamp((b2RosterHeroFit(ourRoster)-b2RosterHeroFit(theirRoster))*.0038,-.035,.035);return b2Clamp(Number(chance)+heroSwing,.22,.87);};
   function b2FastRegularGame(){
-    if(b2Year()<2024&&B2_oldSilent){B2_oldSilent();return true;}const idx=Number(seasonState.played||0),opp=seasonState.opponents?.[idx];if(!opp)return false;const our=careerState.starters||[],their=b2QuickRoster(opp),bonus=typeof currentCareerMatchBonus==='function'?currentCareerMatchBonus():0,venue=typeof regularVenueAt==='function'?regularVenueAt(idx):(seasonState.venues?.[idx]||'home'),chance=getRegularSeasonWinChance(our,their,bonus,venue),won=Math.random()<chance;seasonState.results[idx]=won?'win':'loss';seasonState.played=idx+1;if(won)seasonState.wins++;else seasonState.losses++;
+    const idx=Number(seasonState.played||0),opp=seasonState.opponents?.[idx];if(!opp)return false;const our=careerState.starters||[],their=b2QuickRoster(opp),bonus=typeof currentCareerMatchBonus==='function'?currentCareerMatchBonus():0,venue=typeof regularVenueAt==='function'?regularVenueAt(idx):(seasonState.venues?.[idx]||'home'),chance=getRegularSeasonWinChance(our,their,bonus,venue),won=Math.random()<chance;seasonState.results[idx]=won?'win':'loss';seasonState.played=idx+1;if(won)seasonState.wins++;else seasonState.losses++;
     const status=careerState.userLineupStatus?.key||'starter',playChance=status==='bench'?.46:status==='competition'?.78:.97,plays=Math.random()<playChance;if(plays){const rating=typeof quickCareerRating==='function'?quickCareerRating(won,bonus):b2Clamp(6.8+(won?.55:-.12)+(Number(getMyOvr()==='--'?78:getMyOvr())-78)*.07+(Math.random()-.5)*1.0,4.8,9.8);seasonState.userRatings.push(rating);if(typeof updateCareerAfterMatch==='function')updateCareerAfterMatch(won,rating);try{if(typeof v74EnsureStageFocus==='function')v74EnsureStageFocus();if(typeof v74AbstractMatchPractice==='function')v74AbstractMatchPractice(won,rating);}catch(_){}}else{careerState.condition=b2Clamp(Number(careerState.condition||70)+.7,20,98);}
     if(typeof markSeasonEventDue==='function')markSeasonEventDue();try{if(typeof maybeAutoTrade==='function')maybeAutoTrade();}catch(_){}return true;
   }
@@ -141,8 +141,31 @@
     const note=document.getElementById('seasonSimNote');if(note)note.textContent=`⏳ 正在逐场模拟：${wins}胜 ${losses}负`;
   }
   function b2StopWhole(msg=''){window.__OWL_RUNTIME?.simulation?.stopWhole?.(msg);}
+  function b2OpenPendingEvent(){
+    if(!seasonState.eventDue||seasonState.currentEvent)return false;
+    window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(()=>openScheduledSeasonEvent(),50);return true;
+  }
   function b2WholeSeason(){
-    if(seasonState.b2WholeActive||seasonState.simulating||Number(seasonState.played)>=Number(seasonState.total))return;const wc=b2WorldCupDue();if(wc){window.__OWL_WORLD_CUP?.open?.();return;}seasonState.b2WholeActive=true;seasonState.simulating=true;window.__OWL_B2_FAST_BATCH=true;const token=++B2_wholeToken,delay=160;const tick=()=>{if(token!==B2_wholeToken||!seasonState.b2WholeActive)return;const before=Number(seasonState.played);window.__OWL_V16_SEASON_BATCHING=true;let ok=false;try{ok=b2FastRegularGame();}finally{window.__OWL_V16_SEASON_BATCHING=false;}if(!ok||Number(seasonState.played)<=before){b2StopWhole('模拟被当前流程节点暂停，请先处理当前节点。');return;}if(typeof markStageBreakIfNeeded==='function')markStageBreakIfNeeded();if(seasonState.stageBreakPending)b2ResolveStage();if(careerState.v800Trade?.pending){b2StopWhole('🔄 模拟在交易节点暂停。');return;}const world=b2WorldCupDue();if(world){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP?.open?.(),40);return;}if(seasonState.currentEvent||seasonState.eventDue){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,50);return;}try{window.__OWL_PUBLIC_BETA?.autosave?.('whole-season-match',120)}catch(_){}b2PaintWholeSeasonPulse();if(Number(seasonState.played)>=Number(seasonState.total)){b2StopWhole(`✓ 常规赛与阶段赛事已完成：${seasonState.wins}胜${seasonState.losses}负。年终季后赛保留。`);return;}setTimeout(tick,delay);};renderSeason();setTimeout(tick,delay);
+    if(seasonState.b2WholeActive||seasonState.simulating||Number(seasonState.played)>=Number(seasonState.total))return;
+    const wc=b2WorldCupDue();if(wc){window.__OWL_WORLD_CUP?.open?.();return;}
+    if(b2OpenPendingEvent())return;
+    seasonState.b2WholeActive=true;seasonState.simulating=true;window.__OWL_B2_FAST_BATCH=true;const token=++B2_wholeToken,delay=160;
+    const tick=()=>{
+      if(token!==B2_wholeToken||!seasonState.b2WholeActive)return;
+      const before=Number(seasonState.played);let ok=false;
+      window.__OWL_V16_SEASON_BATCHING=true;try{ok=b2FastRegularGame();}finally{window.__OWL_V16_SEASON_BATCHING=false;}
+      if(!ok||Number(seasonState.played)<=before){b2StopWhole('模拟被当前流程节点暂停，请先处理当前节点。');return;}
+      if(typeof markStageBreakIfNeeded==='function')markStageBreakIfNeeded();if(seasonState.stageBreakPending)b2ResolveStage();
+      if(careerState.v800Trade?.pending){b2StopWhole('🔄 模拟在交易节点暂停。');return;}
+      const world=b2WorldCupDue();if(world){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP?.open?.(),40);return;}
+      if(b2OpenPendingEvent())return;
+      try{window.__OWL_PUBLIC_BETA?.autosave?.('whole-season-match',120)}catch(_){}
+      try{b2PaintWholeSeasonPulse();}catch(_){renderSeason();}
+      if(Number(seasonState.played)>=Number(seasonState.total)){b2StopWhole(`✓ 常规赛与阶段赛事已完成：${seasonState.wins}胜${seasonState.losses}负。年终季后赛保留。`);return;}
+      if(!seasonState.b2WholeActive)return;
+      setTimeout(tick,delay);
+    };
+    renderSeason();setTimeout(tick,delay);
   }
   window.__OWL_V18_FULL_SEASON=b2WholeSeason;try{v35SimulateWholeSeason=b2WholeSeason}catch(_){}
 

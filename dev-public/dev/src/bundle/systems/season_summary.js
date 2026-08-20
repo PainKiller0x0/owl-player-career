@@ -151,12 +151,10 @@
     }
 
     function handleSeasonRestartFromSummary() {
-      if (seasonState.played>0 || seasonState.eventHistory.length>0 || playoffState.active) {
-        if (!confirm('确定重开当前赛季？这会清空战绩、季后赛与随机事件进度。')) return;
-      }
-      restartCurrentSeason();
+      const proceed=()=>restartCurrentSeason();
+      if(seasonState.played>0||seasonState.eventHistory.length>0||playoffState.active){if(!window.__OWL_CONFIRM?.({icon:'↩️',kicker:'SEASON RESET · 赛季重开',title:'重开当前赛季？',body:'<p>这会清空当前战绩、季后赛与随机事件进度。</p>',confirmText:'重开赛季',cancelText:'保留当前进度',tone:'warning',onConfirm:proceed}))return;return;}
+      proceed();
     }
-
 
 
 
