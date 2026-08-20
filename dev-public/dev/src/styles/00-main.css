@@ -2196,6 +2196,13 @@
     html[data-theme="dark"] .cover-feature { background:#252c37!important; border-color:#3d4655!important; }
     html[data-theme="dark"] .cover-guide { background:rgba(255,126,58,.10); border-color:rgba(255,142,91,.38); }
     html[data-theme="dark"] .cover-version { background:#222832; border-color:#3b4452; }
+    @media (min-width:1025px) and (max-height:800px) {
+      .cover-screen { padding-top:12px; padding-bottom:20px; }
+      .cover-topline { margin-bottom:12px; }
+      .cover-main { padding-top:30px; padding-bottom:30px; }
+      .cover-preview { padding-top:18px; padding-bottom:18px; }
+      .cover-footer { margin-top:10px; }
+    }
     @media (max-width:760px) {
       .cover-screen { padding:10px 9px calc(72px + env(safe-area-inset-bottom)); align-items:start; }
       .cover-topline { margin:8px 2px 12px; }
