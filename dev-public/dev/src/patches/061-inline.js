@@ -37,7 +37,6 @@
     if(careerViewState.tab==='offseason')careerViewState.tab='overview';
     const out=_hub31.apply(this,arguments);
     trimStatic31();
-    sync31();
     return out;
   };
 
@@ -79,11 +78,6 @@
   // Copy cleanup is applied in the source modules; this final patch only handles flow migration/version sync.
 
   function sync31(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC11';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC11');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
     trimStatic31();
   }
   sync31();

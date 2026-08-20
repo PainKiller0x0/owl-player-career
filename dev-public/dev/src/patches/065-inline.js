@@ -265,7 +265,7 @@
   }
 
   const _renderSeason34=renderSeason;renderSeason=function(){
-    const y0=year34();if(y0>=2035)normalizeLegacyFutureSeason34();const out=_renderSeason34.apply(this,arguments),y=year34();if(y<2027||!careerState.team){syncVersion34();return out;}
+    const y0=year34();if(y0>=2035)normalizeLegacyFutureSeason34();const out=_renderSeason34.apply(this,arguments),y=year34();if(y<2027||!careerState.team)return out;
     const f=seasonFormat34(y),league=document.getElementById('seasonLeagueText'),head=document.querySelector('.season-track-head h3+span'),area=document.getElementById('seasonCompleteArea');
     if(y>=2040){if(league)league.innerHTML=`OWL Global League · 全球第 ${seasonState.played?estimateSeasonRank():'—'} · Stage ${stageNo34(y)}`;}
     else if(y>=2035&&league)league.innerHTML=`OWL 2.0 · ${confZh34(careerState.team)} · Stage ${stageNo34(y)}`;
@@ -277,11 +277,11 @@
     }
     if(area&&seasonState.stageBreakPending&&y>=2030){const s=Number(seasonState.stageBreakPending),rec=stageRecord(s),rank=stageEstimatedRank(s),next=y>=2030&&s===3?'EWC · 沙特中立场':`Major ${s}`;area.innerHTML=`<div class="stage-break-card v32-stage-auto"><div class="offseason-kicker">STAGE ${s} COMPLETE</div><h3>Stage ${s} 已结束</h3><div class="stage-break-stats"><div><span>阶段战绩</span><strong>${rec.wins}-${rec.losses}</strong></div><div><span>${y>=2040?'全球':'阶段'}排名</span><strong>第 ${rank}</strong></div><div><span>下一节点</span><strong>${next}</strong></div></div></div>`;}
     if(area&&seasonState.v71LastMajorSummary?.v34Type==='ewc'){
-      const h=seasonState.v71LastMajorSummary;area.innerHTML=`<div class="stage-break-card v71-major-result"><div class="offseason-kicker">EWC · SAUDI ARABIA · NEUTRAL VENUE</div><h3>🏆 ${h.champion}</h3><p>Esports World Cup · Overwatch项目。你的成绩：<strong>${h.result.replace('EWC · Overwatch ','')}</strong>${h.bonusLP?` · +${h.bonusLP} LP`:''} · <strong>全年最高奖金赛事</strong></p><button class="primary-btn" id="v34ContinueEwc">继续赛季 →</button></div>`;document.getElementById('v34ContinueEwc')?.addEventListener('click',()=>{seasonState.v71LastMajorSummary=null;const resume=!!seasonState.v34ResumeWholeAfterMajor;seasonState.v34ResumeWholeAfterMajor=false;renderSeason();if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(120);});syncVersion34();return out;
+      const h=seasonState.v71LastMajorSummary;area.innerHTML=`<div class="stage-break-card v71-major-result"><div class="offseason-kicker">EWC · SAUDI ARABIA · NEUTRAL VENUE</div><h3>🏆 ${h.champion}</h3><p>Esports World Cup · Overwatch项目。你的成绩：<strong>${h.result.replace('EWC · Overwatch ','')}</strong>${h.bonusLP?` · +${h.bonusLP} LP`:''} · <strong>全年最高奖金赛事</strong></p><button class="primary-btn" id="v34ContinueEwc">继续赛季 →</button></div>`;document.getElementById('v34ContinueEwc')?.addEventListener('click',()=>{seasonState.v71LastMajorSummary=null;const resume=!!seasonState.v34ResumeWholeAfterMajor;seasonState.v34ResumeWholeAfterMajor=false;renderSeason();if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(120);});return out;
     }
     if(area&&seasonState.played>=seasonState.total&&!seasonState.stageBreakPending&&!seasonState.v71LastMajorSummary)renderFinal34(area);
     const sim=document.getElementById('seasonSimNote');if(sim&&/56场/.test(sim.textContent||'')&&y>=2035)sim.textContent=(sim.textContent||'').replace(/56场/g,`${seasonState.total}场`);
-    syncVersion34();return out;
+    return out;
   };
 
   function allStarEventNames34(r){
@@ -398,16 +398,7 @@
     careerState.v34RuleIntroSeen[y]=true;holder.innerHTML=`<div class="season-event-top"><span class="season-event-kicker">OWL ${y} · LEAGUE EVOLUTION</span><span class="season-event-round">规则变化</span></div><div class="season-event-icon">🌐</div><h2 class="season-event-title">${c[0]}</h2><div class="season-event-copy"><p>${c[1]}</p><p>${c[2]}</p></div><div class="season-event-choices"><button class="season-event-choice" id="v34RuleDone"><div><strong>开始 ${y} 赛季 →</strong></div></button></div>`;document.getElementById('v34RuleDone')?.addEventListener('click',()=>overlay.classList.add('hidden'));overlay.classList.remove('hidden');
   }
 
-  function syncVersion34(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC22';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC20');[...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-  const _hub34=renderCareerHub;renderCareerHub=function(){const o=_hub34.apply(this,arguments);syncVersion34();return o;};
-  const _team34=renderCareerTeam;renderCareerTeam=function(){const o=_team34.apply(this,arguments);syncVersion34();return o;};
-  const _sum34=renderSeasonSummary;renderSeasonSummary=function(){const o=_sum34.apply(this,arguments);syncVersion34();return o;};
-  const _match34=renderMatch;renderMatch=function(){const o=_match34.apply(this,arguments);syncVersion34();return o;};
-
   const style=document.createElement('style');style.id='v34FutureLeagueStyle';style.textContent=`.v34-protection-list{display:grid;gap:7px;margin:14px 0}.v34-protect{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.35)}.v34-protect.mine{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}.v34-protect b{font-size:16px}.v34-protect em{font-style:normal;color:var(--muted);font-size:11px}.v34-expansion-result{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;margin-bottom:12px;border:1px solid var(--line);border-radius:12px}.v34-expansion-result span{color:var(--muted)}.v34-short-badge{position:absolute;right:8px;top:8px;padding:2px 7px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:9px;font-weight:800}@media(max-width:720px){.v34-protect{grid-template-columns:36px 1fr}.v34-protect em{grid-column:2}.v34-expansion-result{display:block}.v34-expansion-result span{display:block;margin-top:4px}}`;document.head.appendChild(style);
 
-  syncVersion34();
   window.__OWL_V34_FUTURE={version:VER,format:seasonFormat34,ensureExpansionTeams:ensureExpansionTeams34,standings:standings34,postseason:ensurePostseason34,stageTable:stageTable34,ruleIntro:maybeRuleIntro34,rulebook:futureRulebook34,allStar:openAllStar34,expansionState:expansionState34,protection:rosterProtection34,playIn:buildPlayIn2027_34,wildCard:buildWildCard2035_34,openQualifier:openQualifier34,resolveExpansion:resolveExpansionCore34};
 })();

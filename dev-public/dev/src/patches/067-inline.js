@@ -157,12 +157,4 @@
   function roster35(short,year=DRAFT_YEAR){const s=v60EnsureWorldToYear(Number(year));return (s?.teams?.[short]||[]).map(p=>({id:p.id,name:p.name,role:p.role,ovr:p.ovr,potential:p.potential,age:p.age,teamShort:p.teamShort,expansionDrafted:!!p.expansionDrafted,from:p.expansionFromShort}));}
   window.__OWL_V35_EXPANSION_WORLD={version:VER,ensure:ensureAiExpansionDraft35,onPlayerResolved:onPlayerResolved35,summary:worldSummary35,roster:roster35,state:()=>careerState.v35AiExpansionDraft||null};
 
-  function syncVersion35(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC22';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC20');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;if(window.__OWL_V34_FUTURE)window.__OWL_V34_FUTURE.version=VER;
-  }
-  ['renderSeason','renderCareerHub','renderCareerTeam','renderSeasonSummary','renderMatch'].forEach(name=>{const fn=window[name];if(typeof fn!=='function')return;window[name]=function(){const out=fn.apply(this,arguments);syncVersion35();return out;};});
-  syncVersion35();
 })();

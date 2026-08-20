@@ -67,15 +67,5 @@
   const _overview22=renderCareerOverview;
   renderCareerOverview=function(){const out=_overview22.apply(this,arguments);injectThreads22();return out;};
 
-  function sync22(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC8';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC8');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-  sync22();
-  const _season22=renderSeason;renderSeason=function(){const out=_season22.apply(this,arguments);sync22();return out;};
-  const _hub22=renderCareerHub;renderCareerHub=function(){const out=_hub22.apply(this,arguments);sync22();return out;};
   window.__OWL_V22_UX={version:VER,thread:threadFor22,ensureThread:ensureThread22};
 })();

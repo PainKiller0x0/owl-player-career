@@ -154,15 +154,5 @@
     return out;
   };
 
-  function sync33(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC13';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC13');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-  const wrapSync33=name=>{const old=window[name];if(typeof old!=='function')return;window[name]=function(){const out=old.apply(this,arguments);sync33();return out;};};
-  ['renderSeason','renderCareerHub','renderCareerTeam','renderSeasonSummary','renderMatch','renderOffseason','renderPlayoffs','renderRetirementScreen'].forEach(wrapSync33);
-  sync33();
   window.__OWL_V27_UX={version:VER,usage:usage33,championContribution:championContribution33,careerNode:careerNode33,enrich:enrich33,enrichAll:enrichAll33};
 })();

@@ -109,14 +109,6 @@
   const baseRender=renderSeason;
   renderSeason=function(){const out=baseRender.apply(this,arguments);decorateTournamentCards();return out;};
 
-  function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC22';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC20');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=FULL;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-  syncVersion();
   decorateTournamentCards();
   window.__OWL_V20_TOURNAMENT_UX=Object.freeze({version:VER,decorate:decorateTournamentCards,playerPath:normalizedPlayerPath});
 })();

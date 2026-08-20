@@ -49,24 +49,8 @@
   renderContractMarket=function(wrap){
     const out=baseMarket.apply(this,arguments);
     integrateOfferCards(wrap);
-    syncVersion();
     return out;
   };
 
-  function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC22';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC22');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{
-      if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){
-        const box=r.lastElementChild;if(box)box.textContent=FULL;
-      }
-    });
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-
-  const baseSeason=renderSeason;
-  renderSeason=function(){const out=baseSeason.apply(this,arguments);syncVersion();return out;};
-  syncVersion();
   window.__OWL_V21_CONTRACT_UX=Object.freeze({version:VER,integrate:integrateOfferCards});
 })();

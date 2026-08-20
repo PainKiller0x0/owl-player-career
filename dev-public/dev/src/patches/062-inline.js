@@ -37,7 +37,6 @@
       const sim=document.getElementById('seasonSimNote');
       if(sim&&/三届Major均按阶段节点同步结算/.test(sim.textContent||''))sim.textContent=`✓ 常规赛已完成：${seasonState.wins}胜${seasonState.losses}负。`;
     }
-    sync32();
     return out;
   };
 
@@ -52,19 +51,5 @@
     return out;
   };
 
-  function sync32(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC12';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC12');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-
-  const _hub32=renderCareerHub;renderCareerHub=function(){const out=_hub32.apply(this,arguments);sync32();return out;};
-  const _team32=renderCareerTeam;renderCareerTeam=function(){const out=_team32.apply(this,arguments);sync32();return out;};
-  const _summary32=renderSeasonSummary;renderSeasonSummary=function(){const out=_summary32.apply(this,arguments);sync32();return out;};
-  const _match32=renderMatch;renderMatch=function(){const out=_match32.apply(this,arguments);sync32();return out;};
-
-  sync32();
   window.__OWL_V26_UX={version:VER,autoStageResolve:scheduleStageResolve32};
 })();

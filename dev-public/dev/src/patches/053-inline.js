@@ -242,7 +242,6 @@
   function postRender(){
     relayoutHeroMastery();relayoutPlayoffCard();polishMarket();bindShareButton();
     if(Number(careerState.seasonYear)===2019&&allStarDue(2019)&&!allStarOpening)setTimeout(()=>openHistoricalAllStar(),60);
-    document.title='OWL 选手之路 · Public Beta 1.7 RC1';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.7 RC1');
   }
   const renderSeasonBase=renderSeason;renderSeason=function(...args){const out=renderSeasonBase.apply(this,args);postRender();return out};
   const renderOffseasonBase=renderOffseason;renderOffseason=function(...args){const out=renderOffseasonBase.apply(this,args);polishMarket();return out};
@@ -250,7 +249,6 @@
   const honorBase=renderHonorWall;renderHonorWall=function(...args){const out=honorBase.apply(this,args);bindShareButton();return out};
 
   // Old full-season click listener calls the lexical V13 function. Patch 19 now delegates here.
-  if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=V17;if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=V17;
   window.__OWL_V17={version:V17,roleBaselines:ROLE_REAL,eraBaselines:ERA_REAL,roleProfile:roleBase,mapMinutes,eraKey,regularMaps:actualRegularMaps,playoffMaps:actualPlayoffMaps,fullSeason:v17FullSeason,shareCard:makeShareCard,openHistoricalAllStar};
   postRender();
 })();

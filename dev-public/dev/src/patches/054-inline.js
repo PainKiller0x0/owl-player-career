@@ -132,10 +132,6 @@
   }
   window.__OWL_V18_FULL_SEASON=fullSeason18;v35SimulateWholeSeason=fullSeason18;
 
-  // Version + diagnostic API.
-  function syncV18Version(){document.title='OWL 选手之路 · Public Beta 1.9 RC5';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC5');}
-  syncV18Version();
-  const renderSeason18Base=renderSeason;renderSeason=function(...args){const out=renderSeason18Base.apply(this,args);syncV18Version();const full=document.getElementById('fullSimSeasonBtn');if(full)full.textContent='🚀 模拟全部常规赛';return out;};
-  if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=V18;if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=V18;
+  const renderSeason18Base=renderSeason;renderSeason=function(...args){const out=renderSeason18Base.apply(this,args);const full=document.getElementById('fullSimSeasonBtn');if(full)full.textContent='🚀 模拟全部常规赛';return out;};
   window.__OWL_V18={version:V18,regularMaps:regularMaps18,playoffMaps:playoffMaps18,heroState:heroState18,fullSeason:fullSeason18};
 })();

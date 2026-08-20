@@ -36,17 +36,9 @@
     else if(typeof v35SimulateWholeSeason==='function')v35SimulateWholeSeason();
   },true);
 
-  const _team30=renderCareerTeam;renderCareerTeam=function(){const out=_team30.apply(this,arguments);syncLeague30();sync30();return out;};
-  const _season30=renderSeason;renderSeason=function(){const out=_season30.apply(this,arguments);syncLeague30();sync30();return out;};
-  const _match30=renderMatch;renderMatch=function(){const out=_match30.apply(this,arguments);syncLeague30();sync30();return out;};
-  const _hub30=renderCareerHub;renderCareerHub=function(){const out=_hub30.apply(this,arguments);sync30();return out;};
-  function sync30(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC10';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC10');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=VER;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=VER;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-  sync30();syncLeague30();
+  const _team30=renderCareerTeam;renderCareerTeam=function(){const out=_team30.apply(this,arguments);syncLeague30();return out;};
+  const _season30=renderSeason;renderSeason=function(){const out=_season30.apply(this,arguments);syncLeague30();return out;};
+  const _match30=renderMatch;renderMatch=function(){const out=_match30.apply(this,arguments);syncLeague30();return out;};
+  syncLeague30();
   window.__OWL_V24_UX={version:VER,league:league30};
 })();

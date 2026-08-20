@@ -121,16 +121,9 @@
   }
   const baseGenerate=generateContractOffers;generateContractOffers=function(){const out=baseGenerate.apply(this,arguments);(offseasonState.offers||[]).forEach(recalcOffer);return out;};
   const baseApply=applyTeamFromOffer;applyTeamFromOffer=function(offer){if(offer)recalcOffer(offer);const out=baseApply.apply(this,arguments);if(offer?.tacticProfile){careerState.tacticProfile=JSON.parse(JSON.stringify(offer.tacticProfile));careerState.tactic=careerState.tacticProfile.primary.major;}return out;};
-  const baseMarket=renderContractMarket;renderContractMarket=function(wrap){(offseasonState.offers||[]).forEach(recalcOffer);const out=baseMarket.apply(this,arguments);decorateMarket(wrap);syncVersion();return out;};
-  const baseSetup=setupSeason;setupSeason=function(){ensureCurrentProfile();const out=baseSetup.apply(this,arguments);ensureCurrentProfile();syncVersion();return out;};
-  function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC24';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC24');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=FULL;}});
-    if(window.OWLCore){OWLCore.version=VER;OWLCore.release=FULL;}if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VER;window.__OWL_PUBLIC_BETA.release=FULL;}if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
-  }
-  const baseSeason=renderSeason;renderSeason=function(){const out=baseSeason.apply(this,arguments);syncVersion();return out;};
-  ['renderOffseason','renderSeasonSummary','renderCareerHub','renderRetirementScreen'].forEach(name=>{const base=globalThis[name];if(typeof base!=='function')return;globalThis[name]=function(){const out=base.apply(this,arguments);syncVersion();return out;};});
-  ensureCurrentProfile();syncVersion();
+  const baseMarket=renderContractMarket;renderContractMarket=function(wrap){(offseasonState.offers||[]).forEach(recalcOffer);const out=baseMarket.apply(this,arguments);decorateMarket(wrap);return out;};
+  const baseSetup=setupSeason;setupSeason=function(){ensureCurrentProfile();const out=baseSetup.apply(this,arguments);ensureCurrentProfile();return out;};
+  ensureCurrentProfile();
   const api=Object.freeze({version:VER,release:FULL,library:TACTIC_LIBRARY,traitHeroes:TRAIT_HEROES,profileFor:(team,year,primary)=>normalizeProfile(null,team,year,primary),recalcOffer,ensureCurrentProfile,heroAffinity,available:(major,year)=>available(major,year).map(x=>x.name),honorImportance:typeof honorImportance==='function'?honorImportance:null});
   window.__OWL_V24_TACTICAL_IDENTITY=api;
   // Keep the old seam alive for old saves / old QA callers, but the data schema is V2.

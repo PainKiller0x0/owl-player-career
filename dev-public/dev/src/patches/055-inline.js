@@ -148,18 +148,5 @@
     return [...latest,...highlights].sort((a,b)=>Number(b.matchNo||0)-Number(a.matchNo||0));
   }
 
-  // Version sync is deliberately last so older feature patches cannot repaint RC4.
-  function v19SyncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC5';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC5');
-    const rows=[...document.querySelectorAll('.setting-row')];
-    rows.forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent='Public Beta 1.9 RC5';}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=V19;
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=V19;
-  }
-  v19SyncVersion();
-  const _v19RenderSeason=renderSeason;
-  renderSeason=function(...args){const out=_v19RenderSeason.apply(this,args);v19SyncVersion();return out;};
-
   window.__OWL_V19_PACING={version:V19,eventTheme:v19EventTheme,eventSchedule:()=>generateSeasonEventSchedule(),storySelection:v19StorySelection};
 })();

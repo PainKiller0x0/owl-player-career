@@ -117,7 +117,7 @@
     });
   }
   const baseMarket=renderContractMarket;
-  renderContractMarket=function(wrap){(offseasonState.offers||[]).forEach(normalizeOffer);const out=baseMarket.apply(this,arguments);normalizeMarket(wrap);syncVersion();return out;};
+  renderContractMarket=function(wrap){(offseasonState.offers||[]).forEach(normalizeOffer);const out=baseMarket.apply(this,arguments);normalizeMarket(wrap);return out;};
 
   // ------------------------------------------------------------------
   // Season / roster tactical identity and navigation semantics.
@@ -137,7 +137,7 @@
   }
   document.addEventListener('click',e=>{const b=e.target?.closest?.('#startSeasonBtn.rc26-return-season');if(!b)return;e.preventDefault();e.stopImmediatePropagation();renderSeason();showScreen('season');},true);
   const baseTeam=renderCareerTeam;
-  renderCareerTeam=function(){const out=baseTeam.apply(this,arguments);decorateCareerTeam();syncVersion();return out;};
+  renderCareerTeam=function(){const out=baseTeam.apply(this,arguments);decorateCareerTeam();return out;};
 
   function decorateSeason(){
     if(!careerState.team)return;
@@ -154,7 +154,7 @@
   const baseSeason=renderSeason;
   renderSeason=function(){
     const y=Number(careerState.seasonYear||0),cache=seasonState.finalStandingsCache;if(y>=2027&&cache?.v34){const me=[...cache].find?.(r=>r.isUser);if(!me||Number(me.wins)!==Number(seasonState.wins||0))seasonState.finalStandingsCache=null;}
-    const out=baseSeason.apply(this,arguments);decorateSeason();syncVersion();return out;
+    const out=baseSeason.apply(this,arguments);decorateSeason();return out;
   };
 
   // ------------------------------------------------------------------
@@ -182,7 +182,7 @@
     if(mvp){const winner=mvp.querySelector('.award-winner-copy strong')?.textContent.trim();if(winner===getPlayerName()){mvp.classList.add('rc26-user-mvp');const rank=mvp.querySelector('.award-rank-box strong');if(rank)rank.innerHTML='🏆 你就是本季 MVP';}}
   }
   const baseAwards=renderRegularSeasonAwards;
-  renderRegularSeasonAwards=function(){const out=baseAwards.apply(this,arguments);decorateAwards();syncVersion();return out;};
+  renderRegularSeasonAwards=function(){const out=baseAwards.apply(this,arguments);decorateAwards();return out;};
 
   // ------------------------------------------------------------------
   // Season summary: team logo and compact K/D/A line.
@@ -193,20 +193,11 @@
     document.querySelectorAll('#summaryScreen .summary-stat-box').forEach(box=>{if(/K\s*\/\s*D\s*\/\s*A/i.test(box.querySelector('span')?.textContent||''))box.classList.add('rc26-kda-box');});
   }
   const baseSummary=renderSeasonSummary;
-  renderSeasonSummary=function(){const out=baseSummary.apply(this,arguments);decorateSummary();syncVersion();return out;};
+  renderSeasonSummary=function(){const out=baseSummary.apply(this,arguments);decorateSummary();return out;};
 
   function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC26';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC26');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=FULL;}});
-    if(window.OWLCore){OWLCore.version=VER;OWLCore.release=FULL;}if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VER;window.__OWL_PUBLIC_BETA.release=FULL;}if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
+    window.__OWL_RUNTIME.render.syncReleaseMeta();
   }
-  // RC25 still owns wrappers around several legacy render entry points. Re-wrap the ones
-  // RC26 does not otherwise override so a later legacy render cannot paint the version back to RC25.
-  ['setupSeason','renderOffseason','renderCareerHub','renderRetirementScreen'].forEach(name=>{
-    const base=globalThis[name];if(typeof base!=='function')return;
-    globalThis[name]=function(){const out=base.apply(this,arguments);syncVersion();return out;};
-  });
-  syncVersion();
   window.__OWL_V26_RELEASE_POLISH=Object.freeze({version:VER,release:FULL,normalizeOffer,decorateAwards,decorateSeason,decorateCareerTeam,decorateSummary,decorateHeroTraining,syncVersion});
 })();
 
@@ -308,15 +299,11 @@
   }
 
   function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC27';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC27');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=FULL;}});
-    if(window.OWLCore){OWLCore.version=VER;OWLCore.release=FULL;}if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VER;window.__OWL_PUBLIC_BETA.release=FULL;}if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
+    window.__OWL_RUNTIME.render.syncReleaseMeta();
   }
 
-  const baseTeam=renderCareerTeam;renderCareerTeam=function(){const out=baseTeam.apply(this,arguments);decorateTeamConfirmation();syncVersion();return out;};
-  const baseSeason=renderSeason;renderSeason=function(){const out=baseSeason.apply(this,arguments);decorateSeasonHome();syncVersion();return out;};
-  ['setupSeason','renderOffseason','renderSeasonSummary','renderCareerHub','renderRetirementScreen','renderRegularSeasonAwards'].forEach(name=>{const base=globalThis[name];if(typeof base!=='function')return;globalThis[name]=function(){const out=base.apply(this,arguments);syncVersion();return out;};});
-  syncVersion();
+  const baseTeam=renderCareerTeam;renderCareerTeam=function(){const out=baseTeam.apply(this,arguments);decorateTeamConfirmation();return out;};
+  const baseSeason=renderSeason;renderSeason=function(){const out=baseSeason.apply(this,arguments);decorateSeasonHome();return out;};
   window.__OWL_V27_UI_CONSOLIDATION=Object.freeze({version:VER,release:FULL,decorateTeamConfirmation,decorateSquadCard,decorateSeasonHome,openTacticModal,closeTacticModal,syncVersion});
 })();
 
@@ -515,37 +502,33 @@
   }
 
   function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC28';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC28');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=FULL;}});
-    if(window.OWLCore){OWLCore.version=VER;OWLCore.release=FULL;}if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VER;window.__OWL_PUBLIC_BETA.release=FULL;}if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
+    window.__OWL_RUNTIME.render.syncReleaseMeta();
   }
 
   // Last-layer wrappers: run after every legacy/RC render so late additions do
   // not reintroduce the old UI or put milestone cards back at page bottom.
   if(typeof renderSeasonSummary==='function'){
-    const base=renderSeasonSummary;renderSeasonSummary=function(){const out=base.apply(this,arguments);decorateSummaryAlignment();syncVersion();return out;};
+    const base=renderSeasonSummary;renderSeasonSummary=function(){const out=base.apply(this,arguments);decorateSummaryAlignment();return out;};
   }
   if(typeof renderOffseason==='function'){
-    const base=renderOffseason;renderOffseason=function(){const out=base.apply(this,arguments);decorateHeroProfile();decorateOfferSelection();syncVersion();return out;};
+    const base=renderOffseason;renderOffseason=function(){const out=base.apply(this,arguments);decorateHeroProfile();decorateOfferSelection();return out;};
   }
   if(typeof renderSeason==='function'){
-    const base=renderSeason;renderSeason=function(){const out=base.apply(this,arguments);decorateStageResults();promoteSeasonMilestone();syncVersion();requestAnimationFrame(()=>{decorateStageResults();promoteSeasonMilestone();});return out;};
+    const base=renderSeason;renderSeason=function(){const out=base.apply(this,arguments);decorateStageResults();promoteSeasonMilestone();requestAnimationFrame(()=>{decorateStageResults();promoteSeasonMilestone();});return out;};
   }
   if(typeof renderRegularSeasonAwards==='function'){
-    const base=renderRegularSeasonAwards;renderRegularSeasonAwards=function(){const out=base.apply(this,arguments);decorateAwards();syncVersion();return out;};
+    const base=renderRegularSeasonAwards;renderRegularSeasonAwards=function(){const out=base.apply(this,arguments);decorateAwards();return out;};
   }
   if(typeof renderCareerOverview==='function'){
-    const base=renderCareerOverview;renderCareerOverview=function(){const out=base.apply(this,arguments);decorateCareerLogos();syncVersion();return out;};
+    const base=renderCareerOverview;renderCareerOverview=function(){const out=base.apply(this,arguments);decorateCareerLogos();return out;};
   }
   if(typeof renderCareerHub==='function'){
-    const base=renderCareerHub;renderCareerHub=function(){const out=base.apply(this,arguments);decorateCareerLogos();syncVersion();return out;};
+    const base=renderCareerHub;renderCareerHub=function(){const out=base.apply(this,arguments);decorateCareerLogos();return out;};
   }
   if(typeof renderSigningComplete==='function'){
-    const base=renderSigningComplete;renderSigningComplete=function(wrap){const out=base.apply(this,arguments);injectAlarmHistoryNode(wrap);syncVersion();return out;};
+    const base=renderSigningComplete;renderSigningComplete=function(wrap){const out=base.apply(this,arguments);injectAlarmHistoryNode(wrap);return out;};
   }
-  ['setupSeason','renderCareerTeam','renderPlayoffs','renderRetirementScreen'].forEach(name=>{const base=globalThis[name];if(typeof base!=='function')return;globalThis[name]=function(){const out=base.apply(this,arguments);syncVersion();return out;};});
-
-  decorateSummaryAlignment();decorateHeroProfile();decorateOfferSelection();decorateStageResults();decorateAwards();decorateCareerLogos();promoteSeasonMilestone();syncVersion();
+  decorateSummaryAlignment();decorateHeroProfile();decorateOfferSelection();decorateStageResults();decorateAwards();decorateCareerLogos();promoteSeasonMilestone();
   window.__OWL_V28_UI_TRUTH=Object.freeze({version:VER,release:FULL,decorateSummaryAlignment,decorateHeroProfile,openHeroModal,closeHeroModal,decorateOfferSelection,decorateStageResults,decorateAwards,scrubAlarmSnapshot,injectAlarmHistoryNode,promoteSeasonMilestone,decorateCareerLogos,syncVersion});
 })();
 
@@ -679,16 +662,7 @@
   }
 
   function syncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC29';
-    document.querySelectorAll('.cover-version b').forEach(x=>{if(x.textContent!=='PUBLIC BETA · 1.9 RC29')x.textContent='PUBLIC BETA · 1.9 RC29';});
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{
-      if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){
-        const box=r.lastElementChild;if(box&&box.textContent!==FULL)box.textContent=FULL;
-      }
-    });
-    if(window.OWLCore){OWLCore.version=VER;OWLCore.release=FULL;}
-    if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VER;window.__OWL_PUBLIC_BETA.release=FULL;}
-    if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;
+    window.__OWL_RUNTIME.render.syncReleaseMeta();
     decorateVersionEntry();
   }
 
@@ -698,17 +672,10 @@
   // RC29 is the final release layer, so re-assert the version after those renders.
   ['renderSeasonSummary','renderOffseason','renderSeason','renderRegularSeasonAwards','renderCareerOverview','renderCareerHub','renderSigningComplete','setupSeason','renderCareerTeam','renderPlayoffs','renderRetirementScreen'].forEach(name=>{
     const base=globalThis[name];if(typeof base!=='function')return;
-    globalThis[name]=function(){const out=base.apply(this,arguments);syncVersion();return out;};
+    globalThis[name]=function(){const out=base.apply(this,arguments);decorateVersionEntry();return out;};
   });
 
-  const versionObserver=new MutationObserver(()=>{
-    if(window.__OWL_V20_ALPHA1)return;
-    const label=document.querySelector('.cover-version b');
-    if(label&&label.textContent!=='PUBLIC BETA · 1.9 RC29')syncVersion();
-  });
-  if(document.body)versionObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
-
-  syncVersion();
+  decorateVersionEntry();
   window.__OWL_V29_CHANGELOG=Object.freeze({version:VER,release:FULL,releases,open:openChangelog,close:closeChangelog,render:renderChangelog,syncVersion});
 })();
 
@@ -989,9 +956,7 @@
     const api=window.__OWL_V29_CHANGELOG,arr=api?.releases;if(!Array.isArray(arr)||arr.some(x=>x.version==='2.0 Alpha 1'))return;arr.forEach(x=>x.current=false);arr.unshift({version:'2.0 Alpha 1',name:'职业世界',release:FULL,current:true,points:['战队获得俱乐部 DNA、管理策略、建队周期和可持续的教练画像。','队友关系细化为逐人默契、黄金搭档与位置竞争，并随共同比赛变化。','比赛模拟开始纳入教练、队内默契、主副体系与英雄池契合，并生成“为什么赢 / 为什么输”。','每个赛季生成争冠、重建、卫冕、新教练时代等赛季主题，并记录赛季故事节点。']});
   }
   function syncVersion20(){
-    document.title='OWL 选手之路 · 2.0 Alpha 1';document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='OWL 2.0 · ALPHA 1');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=FULL;}});
-    if(window.OWLCore){OWLCore.version=VER;OWLCore.release=FULL;}if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VER;window.__OWL_PUBLIC_BETA.release=FULL;}if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VER;syncChangelog20();
+    window.__OWL_RUNTIME.render.syncReleaseMeta();syncChangelog20();
   }
   ['renderOffseason','renderCareerOverview','renderCareerHub','renderRegularSeasonAwards','renderPlayoffs','renderRetirementScreen','renderSigningComplete'].forEach(name=>{const base=globalThis[name];if(typeof base!=='function')return;globalThis[name]=function(){const out=base.apply(this,arguments);syncVersion20();return out;};});
 

@@ -105,17 +105,5 @@
   const _v21Overview=renderCareerOverview;
   renderCareerOverview=function(){const out=_v21Overview.apply(this,arguments);injectCareerAnchors21();return out;};
 
-  // -------------------------------------------------------------------
-  // D. Version sync.
-  // -------------------------------------------------------------------
-  function sync21(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC7';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC7');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=V21;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=V21;if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=V21;
-  }
-  sync21();
-  const _v21Season=renderSeason;renderSeason=function(){const out=_v21Season.apply(this,arguments);sync21();return out;};
-  const _v21Hub=renderCareerHub;renderCareerHub=function(){const out=_v21Hub.apply(this,arguments);sync21();return out;};
   window.__OWL_V21_UX={version:V21,rememberHeroPlan:rememberHeroPlan21,injectHeroReuse:injectHeroReuse21,anchor:anchorFor21};
 })();

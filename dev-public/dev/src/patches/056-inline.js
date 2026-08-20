@@ -203,16 +203,5 @@
     return out;
   };
 
-  // -------------------------------------------------------------------
-  // Version sync.
-  // -------------------------------------------------------------------
-  function v20SyncVersion(){
-    document.title='OWL 选手之路 · Public Beta 1.9 RC6';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.9 RC6');
-    [...document.querySelectorAll('.setting-row')].forEach(r=>{if(r.querySelector('.setting-copy strong')?.textContent==='当前版本'){const box=r.lastElementChild;if(box)box.textContent=V20;}});
-    if(window.__OWL_PUBLIC_BETA)window.__OWL_PUBLIC_BETA.version=V20;if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=V20;
-  }
-  v20SyncVersion();
-  const _v20Season=renderSeason;renderSeason=function(){const out=_v20Season.apply(this,arguments);v20SyncVersion();return out;};
   window.__OWL_V20_UX={version:V20,teamPower:v20TeamPower,fit:v20Fit,coachLine:v20CoachLine,marketScore:v20MarketScore};
 })();

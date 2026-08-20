@@ -110,13 +110,7 @@
     document.getElementById('colorblindModeToggle').onclick=()=>{const on=!colorblindOn();try{localStorage.setItem(CB_KEY,on?'1':'0')}catch(e){}applyColorblind(on)};applyColorblind();
   }
 
-  // Current release strings can survive in old stored/compatibility DOM; normalize visible shell labels.
-  function versionPolish(){
-    document.title='OWL 选手之路 · Public Beta 1.6 RC1';
-    document.querySelectorAll('.cover-version b').forEach(x=>x.textContent='PUBLIC BETA · 1.6 RC1');
-  }
-
   // Run after DOM and all prior patches are available.
-  injectColorblindSetting();applyColorblind();versionPolish();
+  injectColorblindSetting();applyColorblind();
   window.__OWL_V16={version:V16,openModal,applyColorblind,polishTrainingLayout,injectMarketSelfCard};
 })();

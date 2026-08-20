@@ -4,7 +4,7 @@
 
 ## 1. 范围与现状
 
-这是一个按固定 `<script>` 顺序加载的单页游戏。`dev-public/dev/index.html` 负责装配核心 bundle、历史年份 patch 和 Alpha1 patch；它不是模块打包器，因此脚本之间通过全局函数、`seasonState`、`careerState` 和少量 `window.__OWL_*` API 协作。
+这是一个按固定 `<script>` 顺序加载的单页游戏。`dev-public/dev/index.html` 负责装配核心 bundle、历史年份 patch 和 Alpha1 patch；它不是模块打包器，因此脚本之间通过全局函数、`seasonState`、`careerState` 和少量 `window.__OWL_*` API 协作。基础 bundle 加载完成后，`094-shared.runtime.js` 先于历史 patch 加载，后续 patch 都可以直接复用它。
 
 本次重构的目标是收敛跨年份重复的流程控制，不改变年份规则、比赛数值、阶段赛结算或 UI 文案。年份差异仍由各自 Adapter 保留。
 
@@ -54,7 +54,7 @@ window.__OWL_RUNTIME.render.register(
 3. 不在 hook 内启动新的模拟循环。
 4. 如果功能属于某个年份，只在该 hook 自己内部判断年份。
 
-版本元信息由 `syncReleaseMeta` 统一写入页面标题、封面版本、设置页版本和公开 API 元数据。旧 RC patch 中保留的 `syncVersion` 仅作为历史兼容实现；页面装配完成后由 Shared Runtime 接管最终可见值。
+版本元信息由 `syncReleaseMeta` 统一写入页面标题、封面版本、设置页版本和公开 API 元数据。旧 RC patch 中保留的 `syncVersion` 仅作为兼容 Adapter，函数体只委托给 Shared Runtime；历史 patch 不再自己写标题或版本字段。需要 RC29 更新日志入口的 patch 只保留自己的入口装饰，不再重复同步公共版本。
 
 ## 4. 模拟生命周期协议
 
@@ -113,7 +113,7 @@ fastSeasonStep
 - 新的整季模拟只实现“本年份如何推进一场”和“本年份遇到什么节点”；暂停、终止、恢复统一调用 Shared Runtime。
 - 新的事件类型复用 `season_events.js` 的弹窗生命周期；关闭弹窗只负责清理 UI，继续模拟交给 `resumeAfterEvent`。
 - 不把 Shared Runtime 变成数值规则仓库。它的深度应保持小：只管理生命周期和跨模块协议。
-- 历史 patch 的旧 wrapper 暂不大规模删除，除非能证明它只做公共生命周期而不包含年份功能。后续迁移应一次只移除一个 wrapper，并用 `node --check`、静态 hook 计数和线上 dev 回归验证。
+- 历史 patch 中只做公共版本同步的 wrapper 已删除；包含年份功能的 wrapper 只保留年份后处理。以后新增公共渲染修正使用 `render.register`，若迁移旧 wrapper，必须先证明它不包含年份功能，再用 `node --check`、静态 hook 计数和线上 dev 回归验证。
 
 ## 7. 验证清单
 
@@ -123,4 +123,3 @@ fastSeasonStep
 2. `git diff --check` 无新增空白错误。
 3. Shared Runtime 行为测试覆盖：标题稳定、whole 暂停清 flag、whole 恢复、普通事件恢复、render hook 只包装一次。
 4. 线上 dev 页面检查：继续生涯、模拟全部常规赛、事件处理后继续、交易处理后继续，且浏览器页签标题不闪回旧 RC 版本。
-

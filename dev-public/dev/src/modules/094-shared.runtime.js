@@ -24,6 +24,8 @@
     if(window.OWLCore){window.OWLCore.version=VERSION;window.OWLCore.release=RELEASE;}
     if(window.__OWL_PUBLIC_BETA){window.__OWL_PUBLIC_BETA.version=VERSION;window.__OWL_PUBLIC_BETA.release=RELEASE;}
     if(window.__OWL_WORLD_CUP)window.__OWL_WORLD_CUP.version=VERSION;
+    if(window.__OWL_V34_FUTURE)window.__OWL_V34_FUTURE.version=VERSION;
+    if(window.__OWL_V35_EXPANSION_WORLD)window.__OWL_V35_EXPANSION_WORLD.version=VERSION;
   }
 
   function installStableTitle(){
