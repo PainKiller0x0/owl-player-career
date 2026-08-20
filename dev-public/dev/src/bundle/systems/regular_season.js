@@ -337,7 +337,7 @@
       document.getElementById('seasonSimNote').textContent=`第 ${seasonState.played} 场：你因病缺席，队伍${won?'赢下':'输掉'}了${venue==='home'?'主场':'客场'}比赛。本次不会计入伤病次数。`;
       renderSeason();showScreen('season');
       if(seasonState.played>=seasonState.total){seasonState.simulating=false;setTimeout(openRegularSeasonAwards,360);return;}
-      if(eventNow){seasonState.simulating=false;seasonState.resumeFastAfterEvent=resumeFast;setTimeout(openScheduledSeasonEvent,180);return;}
+      if(eventNow){if(resumeFast)window.__OWL_RUNTIME?.simulation?.pauseFast?.();else seasonState.simulating=false;setTimeout(openScheduledSeasonEvent,180);return;}
       if(resumeFast){seasonState.simulating=true;seasonState.timer=setTimeout(fastSeasonStep,420);}
     }
 
@@ -493,13 +493,11 @@
         return;
       }
       if(eventNow) {
-        seasonState.simulating=false;
-        seasonState.resumeFastAfterEvent=true;
+        window.__OWL_RUNTIME?.simulation?.pauseFast?.();
         setTimeout(openScheduledSeasonEvent,180);
         return;
       }
       seasonState.timer=setTimeout(fastSeasonStep,420);
     }
-
 
 

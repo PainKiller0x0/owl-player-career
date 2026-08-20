@@ -183,8 +183,7 @@
   // ----- Full-season simulation: persistent own state, not the transient legacy simulating flag. -----
   let wholeToken=0;
   function stopWhole(msg=''){
-    seasonState.v17WholeActive=false;seasonState.simulating=false;window.__OWL_V16_SEASON_BATCHING=false;
-    const note=document.getElementById('seasonSimNote');if(note&&msg)note.textContent=msg;renderSeason();
+    window.__OWL_RUNTIME?.simulation?.stopWhole?.(msg);
   }
   function blockingWorldCup(){const api=window.__OWL_WORLD_CUP;if(!api?.maybeMarkDue)return null;const r=api.maybeMarkDue();return r&&!r.completed&&r.pendingStage?r:null}
   function v17FullSeason(){
@@ -200,8 +199,8 @@
         if(num(seasonState.played)<=before){stopWhole('模拟被当前流程节点暂停，请先处理页面上的节点。');return;}
         markStageBreakIfNeeded();
         if(careerState.v800Trade?.pending){stopWhole('🔄 模拟在交易节点暂停。先决定自己的下一站。');return;}
-        const world=blockingWorldCup();if(world){seasonState.v17WholeActive=false;seasonState.simulating=false;seasonState.v13ResumeWholeAfterWorldCup=true;renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP.open(),70);return;}
-        if(seasonState.currentEvent||seasonState.eventDue){seasonState.v17WholeActive=false;seasonState.simulating=false;seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,80);return;}
+        const world=blockingWorldCup();if(world){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.v13ResumeWholeAfterWorldCup=true;renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP.open(),70);return;}
+        if(seasonState.currentEvent||seasonState.eventDue){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,80);return;}
         if(seasonState.stageBreakPending){stopWhole('🏆 已推进到阶段赛事节点。先处理阶段赛 / Major，再继续完整赛季模拟。');return;}
       }
       renderSeason();const note=document.getElementById('seasonSimNote');if(note)note.textContent=`⏳ 正在模拟全部常规赛：${seasonState.played}/${seasonState.total} · ${seasonState.wins}胜${seasonState.losses}负`;

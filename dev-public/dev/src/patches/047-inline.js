@@ -530,7 +530,7 @@
   function vwcClose(){
     document.getElementById('vwcOverlay')?.classList.add('ui-hidden');vwcRenderSeasonLayer();
     const rec=vwcEnsureRecord();
-    if(seasonState.v13ResumeWholeAfterWorldCup&&(!rec||rec.completed||!rec.pendingStage)){seasonState.v13ResumeWholeAfterWorldCup=false;setTimeout(()=>{if(typeof v35SimulateWholeSeason==='function')v35SimulateWholeSeason()},140)}
+    if(seasonState.v13ResumeWholeAfterWorldCup&&(!rec||rec.completed||!rec.pendingStage)){seasonState.v13ResumeWholeAfterWorldCup=false;window.__OWL_RUNTIME?.simulation?.resumeWhole?.(140)}
   }
 
   function vwcSeasonBannerMarkup(rec,cfg){

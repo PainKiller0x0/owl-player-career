@@ -501,7 +501,7 @@
   }
   function resumeAfterTradeDecision(){
     const root=tradeRoot(),resume=!!root.resumeWhole;root.resumeWhole=false;
-    if(resume)setTimeout(()=>{if(typeof v35SimulateWholeSeason==='function'&&!seasonState.simulating&&seasonState.played<seasonState.total)v35SimulateWholeSeason()},160);
+    if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(160);
   }
   function closeTrade(){
     const root=tradeRoot();$('#v800TradeOverlay').classList.add('ui-hidden');
@@ -513,8 +513,8 @@
   function showTradeOffer(type,candidate=null,forced=false){
     const root=tradeRoot(),c=candidate||tradeCandidates(1)[0];if(!c)return;
     root.pending={type,team:c.team.name,power:c.power,forced,afterGame:seasonState.played};
-    root.resumeWhole=!!(seasonState.v13WholeSimActive||seasonState.v17WholeActive||seasonState.v18WholeActive||seasonState.b2WholeActive||seasonState.v34WholeActive);
-    seasonState.simulating=false;if(seasonState.timer){clearTimeout(seasonState.timer);seasonState.timer=null}
+    root.resumeWhole=!!window.__OWL_RUNTIME?.simulation?.pauseWhole?.();
+    if(!root.resumeWhole){seasonState.simulating=false;window.__OWL_RUNTIME?.simulation?.clearTimer?.();}
     const avg=avgRating(),content=$('#v800TradeContent'),poor=type==='team',request=type==='request',proj=c.projection||tradeProjection(c);
     if(type==='poach'&&proj&&careerState.contract?.rolePromise&&v826RoleRank(proj.role)<v826RoleRank(careerState.contract.rolePromise)){
       proj.role=careerState.contract.rolePromise;proj.key=v826RoleKey(proj.role);proj.competition='战队承诺维持当前地位';

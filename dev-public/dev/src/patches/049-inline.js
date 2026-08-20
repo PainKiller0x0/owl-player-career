@@ -88,9 +88,7 @@
   // -------------------------------------------------------------------
   let v13WholeToken=0;
   function v13StopWhole(reason=''){
-    seasonState.v13WholeSimActive=false;seasonState.simulating=false;
-    if(reason){const n=document.getElementById('seasonSimNote');if(n)n.textContent=reason}
-    renderSeason();
+    window.__OWL_RUNTIME?.simulation?.stopWhole?.(reason);
   }
   function v13WorldCupDue(){
     const api=window.__OWL_WORLD_CUP;if(!api?.maybeMarkDue)return null;
@@ -102,7 +100,7 @@
     if(stageQualified(s))simulateStagePlayoff(s);else skipStageBreak(s);
     seasonState.stageBreakPending=null;
     if(v13Year()>=2024&&s===2&&seasonState.v71AllStarPending){
-      seasonState.simulating=false;seasonState.v13WholeSimActive=false;seasonState.v71ResumeWholeAfterAllStar=true;renderSeason();setTimeout(()=>typeof v71OpenAllStarWeekend==='function'&&v71OpenAllStarWeekend(),80);return true;
+      window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.v71ResumeWholeAfterAllStar=true;renderSeason();setTimeout(()=>typeof v71OpenAllStarWeekend==='function'&&v71OpenAllStarWeekend(),80);return true;
     }
     return false;
   }
@@ -123,14 +121,14 @@
         if(seasonState.played===before){v13StopWhole('模拟被当前流程节点暂停，请先处理页面上的事件。');return}
         markStageBreakIfNeeded();
 
-        if(careerState.v800Trade?.pending){seasonState.v13WholeSimActive=false;seasonState.simulating=false;renderSeason();return}
-        const due=v13WorldCupDue();if(due){seasonState.v13WholeSimActive=false;seasonState.simulating=false;seasonState.v13ResumeWholeAfterWorldCup=true;renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP.open(),60);return}
-        if(seasonState.eventDue){seasonState.v13WholeSimActive=false;seasonState.simulating=false;seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,80);return}
+        if(careerState.v800Trade?.pending){v13StopWhole('🔄 模拟在交易节点暂停。');return}
+        const due=v13WorldCupDue();if(due){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.v13ResumeWholeAfterWorldCup=true;renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP.open(),60);return}
+        if(seasonState.eventDue){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,80);return}
         if(seasonState.stageBreakPending&&v13ProcessStageBreak())return;
       }
       const note=document.getElementById('seasonSimNote');if(note)note.textContent=`⏳ 正在模拟全部常规赛：${seasonState.played}/${seasonState.total} · ${seasonState.wins}胜${seasonState.losses}负`;
       renderSeason();
-      if(seasonState.played>=seasonState.total){seasonState.v13WholeSimActive=false;seasonState.simulating=false;seasonState.resumeWholeAfterEvent=false;if(note)note.textContent=`✓ 已模拟完整常规赛：${seasonState.wins}胜${seasonState.losses}负。`;renderSeason();return}
+      if(seasonState.played>=seasonState.total){v13StopWhole(`✓ 已模拟完整常规赛：${seasonState.wins}胜${seasonState.losses}负。`);seasonState.resumeWholeAfterEvent=false;return}
       (window.requestAnimationFrame?requestAnimationFrame(()=>setTimeout(step,0)):setTimeout(step,0));
     };
     renderSeason();(window.requestAnimationFrame?requestAnimationFrame(()=>setTimeout(step,0)):setTimeout(step,0));
@@ -141,7 +139,7 @@
   // actually finishes the pending national-team node and closes the panel.
   const wcApi=window.__OWL_WORLD_CUP;
   if(wcApi?.close){
-    const oldClose=wcApi.close;wcApi.close=function(){const out=oldClose();const rec=wcApi.ensure?.();if(seasonState.v13ResumeWholeAfterWorldCup&&(!rec||rec.completed||!rec.pendingStage)){seasonState.v13ResumeWholeAfterWorldCup=false;setTimeout(v13WholeSeason,140)}return out};
+    const oldClose=wcApi.close;wcApi.close=function(){const out=oldClose();const rec=wcApi.ensure?.();if(seasonState.v13ResumeWholeAfterWorldCup&&(!rec||rec.completed||!rec.pendingStage)){seasonState.v13ResumeWholeAfterWorldCup=false;window.__OWL_RUNTIME?.simulation?.resumeWhole?.(140)}return out};
   }
 
   // -------------------------------------------------------------------

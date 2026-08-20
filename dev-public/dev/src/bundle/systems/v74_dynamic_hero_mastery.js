@@ -1561,7 +1561,7 @@
   v35SimulateWholeSeason=function(){
     if(!v762HistoricalEra())return _v762WholeSeasonBase();if(seasonState.simulating||seasonState.played>=seasonState.total)return;seasonState.simulating=true;
     if(seasonState.stageBreakPending){const s=seasonState.stageBreakPending;stageQualified(s)?simulateStagePlayoff(s):skipStageBreak(s);}
-    let guard=0;while(seasonState.played<seasonState.total&&guard++<100){v32SilentRegularGame();markStageBreakIfNeeded();if(seasonState.eventDue&&!gameSettings.autoSeasonEvents){seasonState.simulating=false;seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,80);return;}if(seasonState.stageBreakPending){const s=seasonState.stageBreakPending;stageQualified(s)?simulateStagePlayoff(s):skipStageBreak(s);}}
+    let guard=0;while(seasonState.played<seasonState.total&&guard++<100){v32SilentRegularGame();markStageBreakIfNeeded();if(seasonState.eventDue&&!gameSettings.autoSeasonEvents){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,80);return;}if(seasonState.stageBreakPending){const s=seasonState.stageBreakPending;stageQualified(s)?simulateStagePlayoff(s):skipStageBreak(s);}}
     seasonState.simulating=false;seasonState.stageBreakPending=null;seasonState.resumeWholeAfterEvent=false;const note=document.getElementById('seasonSimNote');if(note)note.textContent=`✓ 已模拟完整${v762Year()}常规赛：${seasonState.wins}胜${seasonState.losses}负。赛季中锦标赛节点已同步结算。`;renderSeason();window.scrollTo({top:0,behavior:'smooth'});
   };
   document.getElementById('fullSimSeasonBtn')?.addEventListener('click',e=>{if(!v762HistoricalEra())return;e.preventDefault();e.stopImmediatePropagation();v35SimulateWholeSeason();},true);
@@ -1620,4 +1620,3 @@
 })();
 
 
-  

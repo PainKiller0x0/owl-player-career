@@ -6,18 +6,6 @@
    ========================================================================== */
     /* ================= V3.8 · 关键事件设置 / 转位竞争 / 退役履历 ================= */
 
-    // 手动处理完整赛季模拟中断的事件后，自动接回“模拟全部常规赛”。
-    const _v38CloseSeasonEventBase=closeSeasonEvent;
-    closeSeasonEvent=function(){
-      const resumeWhole=!!seasonState.resumeWholeAfterEvent;
-      seasonState.resumeWholeAfterEvent=false;
-      _v38CloseSeasonEventBase();
-      if(resumeWhole && seasonState.played<seasonState.total){
-        document.getElementById('seasonSimNote').textContent='关键事件已处理，继续模拟剩余赛季。';
-        setTimeout(v35SimulateWholeSeason,180);
-      }
-    };
-
     function v38RoleCompetition(target,targetOvr){
       const depth=v37RuntimeRoleDepth(careerState.team,target)
         .map(x=>({name:x.name,ovr:Math.round(Number(x.ovr)||70)}))
@@ -57,7 +45,6 @@
         </div>`;
       wrap.querySelectorAll('[data-role-choice]').forEach(btn=>btn.addEventListener('click',()=>applyRoleDecision(btn.dataset.roleChoice)));
     };
-
 
 
 

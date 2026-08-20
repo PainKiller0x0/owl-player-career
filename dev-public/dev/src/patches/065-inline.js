@@ -277,7 +277,7 @@
     }
     if(area&&seasonState.stageBreakPending&&y>=2030){const s=Number(seasonState.stageBreakPending),rec=stageRecord(s),rank=stageEstimatedRank(s),next=y>=2030&&s===3?'EWC · 沙特中立场':`Major ${s}`;area.innerHTML=`<div class="stage-break-card v32-stage-auto"><div class="offseason-kicker">STAGE ${s} COMPLETE</div><h3>Stage ${s} 已结束</h3><div class="stage-break-stats"><div><span>阶段战绩</span><strong>${rec.wins}-${rec.losses}</strong></div><div><span>${y>=2040?'全球':'阶段'}排名</span><strong>第 ${rank}</strong></div><div><span>下一节点</span><strong>${next}</strong></div></div></div>`;}
     if(area&&seasonState.v71LastMajorSummary?.v34Type==='ewc'){
-      const h=seasonState.v71LastMajorSummary;area.innerHTML=`<div class="stage-break-card v71-major-result"><div class="offseason-kicker">EWC · SAUDI ARABIA · NEUTRAL VENUE</div><h3>🏆 ${h.champion}</h3><p>Esports World Cup · Overwatch项目。你的成绩：<strong>${h.result.replace('EWC · Overwatch ','')}</strong>${h.bonusLP?` · +${h.bonusLP} LP`:''} · <strong>全年最高奖金赛事</strong></p><button class="primary-btn" id="v34ContinueEwc">继续赛季 →</button></div>`;document.getElementById('v34ContinueEwc')?.addEventListener('click',()=>{seasonState.v71LastMajorSummary=null;const resume=!!seasonState.v34ResumeWholeAfterMajor;seasonState.v34ResumeWholeAfterMajor=false;renderSeason();if(resume)setTimeout(futureWholeSeason34,120);});syncVersion34();return out;
+      const h=seasonState.v71LastMajorSummary;area.innerHTML=`<div class="stage-break-card v71-major-result"><div class="offseason-kicker">EWC · SAUDI ARABIA · NEUTRAL VENUE</div><h3>🏆 ${h.champion}</h3><p>Esports World Cup · Overwatch项目。你的成绩：<strong>${h.result.replace('EWC · Overwatch ','')}</strong>${h.bonusLP?` · +${h.bonusLP} LP`:''} · <strong>全年最高奖金赛事</strong></p><button class="primary-btn" id="v34ContinueEwc">继续赛季 →</button></div>`;document.getElementById('v34ContinueEwc')?.addEventListener('click',()=>{seasonState.v71LastMajorSummary=null;const resume=!!seasonState.v34ResumeWholeAfterMajor;seasonState.v34ResumeWholeAfterMajor=false;renderSeason();if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(120);});syncVersion34();return out;
     }
     if(area&&seasonState.played>=seasonState.total&&!seasonState.stageBreakPending&&!seasonState.v71LastMajorSummary)renderFinal34(area);
     const sim=document.getElementById('seasonSimNote');if(sim&&/56场/.test(sim.textContent||'')&&y>=2035)sim.textContent=(sim.textContent||'').replace(/56场/g,`${seasonState.total}场`);
@@ -316,7 +316,7 @@
   function openAllStar34(resumeWhole=false){
     if(year34()<2027)return false;const overlay=document.getElementById('seasonEventOverlay'),holder=document.getElementById('seasonEventContent');if(!overlay||!holder)return false;const y=year34(),r=buildAllStar34(),host=y>=2038?ALLSTAR_HOSTS[(y-2038)%ALLSTAR_HOSTS.length]:null,selection=r.selected?(r.starter?'⭐ 全明星首发':'⭐ 全明星替补'):'未入选全明星正赛';
     seasonState.simulating=false;seasonState.v18WholeActive=false;seasonState.v34ResumeWholeAfterAllStar=!!resumeWhole||!!seasonState.v34ResumeWholeAfterMajor;
-    const finish=()=>{overlay.classList.add('hidden');seasonState.v71AllStarPending=false;seasonState.v71LastMajorSummary=null;const resume=!!seasonState.v34ResumeWholeAfterAllStar;seasonState.v34ResumeWholeAfterAllStar=false;seasonState.v34ResumeWholeAfterMajor=false;renderSeason();if(resume)setTimeout(futureWholeSeason34,120);};
+    const finish=()=>{overlay.classList.add('hidden');seasonState.v71AllStarPending=false;seasonState.v71LastMajorSummary=null;const resume=!!seasonState.v34ResumeWholeAfterAllStar;seasonState.v34ResumeWholeAfterAllStar=false;seasonState.v34ResumeWholeAfterMajor=false;renderSeason();if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(120);};
     if(r.selected&&!r.participation){
       holder.innerHTML=`<div class="season-event-top"><span class="season-event-kicker">ALL-STAR INVITATION${host?` · HOST CITY ${host}`:''}</span><span class="season-event-round">Major 2 后</span></div><div class="season-event-icon">⭐</div><h2 class="season-event-title">${y} OWL 全明星邀请${host?` · ${host}`:''}</h2><div class="season-event-copy"><div class="v71-pregame-grid"><div><span>你的身份</span><strong>${selection}</strong></div><div><span>参加项目</span><strong>${allStarEventNames34(r).length} 个项目</strong></div><div><span>赛事性质</span><strong>表演赛 · 不影响联赛排名</strong></div></div><p><strong>你将参加：</strong><br>${allStarEventNames34(r).map(x=>`• ${x}`).join('<br>')}</p><p>你可以选择退出。退出会降低公众关注并提升本赛季状态，但不扣队友信任。</p></div><div class="season-event-choices"><button class="season-event-choice" id="v34AttendAllStar"><div><strong>参加今年全明星 →</strong></div></button><button class="season-event-choice danger" id="v34WithdrawAllStar"><div><strong>退出今年全明星</strong></div></button></div>`;
       overlay.classList.remove('hidden');document.getElementById('v34AttendAllStar').onclick=()=>{window.__OWL_ALLSTAR_DECISION?.attend?.(r);openAllStar34(resumeWhole);};document.getElementById('v34WithdrawAllStar').onclick=()=>{window.__OWL_ALLSTAR_DECISION?.withdraw?.(r);openAllStar34(resumeWhole);};return true;
@@ -342,7 +342,7 @@
     }
     if(!resume)return;
     e.preventDefault();e.stopImmediatePropagation();seasonState.v71LastMajorSummary=null;seasonState.v34ResumeWholeAfterMajor=false;
-    renderSeason();setTimeout(futureWholeSeason34,120);
+    renderSeason();window.__OWL_RUNTIME?.simulation?.resumeWhole?.(120);
   },true);
 
   const _toggleFast34=toggleFastSeasonSimulation;
@@ -358,7 +358,7 @@
   const _wholeFutureBase34=window.__OWL_V18_FULL_SEASON;
   let wholeToken34=0;
   function worldCupDue34(){try{const rec=window.__OWL_WORLD_CUP?.maybeMarkDue?.();return rec&&!rec.completed&&rec.pendingStage?rec:null;}catch(_){return null;}}
-  function stopWhole34(note=''){seasonState.v34WholeActive=false;seasonState.v18WholeActive=false;seasonState.simulating=false;if(note){const n=document.getElementById('seasonSimNote');if(n)n.textContent=note;}renderSeason();}
+  function stopWhole34(note=''){window.__OWL_RUNTIME?.simulation?.stopWhole?.(note);}
   function futureWholeSeason34(){
     if(year34()<2027)return typeof _wholeFutureBase34==='function'?_wholeFutureBase34():undefined;if(seasonState.v34WholeActive)return;const wc=worldCupDue34();if(wc){window.__OWL_WORLD_CUP?.open?.();return;}
     if(seasonState.v71AllStarPending){openAllStar34(true);return;}seasonState.v34WholeActive=true;seasonState.simulating=true;const token=++wholeToken34;
@@ -366,7 +366,7 @@
     if(resolveBreak())return;
     const step=()=>{if(token!==wholeToken34||!seasonState.v34WholeActive)return;let batch=0;while(batch++<10&&Number(seasonState.played)<Number(seasonState.total)){
       const before=Number(seasonState.played);window.__OWL_V16_SEASON_BATCHING=true;try{v32SilentRegularGame();}finally{window.__OWL_V16_SEASON_BATCHING=false;}if(Number(seasonState.played)<=before){stopWhole34('模拟被当前流程节点暂停。');return;}markStageBreakIfNeeded();if(resolveBreak())return;
-      if(careerState.v800Trade?.pending){stopWhole34('🔄 模拟在交易节点暂停。');return;}const world=worldCupDue34();if(world){stopWhole34();setTimeout(()=>window.__OWL_WORLD_CUP?.open?.(),60);return;}if(seasonState.currentEvent||seasonState.eventDue){seasonState.v34WholeActive=false;seasonState.simulating=false;seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,60);return;}
+      if(careerState.v800Trade?.pending){stopWhole34('🔄 模拟在交易节点暂停。');return;}const world=worldCupDue34();if(world){stopWhole34();setTimeout(()=>window.__OWL_WORLD_CUP?.open?.(),60);return;}if(seasonState.currentEvent||seasonState.eventDue){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,60);return;}
     }
     if(Number(seasonState.played)>=Number(seasonState.total)){stopWhole34(`✓ 常规赛与阶段赛事已完成：${seasonState.wins}胜${seasonState.losses}负。`);return;}const note=document.getElementById('seasonSimNote');if(note)note.textContent=`⏳ 正在模拟全部常规赛：${seasonState.played}/${seasonState.total} · ${seasonState.wins}胜${seasonState.losses}负`;renderSeason();setTimeout(step,8);};setTimeout(step,0);
   }

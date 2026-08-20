@@ -24,10 +24,6 @@
     const note=document.getElementById('seasonSimNote');
     if(note&&actions&&note.previousElementSibling!==actions)actions.insertAdjacentElement('afterend',note);
   }
-  if(typeof renderSeason==='function'){
-    const base=renderSeason;
-    renderSeason=function(){const out=base.apply(this,arguments);repairSeasonTrack();return out;};
-  }
   function repairCareerSeasonAction(){
     const btn=document.getElementById('startSeasonBtn'),card=document.getElementById('careerContractCard');
     if(!btn||!card||!seasonState?.active||Number(careerState?.seasonYear||0)<2024)return;
@@ -36,10 +32,8 @@
     const anchor=card.querySelector('.rc27-contract-facts')||card.querySelector('.contract-role')||card.querySelector('.contract-team-line');
     if(anchor&&anchor.nextElementSibling!==btn)anchor.insertAdjacentElement('afterend',btn);
   }
-  if(typeof renderCareerTeam==='function'){
-    const base=renderCareerTeam;
-    renderCareerTeam=function(){const out=base.apply(this,arguments);repairCareerSeasonAction();return out;};
-  }
+  window.__OWL_RUNTIME?.render?.register('renderSeason','b1-season-track',repairSeasonTrack);
+  window.__OWL_RUNTIME?.render?.register('renderCareerTeam','b1-career-season-action',repairCareerSeasonAction);
   repairSeasonTrack();repairCareerSeasonAction();
 
   /* ---------------------------------------------------------------
@@ -306,10 +300,8 @@
       return a;
     };
   }
-  if(typeof renderRegularSeasonAwards==='function'){
-    const base=renderRegularSeasonAwards;
-    renderRegularSeasonAwards=function(){
-      const out=base.apply(this,arguments),a=ensureRegularSeasonAwards();
+  function decorateRegularSeasonAwardsB1(){
+      const a=ensureRegularSeasonAwards();
       const cards=[...document.querySelectorAll('#regularAwardsContent .award-card')];
       const card=cards.find(c=>/社区之星|Dennis Hawelka/.test(c.querySelector('.award-card-head h3')?.textContent||''));
       if(card){
@@ -317,9 +309,8 @@
         const topCopy=document.querySelector('#awardsScreen .brand p');if(topCopy)topCopy.textContent='MVP · 职责之星 · 最佳新秀 · Dennis Hawelka奖';
         const rank=card.querySelector('.award-rank-box strong');if(rank&&!a?.hawelka?.userEligible)rank.textContent='未满足评选条件';
       }
-      return out;
-    };
   }
+  window.__OWL_RUNTIME?.render?.register('renderRegularSeasonAwards','b1-awards',decorateRegularSeasonAwardsB1);
   if(typeof deriveSeasonHonors==='function'){
     const base=deriveSeasonHonors;
     deriveSeasonHonors=function(){
@@ -330,11 +321,9 @@
     };
   }
 
-  /* Final render wrapper: install button/feed/modal after every later-era bracket renderer. */
-  if(typeof renderPlayoffs==='function'){
-    const base=renderPlayoffs;
-    renderPlayoffs=function(){const out=base.apply(this,arguments);installWholePlayoffButton();renderPlayoffFeed();setTimeout(maybeShowFinalSettlement,40);return out;};
-  }
+  /* Final render hook: install button/feed/modal after every later-era bracket renderer. */
+  function decoratePlayoffsB1(){installWholePlayoffButton();renderPlayoffFeed();setTimeout(maybeShowFinalSettlement,40);}
+  window.__OWL_RUNTIME?.render?.register('renderPlayoffs','b1-playoffs',decoratePlayoffsB1);
   installWholePlayoffButton();renderPlayoffFeed();
   window.__OWL_ALPHA1_BATCH1={patch:PATCH,repairSeasonTrack,repairCareerSeasonAction,heroRanking,hawelkaUserEligible,simulateWholePlayoffs:simulateWholePlayoffsB1,showFinalSettlement,patchWorldCupUi};
 })();

@@ -248,7 +248,7 @@
         // 默认在任何关键事件处停下。开启设置后，v32SilentRegularGame 会自动完成选择并继续。
         if(seasonState.eventDue){
           if(boundary&&!seasonState.stageProcessed.includes(boundary))seasonState.stageBreakPending=boundary;
-          seasonState.simulating=false;
+          window.__OWL_RUNTIME?.simulation?.pauseWhole?.();
           seasonState.resumeWholeAfterEvent=true;
           document.getElementById('seasonSimNote').textContent='模拟在关键事件处暂停。处理完事件后会继续模拟剩余赛季。';
           renderSeason();
@@ -311,7 +311,6 @@
     // 新角色重开时清理一次性特殊事件记录。
     const _v35ResetBuildOnlyBase=resetBuildOnly;
     resetBuildOnly=function(){_v35ResetBuildOnlyBase();delete careerState.specialEventsTriggered;delete seasonState.specialForcedEventId;};
-
 
 
 

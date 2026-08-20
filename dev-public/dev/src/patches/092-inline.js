@@ -27,11 +27,7 @@
     renderContractMarket=function(wrap){const out=base.apply(this,arguments);owl92RelocateMarketTags(wrap||document);return out;};
     window.__OWL92_MARKET_WRAPPED=true;
   }
-  if(typeof renderSeason==='function'&&!window.__OWL92_SEASON_WRAPPED){
-    const base=renderSeason;
-    renderSeason=function(){const out=base.apply(this,arguments);owl92UpdateSeasonCopy();return out;};
-    window.__OWL92_SEASON_WRAPPED=true;
-  }
+  window.__OWL_RUNTIME?.render?.register('renderSeason','b2-season-copy',owl92UpdateSeasonCopy);
 
   if(!document.getElementById('owl92StabilityStyle')){
     const style=document.createElement('style');style.id='owl92StabilityStyle';style.textContent=`

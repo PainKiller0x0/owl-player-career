@@ -617,9 +617,7 @@
       if(seasonState.currentEvent) return;
       if(!force && !seasonState.eventDue) return;
       if(force && seasonState.simulating) {
-        seasonState.simulating=false;
-        seasonState.resumeFastAfterEvent=true;
-        if(seasonState.timer) clearTimeout(seasonState.timer);
+        window.__OWL_RUNTIME?.simulation?.pauseFast?.();
       }
       const event=chooseSeasonEvent();
       seasonState.currentEvent={event,resolved:false,forced:force};
@@ -666,14 +664,7 @@
       document.getElementById('seasonEventOverlay').classList.add('hidden');
       seasonState.currentEvent=null;
       renderSeason();
-      if(seasonState.resumeFastAfterEvent && seasonState.played<seasonState.total) {
-        seasonState.resumeFastAfterEvent=false;
-        seasonState.simulating=true;
-        document.getElementById('seasonSimNote').textContent='事件处理完成，继续模拟剩余常规赛。';
-        renderSeason();
-        seasonState.timer=setTimeout(fastSeasonStep,450);
-      }
+      window.__OWL_RUNTIME?.simulation?.resumeAfterEvent?.({message:'事件处理完成，继续模拟剩余常规赛。',delay:450,wholeDelay:180});
     }
-
 
 

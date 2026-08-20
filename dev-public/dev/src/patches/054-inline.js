@@ -104,7 +104,7 @@
   let whole18=0;
   function resolveStage18(){const st=Number(seasonState.stageBreakPending)||0;if(!st)return;window.__OWL_V16_SEASON_BATCHING=true;try{if(typeof v71IsOwl2==='function'&&v71IsOwl2())v71RunMajor(st);else (stageQualified(st)?simulateStagePlayoff(st):skipStageBreak(st));}finally{window.__OWL_V16_SEASON_BATCHING=false}seasonState.stageBreakPending=null;seasonState.v71LastMajorSummary=null;seasonState.v769TournamentResultPending=null;if(st===2&&seasonState.v71AllStarPending){try{if(typeof v71BuildAllStarResult==='function')v71BuildAllStarResult()}catch(e){}seasonState.v71AllStarPending=false;}}
   function worldCupBlock18(){const api=window.__OWL_WORLD_CUP,r=api?.maybeMarkDue?.();return r&&!r.completed&&r.pendingStage?r:null}
-  function stop18(msg=''){seasonState.v18WholeActive=false;seasonState.v17WholeActive=false;seasonState.simulating=false;window.__OWL_V16_SEASON_BATCHING=false;const note=document.getElementById('seasonSimNote');if(note&&msg)note.textContent=msg;renderSeason();}
+  function stop18(msg=''){window.__OWL_RUNTIME?.simulation?.stopWhole?.(msg);}
   function finishAnnualPostseason18(){
     renderSeason();
     // 2020-23 regional play-in resolves immediately from its button.
@@ -122,11 +122,11 @@
         const before=n18(seasonState.played);window.__OWL_V16_SEASON_BATCHING=true;try{v32SilentRegularGame()}finally{window.__OWL_V16_SEASON_BATCHING=false}if(n18(seasonState.played)<=before){stop18('模拟被当前流程节点暂停，请先处理页面上的节点。');return;}
         markStageBreakIfNeeded();if(seasonState.stageBreakPending)resolveStage18();
         if(careerState.v800Trade?.pending){stop18('🔄 模拟在交易节点暂停。先决定自己的下一站。');return;}
-        const world=worldCupBlock18();if(world){seasonState.v18WholeActive=false;seasonState.simulating=false;seasonState.v13ResumeWholeAfterWorldCup=true;renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP?.open?.(),50);return;}
-        if(seasonState.currentEvent||seasonState.eventDue){seasonState.v18WholeActive=false;seasonState.simulating=false;seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,60);return;}
+        const world=worldCupBlock18();if(world){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.v13ResumeWholeAfterWorldCup=true;renderSeason();setTimeout(()=>window.__OWL_WORLD_CUP?.open?.(),50);return;}
+        if(seasonState.currentEvent||seasonState.eventDue){window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;renderSeason();setTimeout(openScheduledSeasonEvent,60);return;}
       }
       renderSeason();const note=document.getElementById('seasonSimNote');if(note)note.textContent=`⏳ 正在模拟全部常规赛：${seasonState.played}/${seasonState.total} · ${seasonState.wins}胜${seasonState.losses}负`;
-      if(n18(seasonState.played)>=n18(seasonState.total)){seasonState.v18WholeActive=false;seasonState.simulating=false;renderSeason();const done=document.getElementById('seasonSimNote');if(done)done.textContent='✓ 常规赛与阶段赛事已全部模拟完成。年终季后赛留给你亲自打。';return;}
+      if(n18(seasonState.played)>=n18(seasonState.total)){stop18('✓ 常规赛与阶段赛事已全部模拟完成。年终季后赛留给你亲自打。');return;}
       setTimeout(step,8);
     };renderSeason();setTimeout(step,0);
   }

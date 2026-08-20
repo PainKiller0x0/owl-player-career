@@ -583,7 +583,7 @@
   function v71OpenAllStarWeekend(){
     if(!v71IsOwl2())return;const r=v71BuildAllStarResult(),overlay=document.getElementById('seasonEventOverlay'),holder=document.getElementById('seasonEventContent');if(!overlay||!holder){seasonState.v71AllStarPending=false;renderSeason();return;}
     const selection=r.selected?(r.starter?'⭐ 全明星首发':'⭐ 全明星替补'):'未入选全明星正赛';
-    const closeAllStar=()=>{overlay.classList.add('hidden');seasonState.v71AllStarPending=false;const resume=!!seasonState.v71ResumeWholeAfterAllStar;seasonState.v71ResumeWholeAfterAllStar=false;seasonState.v71LastMajorSummary=null;renderSeason();if(resume)setTimeout(v35SimulateWholeSeason,180);};
+    const closeAllStar=()=>{overlay.classList.add('hidden');seasonState.v71AllStarPending=false;const resume=!!seasonState.v71ResumeWholeAfterAllStar;seasonState.v71ResumeWholeAfterAllStar=false;seasonState.v71LastMajorSummary=null;renderSeason();if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(180);};
     if(r.selected&&!r.participation){
       const events=v71AllStarEventNames(r);
       holder.innerHTML=`<div class="season-event-top"><span class="season-event-kicker">ALL-STAR INVITATION · 参赛决定</span><span class="season-event-round">Major 2 后</span></div><div class="season-event-icon">⭐</div><h2 class="season-event-title">${v71Year()} OWL 全明星周末邀请</h2><div class="season-event-copy"><p>你已经入选今年的全明星。先决定去不去，再看比赛结果——总不能奖杯都发完了才问选手有没有上飞机。</p><div class="v71-pregame-grid"><div><span>你的身份</span><strong>${selection}</strong></div><div><span>本届安排</span><strong>${events.length} 个项目</strong></div><div><span>赛事性质</span><strong>表演赛 · 不影响联赛排名</strong></div></div><p><strong>你将参加：</strong><br>${events.map(x=>`• ${x}`).join('<br>')}</p><p>退出全明星会降低公众关注，但不影响队友信任；同时减少赛程消耗，让本赛季状态更好。</p></div><div class="season-event-choices"><button class="season-event-choice" id="v71AttendAllStar"><div><strong>参加今年全明星 →</strong><p>按当前项目安排出赛。</p></div></button><button class="season-event-choice danger" id="v71WithdrawAllStar"><div><strong>退出今年全明星</strong><p>公众关注下降 · 本赛季状态提升。</p></div></button></div>`;
@@ -620,7 +620,7 @@
     document.getElementById('seasonSimNote').textContent=`第 ${seasonState.played} 场快速结算完成：${seasonState.results[seasonState.played-1]==='win'?'胜利':'失利'}。`;
     renderSeason();
     if(seasonState.stageBreakPending){seasonState.simulating=false;if(seasonState.timer)clearTimeout(seasonState.timer);seasonState.timer=null;return;}
-    if(seasonState.eventDue){seasonState.simulating=false;seasonState.resumeFastAfterEvent=true;setTimeout(openScheduledSeasonEvent,180);return;}
+    if(seasonState.eventDue){window.__OWL_RUNTIME?.simulation?.pauseFast?.();setTimeout(openScheduledSeasonEvent,180);return;}
     if(seasonState.played>=seasonState.total){seasonState.simulating=false;renderSeason();return;}
     seasonState.timer=setTimeout(fastSeasonStep,420);
   };
@@ -638,7 +638,7 @@
       v32SilentRegularGame();
       markStageBreakIfNeeded();
       if(seasonState.eventDue){
-        seasonState.simulating=false;seasonState.resumeWholeAfterEvent=true;
+        window.__OWL_RUNTIME?.simulation?.pauseWhole?.();seasonState.resumeWholeAfterEvent=true;
         document.getElementById('seasonSimNote').textContent='模拟在关键事件处暂停。处理完事件后继续跑完56场。';
         renderSeason();setTimeout(openScheduledSeasonEvent,80);return;
       }
