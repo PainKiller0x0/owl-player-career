@@ -57,7 +57,9 @@ if defined CLOUDFLARE_API_TOKEN (
 )
 
 if not defined CLOUDFLARE_API_TOKEN (
-  echo First deployment needs a Cloudflare API token.
+  call :validate_wrangler_auth
+  if not errorlevel 1 goto cloudflare_auth_ready
+  echo No saved Cloudflare API token or Wrangler login was found.
   echo A browser page will open now. Create a Custom Token with:
   echo   Account - Account Settings - Read
   echo   Account - Workers Scripts - Edit
@@ -80,6 +82,7 @@ if not defined CLOUDFLARE_API_TOKEN (
   )
 )
 
+:cloudflare_auth_ready
 echo.
 echo Uploading dev-public\dev to owl-game-dev...
 set "DEPLOY_LOG=%~dp0.deploy-dev-last.log"
@@ -124,4 +127,8 @@ exit /b 1
 
 :validate_token
 powershell -NoProfile -Command "$t=$env:CLOUDFLARE_API_TOKEN; if ($t -match '^[A-Za-z0-9_-]{32,}$') { exit 0 } else { exit 1 }"
+exit /b %ERRORLEVEL%
+
+:validate_wrangler_auth
+call npx --yes wrangler@4.120.0 whoami >nul 2>&1
 exit /b %ERRORLEVEL%

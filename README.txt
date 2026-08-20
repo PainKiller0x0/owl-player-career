@@ -29,8 +29,9 @@ Deployment behavior:
 - deploy-owl-game-prod.bat remains the production helper.
 - deploy-owl-game.bat is retained for the old production-first workflow.
 
-First use only:
-- The batch file opens Cloudflare's API-token page.
+First use only (choose either route):
+- If Wrangler is already logged in, the batch file reuses that OAuth login.
+- Otherwise it opens Cloudflare's API-token page.
 - Create a Custom Token scoped to Jack0hjj@qq.com's Account with:
   Account > Account Settings > Read
   Account > Workers Scripts > Edit
@@ -38,6 +39,7 @@ First use only:
 - Paste the token itself into the opened terminal once, then press Enter.
 - The token is stored only in your Windows user profile:
   %APPDATA%\owl-game\cloudflare-api-token
+- To create the OAuth login without an API token, run `npx wrangler@4.120.0 login --device` once.
 
 Safety:
 - Production and development deploy to separate Workers, so the development files cannot overwrite the live game.
