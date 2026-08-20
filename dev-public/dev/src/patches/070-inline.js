@@ -116,10 +116,8 @@
     const overlay=document.getElementById('seasonEventContent');
     if(overlay&&/\bFT3\b/.test(overlay.textContent||''))teachOnce('ft3',overlay,'FT3：先赢 3 张地图的一方赢下这个系列赛。');
   }
-  const baseMarket=renderContractMarket;
-  renderContractMarket=function(wrap){const out=baseMarket.apply(this,arguments);compactMarket(wrap);return out;};
-  const baseSeason=renderSeason;
-  renderSeason=function(){const out=baseSeason.apply(this,arguments);scanTermTips();return out;};
+  window.__OWL_RUNTIME?.render?.register('renderContractMarket','v19-market-compact',compactMarket);
+  window.__OWL_RUNTIME?.render?.register('renderSeason','v19-term-scan',scanTermTips);
   const wcBody=document.getElementById('vwcBody');if(wcBody)new MutationObserver(()=>compactWorldCup()).observe(wcBody,{childList:true,subtree:true});
   const eventBody=document.getElementById('seasonEventContent');if(eventBody)new MutationObserver(()=>scanTermTips()).observe(eventBody,{childList:true,subtree:true});
   compactWorldCup();scanTermTips();

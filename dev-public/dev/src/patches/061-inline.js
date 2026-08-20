@@ -77,14 +77,8 @@
 
   // Copy cleanup is applied in the source modules; this final patch only handles flow migration/version sync.
 
-  function sync31(){
-    trimStatic31();
-  }
-  sync31();
-  const _season31=renderSeason;renderSeason=function(){const out=_season31.apply(this,arguments);sync31();return out;};
-  const _summary31=renderSeasonSummary;renderSeasonSummary=function(){const out=_summary31.apply(this,arguments);sync31();return out;};
-  const _team31=renderCareerTeam;renderCareerTeam=function(){const out=_team31.apply(this,arguments);sync31();return out;};
-  const _match31=renderMatch;renderMatch=function(){const out=_match31.apply(this,arguments);sync31();return out;};
+  trimStatic31();
+  ['renderSeason','renderSeasonSummary','renderCareerTeam','renderMatch'].forEach(name=>window.__OWL_RUNTIME?.render?.register(name,'v31-static-trim',trimStatic31));
 
   window.__OWL_V25_UX={version:VER};
 })();

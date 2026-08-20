@@ -33,7 +33,7 @@ window.__OWL_RUNTIME.simulation.resumeAfterEvent(options)
 window.__OWL_RUNTIME.simulation.clearTimer()
 ```
 
-`render.register` 对同一个渲染函数只安装一个 wrapper，再通过 keyed hook 运行多个后处理。`key` 用来保证重复加载或重复注册不会产生重复副作用。
+`render.register` 对同一个渲染函数只安装一个 wrapper，再通过 keyed hook 运行多个后处理。`key` 用来保证重复加载或重复注册不会产生重复副作用。当前已迁移的历史后处理包括 RC18 的英雄专项/整季按钮文案、RC10/RC11 的页面文案清理、RC12 的 Stage 结算提示、RC22 的报价/术语/赛事卡片后处理，以及 Alpha1 的报价标签位置修正。
 
 ## 3. 渲染协议
 
@@ -113,7 +113,7 @@ fastSeasonStep
 - 新的整季模拟只实现“本年份如何推进一场”和“本年份遇到什么节点”；暂停、终止、恢复统一调用 Shared Runtime。
 - 新的事件类型复用 `season_events.js` 的弹窗生命周期；关闭弹窗只负责清理 UI，继续模拟交给 `resumeAfterEvent`。
 - 不把 Shared Runtime 变成数值规则仓库。它的深度应保持小：只管理生命周期和跨模块协议。
-- 历史 patch 中只做公共版本同步的 wrapper 已删除；包含年份功能的 wrapper 只保留年份后处理。以后新增公共渲染修正使用 `render.register`，若迁移旧 wrapper，必须先证明它不包含年份功能，再用 `node --check`、静态 hook 计数和线上 dev 回归验证。
+- 历史 patch 中只做公共版本同步的 wrapper 已删除；可证明幂等的渲染后处理已逐步迁移到 `render.register`，包含前置状态改写、年份流程判断或事件副作用的 wrapper 继续保留。以后新增公共渲染修正使用 `render.register`，若迁移旧 wrapper，必须先证明它不包含年份功能或流程副作用，再用 `node --check`、静态 hook 计数和线上 dev 回归验证。
 
 ## 7. 验证清单
 

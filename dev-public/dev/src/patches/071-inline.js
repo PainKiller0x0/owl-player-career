@@ -106,8 +106,7 @@
     }
   }
 
-  const baseRender=renderSeason;
-  renderSeason=function(){const out=baseRender.apply(this,arguments);decorateTournamentCards();return out;};
+  window.__OWL_RUNTIME?.render?.register('renderSeason','v20-tournament-cards',decorateTournamentCards);
 
   decorateTournamentCards();
   window.__OWL_V20_TOURNAMENT_UX=Object.freeze({version:VER,decorate:decorateTournamentCards,playerPath:normalizedPlayerPath});

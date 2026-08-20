@@ -22,11 +22,7 @@
     progress.innerHTML=progress.innerHTML.replace(/全赛季\s*\d+\s*\/\s*\d+/,`全赛季 ${wins}胜 ${losses}负`);
   }
 
-  if(typeof renderContractMarket==='function'&&!window.__OWL92_MARKET_WRAPPED){
-    const base=renderContractMarket;
-    renderContractMarket=function(wrap){const out=base.apply(this,arguments);owl92RelocateMarketTags(wrap||document);return out;};
-    window.__OWL92_MARKET_WRAPPED=true;
-  }
+  window.__OWL_RUNTIME?.render?.register('renderContractMarket','v92-market-tags',root=>owl92RelocateMarketTags(root||document));
   window.__OWL_RUNTIME?.render?.register('renderSeason','b2-season-copy',owl92UpdateSeasonCopy);
 
   if(!document.getElementById('owl92StabilityStyle')){

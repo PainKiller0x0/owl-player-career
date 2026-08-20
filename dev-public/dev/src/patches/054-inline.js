@@ -87,7 +87,7 @@
     document.getElementById('v18ApplyHeroTrain')?.addEventListener('click',()=>{h.results=window.__OWL_V800_HERO_IO.train(h.selected,year);h.done=true;renderOffseason();window.__OWL_PUBLIC_BETA?.autosave?.('hero-training')});
   }
   if(typeof renderTrainingCamp==='function'){
-    const baseTraining=renderTrainingCamp;renderTrainingCamp=function(wrap){const out=baseTraining.call(this,wrap);renderHeroLab18(wrap);return out;};
+    window.__OWL_RUNTIME?.render?.register('renderTrainingCamp','v18-hero-lab',renderHeroLab18);
   }
   function focusHistoricalHeroLab18(){
     setTimeout(()=>{const hero=document.querySelector('#offseasonContent .v800-hero-training');if(!hero)return;hero.scrollIntoView({behavior:'smooth',block:'center'});try{hero.animate([{boxShadow:'0 0 0 0 rgba(255,107,61,0)'},{boxShadow:'0 0 0 3px rgba(255,107,61,.55)'},{boxShadow:'0 0 0 0 rgba(255,107,61,0)'}],{duration:900,easing:'ease-out'});}catch(e){}},60);
@@ -132,6 +132,7 @@
   }
   window.__OWL_V18_FULL_SEASON=fullSeason18;v35SimulateWholeSeason=fullSeason18;
 
-  const renderSeason18Base=renderSeason;renderSeason=function(...args){const out=renderSeason18Base.apply(this,args);const full=document.getElementById('fullSimSeasonBtn');if(full)full.textContent='🚀 模拟全部常规赛';return out;};
+  function syncFullSeasonButton18(){const full=document.getElementById('fullSimSeasonBtn');if(full)full.textContent='🚀 模拟全部常规赛';}
+  window.__OWL_RUNTIME?.render?.register('renderSeason','v18-full-season-copy',syncFullSeasonButton18);
   window.__OWL_V18={version:V18,regularMaps:regularMaps18,playoffMaps:playoffMaps18,heroState:heroState18,fullSeason:fullSeason18};
 })();

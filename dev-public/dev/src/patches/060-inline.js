@@ -36,9 +36,7 @@
     else if(typeof v35SimulateWholeSeason==='function')v35SimulateWholeSeason();
   },true);
 
-  const _team30=renderCareerTeam;renderCareerTeam=function(){const out=_team30.apply(this,arguments);syncLeague30();return out;};
-  const _season30=renderSeason;renderSeason=function(){const out=_season30.apply(this,arguments);syncLeague30();return out;};
-  const _match30=renderMatch;renderMatch=function(){const out=_match30.apply(this,arguments);syncLeague30();return out;};
+  ['renderCareerTeam','renderSeason','renderMatch'].forEach(name=>window.__OWL_RUNTIME?.render?.register(name,'v30-league-sync',syncLeague30));
   syncLeague30();
   window.__OWL_V24_UX={version:VER,league:league30};
 })();

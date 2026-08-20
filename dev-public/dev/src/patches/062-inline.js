@@ -24,9 +24,7 @@
     },0);
   }
 
-  const _season32=renderSeason;
-  renderSeason=function(){
-    const out=_season32.apply(this,arguments);
+  function polishSeason32(){
     if(Number(careerState.seasonYear)>=2024){
       const area=document.getElementById('seasonCompleteArea');
       if(seasonState.stageBreakPending&&area){
@@ -37,8 +35,8 @@
       const sim=document.getElementById('seasonSimNote');
       if(sim&&/三届Major均按阶段节点同步结算/.test(sim.textContent||''))sim.textContent=`✓ 常规赛已完成：${seasonState.wins}胜${seasonState.losses}负。`;
     }
-    return out;
-  };
+  }
+  window.__OWL_RUNTIME?.render?.register('renderSeason','v32-season-polish',polishSeason32);
 
   // Recurring playoff header: keep the series format and actual decision order only.
   const _openPlayoff32=openNextPlayoffMatch;
