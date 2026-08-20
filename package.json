@@ -1,0 +1,14 @@
+{
+  "name": "owl-player-career-qa",
+  "private": true,
+  "version": "0.0.0",
+  "description": "QA tooling for OWL Player Career",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}

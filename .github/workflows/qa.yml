@@ -217,5 +217,5 @@ jobs:
             echo "- Commit: \`${GITHUB_SHA}\`"
             echo "- Gate: release structure / JS syntax / local assets / native dialogs / whitespace"
             echo ""
-            echo "后续计划：静态门禁稳定后，再接 Playwright 新档、整季、存读档与多视口 E2E。"
+            echo "浏览器门禁：由独立的 OWL Playwright E2E 工作流负责新档、整季、存读档与多视口回归。"
           } >> "$GITHUB_STEP_SUMMARY"
