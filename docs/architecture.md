@@ -16,6 +16,7 @@
 | Era Adapter | `src/patches/049-inline.js`、`053-inline.js`、`054-inline.js`、`065-inline.js`、`091-inline.js`、`src/bundle/systems/v71_owl2_competitive_layer.js`、`v74_dynamic_hero_mastery.js` | 年份规则、阶段节点、地图池、队伍与赛事差异 | 自己重新实现公共暂停/恢复协议 |
 | Shared Runtime | `src/modules/094-shared.runtime.js` | 渲染 hook、版本元信息、模拟生命周期、事件恢复 | 比赛胜负、阶段资格、奖项数值 |
 | Feature Patch | `src/patches/090-inline.js`、`091-inline.js`、`092-inline.js`、`094-inline.js` | 单一 UI 修正或功能后处理 | 复制一套 `renderX` 包装生命周期 |
+| Persistence / Modal | `src/patches/044-inline.js`、`094-inline.js` | 存档主档/可重建副本、恢复降级、游戏内确认框 | 直接调用浏览器原生 `alert / confirm / prompt` |
 
 ### Shared Runtime 接口
 
@@ -79,6 +80,10 @@ start Adapter
 
 `stopWhole(message)` 是终止而非暂停：它清除生命周期状态、刷新提示并重新渲染赛季页。
 
+### Persistence fallback
+
+`044-inline.js` 以槽位主档为权威数据，备份和紧急恢复点都是可重建副本。写入遇到 `QuotaExceededError` 时，先清理所有槽位的备份/恢复点，再重试主档；主档成功后，即使恢复点因剩余空间不足而跳过，也不能把这次保存标记为失败。导出 JSON 是存储紧张时的显式兜底路径。确认类交互统一通过 `window.__OWL_CONFIRM` 转发到游戏内 modal，业务模块不再直接依赖浏览器原生对话框。
+
 ### Fast simulation
 
 普通快速模拟只使用 `resumeFastAfterEvent`：
@@ -113,6 +118,8 @@ fastSeasonStep
 - 新的整季模拟只实现“本年份如何推进一场”和“本年份遇到什么节点”；暂停、终止、恢复统一调用 Shared Runtime。
 - 新的事件类型复用 `season_events.js` 的弹窗生命周期；关闭弹窗只负责清理 UI，继续模拟交给 `resumeAfterEvent`。
 - 不把 Shared Runtime 变成数值规则仓库。它的深度应保持小：只管理生命周期和跨模块协议。
+- 存档写入不得让备份副本阻塞主档；新增持久化字段时必须考虑完整快照在浏览器 quota 下的降级行为，并保持导出 JSON 可用。
+- 需要确认的业务动作统一走 `window.__OWL_CONFIRM` / `__OWL_V16_MODAL`，不得新增原生 `alert / confirm / prompt`。
 - 历史 patch 中只做公共版本同步的 wrapper 已删除；可证明幂等的渲染后处理已逐步迁移到 `render.register`，包含前置状态改写、年份流程判断或事件副作用的 wrapper 继续保留。以后新增公共渲染修正使用 `render.register`，若迁移旧 wrapper，必须先证明它不包含年份功能或流程副作用，再用 `node --check`、静态 hook 计数和线上 dev 回归验证。
 
 ## 7. 验证清单
@@ -123,3 +130,4 @@ fastSeasonStep
 2. `git diff --check` 无新增空白错误。
 3. Shared Runtime 行为测试覆盖：标题稳定、whole 暂停清 flag、whole 恢复、普通事件恢复、render hook 只包装一次。
 4. 线上 dev 页面检查：继续生涯、模拟全部常规赛、事件处理后继续、交易处理后继续，且浏览器页签标题不闪回旧 RC 版本。
+5. 存档写入遇到 quota 时，验证主档仍可保存、重新读档和导出；确认界面只使用游戏内 modal。
