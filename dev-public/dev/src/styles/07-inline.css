@@ -14,7 +14,7 @@
 .v800-overlay.ui-hidden{display:none}
 .v800-modal{width:min(900px,100%);max-height:min(90vh,900px);overflow:auto;border:1px solid var(--line);border-radius:22px;background:var(--panel-solid);box-shadow:0 24px 70px rgba(0,0,0,.36);padding:18px}
 .v800-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:13px}.v800-modal-head h2{margin:0;font-size:22px}.v800-modal-head p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
-.v800-close{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;width:34px;height:34px;cursor:pointer}
+.v800-close{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;width:40px;height:40px;cursor:pointer}
 .v800-save-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .v800-save-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.36);min-width:0}
 .v800-save-card.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,126,58,.09)}
