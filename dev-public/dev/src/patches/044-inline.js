@@ -8,7 +8,7 @@
   const GAME_VERSION='2.0 Alpha 1 · Living World Foundation';
   const INTERNAL_VERSION='V10.0.0';
   const SAVE_VERSION=1;
-  const SLOT_COUNT=3;
+  const SLOT_COUNT=10;
   const KEY_PREFIX='owl_player_path_public_save_';
   const CURRENT_SLOT_KEY='owl_player_path_current_slot_v1';
   const RECOVERY_KEY='owl_player_path_recovery_v1';
@@ -309,7 +309,7 @@
       saveBody=`<div class="v800-save-empty">还没有读取到当前文件对应的本机存档。${fileMode?'如有旧版JSON备份，可直接点“导入旧档JSON”。':''}</div>`;
     }
     const fileWarning=fileMode?'<div style="margin-top:8px;font-size:9px;line-height:1.55;color:var(--muted)">⚠ 本地HTML请始终使用固定文件名 <b>OWL选手之路.html</b>，升级时直接覆盖。长档建议额外导出JSON。</div>':'';
-    box.innerHTML=`<div class="v800-cover-save-head"><strong>💾 本机生涯存档</strong><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="secondary-btn" id="v802CoverImport" type="button">导入旧档JSON</button><button class="secondary-btn" id="v800ManageSaves" type="button">管理3个档位</button></div></div>${saveBody}${fileWarning}`;
+    box.innerHTML=`<div class="v800-cover-save-head"><strong>💾 本机生涯存档</strong><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="secondary-btn" id="v802CoverImport" type="button">导入旧档JSON</button><button class="secondary-btn" id="v800ManageSaves" type="button">管理10个档位</button></div></div>${saveBody}${fileWarning}`;
     $('#v800ManageSaves')?.addEventListener('click',()=>openSaveManager('manage'));
     $('#v800ContinueLatest')?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();const btn=e.currentTarget;if(btn.dataset.loading)return;btn.dataset.loading='1';btn.disabled=true;try{latest&&loadSlot(latest.slot)}finally{setTimeout(()=>{btn.disabled=false;delete btn.dataset.loading},120)}});
     $('#v802CoverImport')?.addEventListener('click',()=>{importTargetSlot=getCurrentSlot();$('#v800ImportInput')?.click()});
@@ -342,7 +342,7 @@
   function closeSaveManager(){$('#v800SaveOverlay').classList.add('ui-hidden')}
   $('#v800SaveClose').onclick=closeSaveManager;
   $('#v800ImportBtn').onclick=()=>{importTargetSlot=getCurrentSlot();$('#v800ImportInput').click()};
-  $('#v800ClearAllSaves').onclick=()=>window.__OWL_CONFIRM?.({icon:'🧹',kicker:'SAVE STORAGE · 存档管理',title:'彻底清空全部生涯存档？',body:'<p>会删除3个槽位、备份、紧急恢复点，以及可识别的旧版本存档残留；主题和玩法设置会保留。</p><p><strong>此操作不可撤销。</strong></p>',confirmText:'清空全部存档',cancelText:'保留存档',tone:'warning',onConfirm:clearAllLocalSaves});
+  $('#v800ClearAllSaves').onclick=()=>window.__OWL_CONFIRM?.({icon:'🧹',kicker:'SAVE STORAGE · 存档管理',title:'彻底清空全部生涯存档？',body:'<p>会删除10个槽位、备份、紧急恢复点，以及可识别的旧版本存档残留；主题和玩法设置会保留。</p><p><strong>此操作不可撤销。</strong></p>',confirmText:'清空全部存档',cancelText:'保留存档',tone:'warning',onConfirm:clearAllLocalSaves});
   $('#v800ImportInput').onchange=async e=>{
     const f=e.target.files?.[0];e.target.value='';if(!f)return;
     try{
@@ -376,7 +376,7 @@
     const empty=Array.from({length:SLOT_COUNT},(_,i)=>i+1).find(n=>!isResumablePayload(readSlot(n).payload));
     if(empty){deletedSlots.delete(empty);setCurrentSlot(empty);}
     else{
-      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openSaveManager('new');toast('3个档位都已有生涯，请选择要覆盖的槽位');return;
+      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openSaveManager('new');toast('10个档位都已有生涯，请选择要覆盖的槽位');return;
     }
     if(!localStorage.getItem(ONBOARD_KEY)){
       e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openOnboard();
