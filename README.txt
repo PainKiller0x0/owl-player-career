@@ -5,6 +5,11 @@ Normal use:
 2. The development page entry is dev-public\dev\index.html; its CSS and JS stay under the same directory.
 3. Double-click deploy-owl-game-dev.bat to deploy owl-game-dev.
 
+Development release order:
+1. Commit the intended changes on the dev branch.
+2. deploy-owl-game-dev.bat checks that the working tree is clean and pushes dev to GitHub.
+3. Only after GitHub succeeds does it deploy the Cloudflare dev Worker.
+
 The development page is now a split source tree rather than one bundled HTML file.
 Cloudflare serves dev-public as Worker Assets, so /dev/ maps to dev-public\dev\.
 
