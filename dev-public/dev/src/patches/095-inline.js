@@ -1,0 +1,106 @@
+/* OWL Alpha1 · annual flow recovery, MVP fatigue and award celebrations. */
+(() => {
+  'use strict';
+
+  function mvpStreak() {
+    let streak = 0;
+    for (const record of [...(careerState.careerArchive || [])].reverse()) {
+      const honors = (record.honors || []).map(h => typeof normalizeHonorName === 'function' ? normalizeHonorName(h) : h);
+      if (honors.includes('MVP') || honors.includes('常规赛最有价值选手')) streak++;
+      else break;
+    }
+    return streak;
+  }
+
+  const baseEnsureAwards = ensureRegularSeasonAwards;
+  ensureRegularSeasonAwards = function (...args) {
+    const awards = baseEnsureAwards.apply(this, args);
+    if (!awards || awards.__owlMvpFatigueApplied || (!awards.v71 && Number(careerState.seasonYear || 0) < 2024)) return awards;
+    const streak = mvpStreak();
+    const penalty = streak >= 2 ? Math.min(18, (streak - 1) * 6) : 0;
+    awards.mvpFatigue = { streak, penalty };
+    if (penalty && typeof buildRegularAwardLeaguePool === 'function' && typeof rankAwardCandidates === 'function') {
+      const pool = buildRegularAwardLeaguePool();
+      awards.mvp = rankAwardCandidates(pool, p => p.rating * 10 + p.ovr * .16 + p.wins * .50 - (p.isUser ? penalty : 0));
+    }
+    Object.defineProperty(awards, '__owlMvpFatigueApplied', { value: true, enumerable: false });
+    return awards;
+  };
+
+  function playSeasonMvpBurst() {
+    document.body.classList.remove('season-mvp-burst');
+    void document.body.offsetWidth;
+    document.body.classList.add('season-mvp-burst');
+    setTimeout(() => document.body.classList.remove('season-mvp-burst'), 1700);
+  }
+
+  const baseRenderAwards = renderRegularSeasonAwards;
+  renderRegularSeasonAwards = function (...args) {
+    const out = baseRenderAwards.apply(this, args);
+    const fatigue = seasonState.awards?.mvpFatigue;
+    const host = document.querySelector('#regularAwardsContent .award-card');
+    host?.querySelector('.owl-mvp-fatigue-note')?.remove();
+    if (host && fatigue?.penalty) {
+      const note = document.createElement('div');
+      note.className = 'owl-mvp-fatigue-note';
+      note.textContent = `连续 ${fatigue.streak} 次 MVP，本季存在 ${fatigue.penalty} 分审美疲劳修正。`;
+      host.appendChild(note);
+    }
+    return out;
+  };
+
+  const baseOpenAwards = openRegularSeasonAwards;
+  openRegularSeasonAwards = function (...args) {
+    const out = baseOpenAwards.apply(this, args);
+    const awards = ensureRegularSeasonAwards();
+    if (awards?.mvp?.userRank === 1) {
+      careerState.owlMvpBurstYears = Array.isArray(careerState.owlMvpBurstYears) ? careerState.owlMvpBurstYears : [];
+      const year = Number(careerState.seasonYear || 0);
+      if (!careerState.owlMvpBurstYears.includes(year)) {
+        careerState.owlMvpBurstYears.push(year);
+        setTimeout(playSeasonMvpBurst, 60);
+      }
+    }
+    return out;
+  };
+
+  function needsAnnualPlayoff() {
+    return Number(seasonState.played || 0) >= Number(seasonState.total || 0)
+      && Number(estimateSeasonRank()) <= 8
+      && !['champion', 'runnerup', 'eliminated'].includes(playoffState.round);
+  }
+
+  function openRecoveredPlayoffs() {
+    if (!needsAnnualPlayoff()) return false;
+    const hasReadyMatch = playoffState.active
+      && Array.isArray(playoffState.matches)
+      && playoffState.matches.length
+      && typeof currentPlayoffMatch === 'function'
+      && !!currentPlayoffMatch();
+    if (!hasReadyMatch) setupPlayoffs();
+    if (!playoffState.active) return false;
+    renderPlayoffs();
+    showScreen('playoff');
+    return true;
+  }
+
+  // Capture the two public season-end CTAs before legacy listeners can return
+  // early on old saves whose playoffState says "active" but is not initialized.
+  document.addEventListener('click', event => {
+    const awardsButton = event.target?.closest?.('#awardsContinueBtn');
+    const summaryButton = event.target?.closest?.('#summaryOffseasonBtn');
+    if (awardsButton && document.getElementById('awardsScreen')?.classList.contains('active') && /进入季后赛|返回季后赛/.test(awardsButton.textContent || '')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (!openRecoveredPlayoffs()) showSeasonSummary();
+      return;
+    }
+    if (summaryButton && document.getElementById('summaryScreen')?.classList.contains('active') && needsAnnualPlayoff()) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (!openRecoveredPlayoffs()) showSeasonSummary();
+    }
+  }, true);
+
+  window.__OWL_ALPHA1_AWARD_FLOW = Object.freeze({ version: '095', mvpStreak, openRecoveredPlayoffs });
+})();

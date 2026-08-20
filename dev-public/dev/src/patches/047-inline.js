@@ -23,6 +23,7 @@
   const VWC_2023_QUALIFIER=new Set(['us','ca','mx','pr','cr','gt','co','br','cl','pe','ar','ec','be','fr','gb','it','nl','es','de','no','pl','sa','se','tr','tw','hk','id','jp','ph','kr','au','in','my','nz','sg','th']);
   const VWC_2023_WILDCARD=new Set(['dk','fi','is','pt']);
   const VWC_2026_INVITED=new Set(['br','ca','co','mx','us','dk','fi','fr','gb','no','sa','es','se','au','cn','hk','jp','kr','th']);
+  const VWC_2026_DIRECT_FINALISTS=new Set(['sa','cn']);
   const VWC_2026_CONFERENCE=new Set(['ar','cl','cr','ec','gt','hn','pa','pe','pr','at','bh','be','cz','ee','de','gr','is','ie','il','it','lv','nl','pl','pt','za','ch','tr','in','my','nz','pk','ph','sg']);
   const VWC_2026_MAIN=new Set([...VWC_2026_INVITED,'ar','cl','pr','de','pl','ie','at','pt','in','pk','ph']);
   const VWC_2026_PROGRAM=new Set([...VWC_2026_INVITED,...VWC_2026_CONFERENCE]);
@@ -55,7 +56,7 @@
     if(year===2019)return{year,edition:4,historical:true,display:'2019 Overwatch World Cup',selectionWindow:'6–7月试训',qualifierWindow:'10月31日预选',groupWindow:'11月1日小组赛',finalWindow:'11月2日 · BlizzCon',note:'10队小组赛 · 单败淘汰'};
     if(year===2023)return{year,edition:5,historical:true,display:'2023 Overwatch World Cup',selectionWindow:'2月Trials / 3月试训 / 4月锁7人名单',qualifierWindow:'6月在线资格赛',groupWindow:'10月29日–11月1日',finalWindow:'11月3–4日 · BlizzCon',note:'36支邀请队 + Wild Card · 16队正赛'};
     if(year===2026)return{year,edition:6,historical:true,display:'2026 Overwatch World Cup',selectionWindow:'2–4月试训 · 5月4日锁名单',qualifierWindow:'Conference Cup：3月13–15日 AMER / 3月14–15日 ASIA / 4月17–19日 EMEA · 在线资格赛：5月29–31日 ASIA / 5月30–31日、6月6–7日 AMER+EMEA',groupWindow:'8月20–23日 · 韩国',finalWindow:'9月12–13日 · Anaheim · BlizzCon',note:'52队项目 · 30队主赛 · 16队韩国小组赛 · BlizzCon八强'};
-    if(year>2026)return{year,edition:null,historical:false,display:`${year} Overwatch World Cup`,selectionWindow:'春季国家队选拔',qualifierWindow:'初夏地区资格赛',groupWindow:'夏末世界小组赛',finalWindow:'秋季世界总决赛',note:'架空未来规则 · 2027起每年举办'};
+    if(year>2026)return{year,edition:null,historical:false,display:`${year} Overwatch World Cup`,selectionWindow:'春季国家队选拔',qualifierWindow:'初夏地区资格赛',groupWindow:'夏末世界小组赛',finalWindow:'秋季世界总决赛',note:'2026规则延续 · 区域赛区 + 上届冠亚军直通'};
     return null;
   }
 
@@ -72,11 +73,16 @@
     if(!careerState.worldCup||typeof careerState.worldCup!=='object')careerState.worldCup={version:VWC_VERSION,seasons:{}};
     careerState.worldCup.version=VWC_VERSION;careerState.worldCup.seasons=careerState.worldCup.seasons||{};return careerState.worldCup;
   }
+  function vwcDirectFinalists(year){
+    year=Number(year);if(year===2026)return new Set(VWC_2026_DIRECT_FINALISTS);
+    const prev=vwcRoot().seasons?.[year-1],final=(prev?.observerReport||[]).find(row=>row.round==='总决赛')||(prev?.observerReport||[]).at(-1),out=[prev?.worldChampion,prev?.worldRunnerUp,final?.loser].filter(code=>VWC_COUNTRIES[code]);
+    if(out.length<2)[...VWC_2026_DIRECT_FINALISTS].filter(code=>!out.includes(code)).slice(0,2-out.length).forEach(code=>out.push(code));
+    return new Set(out.length?out:VWC_2026_DIRECT_FINALISTS);
+  }
   function vwcRoute(year,country){
     if(year===2019)return VWC_2019_DIRECT.has(country)?'direct-group':'preliminary';
     if(year===2023){if(country==='cn')return'direct-group';if(VWC_2023_QUALIFIER.has(country))return'qualifier';if(VWC_2023_WILDCARD.has(country))return'wildcard';return'no-team';}
-    if(year===2026){if(country==='cn'||country==='sa')return'direct-group';if(VWC_2026_INVITED.has(country))return'qualifier';if(VWC_2026_CONFERENCE.has(country))return'conference';if(!VWC_2026_PROGRAM.has(country))return'breakthrough';return'no-team';}
-    if(year>2026)return vwcPower(country)>=85?'qualifier':'conference';
+    if(year>=2026){if(vwcDirectFinalists(year).has(country))return'direct-group';if(VWC_2026_INVITED.has(country))return'qualifier';if(VWC_2026_CONFERENCE.has(country))return'conference';if(!VWC_2026_PROGRAM.has(country))return'breakthrough';return'no-team';}
     return'no-team';
   }
   function vwcFirstStage(rec){
@@ -138,7 +144,7 @@
       rec.eventMods.power=Number(rec.eventMods.power||0);rec.eventMods.rating=Number(rec.eventMods.rating||0);
       rec.nationalCohesion=Number.isFinite(Number(rec.nationalCohesion))?vwcClamp(Number(rec.nationalCohesion),0,100):50;
       rec.homeCountry=rec.homeCountry||state.playerCountry||'cn';rec.representingCountry=rec.representingCountry||rec.homeCountry;
-      rec.route=rec.route||vwcRoute(year,rec.homeCountry);rec.version=VWC_VERSION;
+      rec.route=rec.route||vwcRoute(year,rec.homeCountry);if(year>=2026&&!rec.completed&&!rec.selected&&rec.phase==='selection')rec.route=vwcRoute(year,rec.homeCountry);rec.worldRunnerUp=rec.worldRunnerUp||null;rec.version=VWC_VERSION;
       rec.selected=!!rec.selected;rec.starter=!!rec.starter;rec.completed=!!rec.completed;
       rec.observerReport=Array.isArray(rec.observerReport)?rec.observerReport:[];rec.declineMedia=rec.declineMedia||null;
       rec.eventCount=Number(rec.eventCount||rec.events.filter(e=>e?.kind==='random'||e?.kind==='standby').length||0);
@@ -146,7 +152,7 @@
       return rec;
     }
     const home=state.playerCountry||'cn',route=vwcRoute(year,home);
-    rec={version:VWC_VERSION,year,homeCountry:home,representingCountry:home,breakthrough:false,route,phase:'selection',nextStage:null,pendingStage:'selection',selected:false,starter:false,roster:[],matches:[],observerReport:[],events:[],eventCount:0,nationalCohesion:50,selectionChoice:null,selectionRank:null,eventMods:{power:0,rating:0},declineMedia:null,standbyEligible:false,standbyChecked:false,standbyPending:false,completed:false,result:null,worldChampion:null,createdAt:new Date().toISOString()};
+    rec={version:VWC_VERSION,year,homeCountry:home,representingCountry:home,breakthrough:false,route,phase:'selection',nextStage:null,pendingStage:'selection',selected:false,starter:false,roster:[],matches:[],observerReport:[],events:[],eventCount:0,nationalCohesion:50,selectionChoice:null,selectionRank:null,eventMods:{power:0,rating:0},declineMedia:null,standbyEligible:false,standbyChecked:false,standbyPending:false,completed:false,result:null,worldChampion:null,worldRunnerUp:null,createdAt:new Date().toISOString()};
     root.seasons[year]=rec;
     if(Number(careerState.age||16)<18){rec.phase='ineligible';rec.pendingStage=null;rec.completed=true;rec.result='年龄不符合参赛资格';rec.note=`${careerState.age}岁 · 未达到当届成年参赛要求`;return rec;}
     if(route==='no-team'){rec.phase='no-team';rec.pendingStage=null;rec.completed=true;rec.result='当届国家/地区未进入世界杯计划';return rec;}
@@ -469,15 +475,16 @@
     let eight=[...vwcChampionPool(rec)].sort((a,b)=>(vwcPower(b)+vwcSigned(`${rec.year}|observer-seed|${b}`,3))-(vwcPower(a)+vwcSigned(`${rec.year}|observer-seed|${a}`,3))).slice(0,8);
     while(eight.length<8){const c=Object.keys(VWC_COUNTRIES).filter(x=>!eight.includes(x)).sort((a,b)=>vwcPower(b)-vwcPower(a))[0];if(!c)break;eight.push(c)}
     const qPairs=[[0,7],[3,4],[1,6],[2,5]],rows=[],q=[];qPairs.forEach((pair,i)=>{const r=vwcNeutralSeries(rec,eight[pair[0]],eight[pair[1]],'八强',i);rows.push(r);q.push(r.winner)});
-    const s1=vwcNeutralSeries(rec,q[0],q[1],'半决赛',0),s2=vwcNeutralSeries(rec,q[2],q[3],'半决赛',1);rows.push(s1,s2);const f=vwcNeutralSeries(rec,s1.winner,s2.winner,'总决赛',0);rows.push(f);rec.observerReport=rows;rec.worldChampion=f.winner;return rows;
+    const s1=vwcNeutralSeries(rec,q[0],q[1],'半决赛',0),s2=vwcNeutralSeries(rec,q[2],q[3],'半决赛',1);rows.push(s1,s2);const f=vwcNeutralSeries(rec,s1.winner,s2.winner,'总决赛',0);rows.push(f);rec.observerReport=rows;rec.worldChampion=f.winner;rec.worldRunnerUp=f.loser;return rows;
   }
   function vwcComplete(rec,result,finalOpp=null){
     rec.completed=true;rec.phase='complete';rec.pendingStage=null;rec.nextStage=null;rec.stageState=null;rec.result=result;rec.finishedAtGames=seasonState.played;
-    if(result==='世界杯冠军'){rec.worldChampion=rec.representingCountry;careerState.popularity=vwcClamp(careerState.popularity+12,0,100);careerState.coachTrust=vwcClamp(careerState.coachTrust+4,0,100);}
+    if(result==='世界杯冠军'){rec.worldChampion=rec.representingCountry;rec.worldRunnerUp=finalOpp&&finalOpp!==rec.representingCountry?finalOpp:vwcSimChampion(rec,new Set([rec.worldChampion]));careerState.popularity=vwcClamp(careerState.popularity+12,0,100);careerState.coachTrust=vwcClamp(careerState.coachTrust+4,0,100);}
     else{
       const eliminated=new Set([rec.representingCountry]);
       (rec.matches||[]).filter(m=>m.stage==='knockout'&&m.won).forEach(m=>eliminated.add(m.opponent));
       rec.worldChampion=result==='世界杯亚军'&&finalOpp?finalOpp:vwcSimChampion(rec,eliminated);
+      rec.worldRunnerUp=result==='世界杯亚军'?rec.representingCountry:vwcSimChampion(rec,new Set([rec.worldChampion]));
       careerState.popularity=vwcClamp(careerState.popularity+(result.includes('亚军')?8:result.includes('四强')?5:result.includes('八强')?3:1),0,100);
     }
     vwcFinalize(rec);vwcSyncArchive(rec.year);vwcRenderSeasonLayer();

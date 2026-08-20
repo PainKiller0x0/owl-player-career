@@ -251,3 +251,183 @@ test('1280x720: cover primary action remains visible without horizontal overflow
 
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });
+
+test('2025 final standings keep the season LP and record in sync', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_STANDINGS', age: 20 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2025;
+    careerState.v13RuleIntroSeen2025 = true;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 56;
+    seasonState.total = 56;
+    seasonState.wins = 31;
+    seasonState.losses = 25;
+    seasonState.majorBonusLP = 3;
+    seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 31 ? 'win' : 'loss'));
+    seasonState.userRatings = Array.from({ length: 56 }, () => 7.7);
+    seasonState.v741FinalStandingsCache = null;
+    seasonState.finalStandingsCache = null;
+    renderSeason();
+    showScreen('season');
+  });
+
+  await page.locator('#seasonYearChip').click();
+  const userRow = page.locator('#b2StandingsBody tr.user');
+  await expect(userRow).toContainText('31');
+  await expect(userRow).toContainText('25');
+  await expect(userRow).toContainText('34');
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('annual awards continue repairs a completed season with an uninitialized playoff state', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_AWARDS_FLOW', age: 20 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2029;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 56;
+    seasonState.total = 56;
+    seasonState.wins = 46;
+    seasonState.losses = 10;
+    seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 46 ? 'win' : 'loss'));
+    seasonState.userRatings = Array.from({ length: 56 }, () => 8.2);
+    seasonState.stageProcessed = [1, 2, 3];
+    seasonState.stageBreakPending = null;
+    seasonState.awards = null;
+    playoffState.active = false;
+    playoffState.round = 'active';
+    playoffState.matches = [];
+    playoffState.results = [];
+    renderSeason();
+    showScreen('season');
+    openRegularSeasonAwards();
+  });
+
+  await expect(page.locator('#awardsScreen')).toHaveClass(/active/);
+  await page.locator('#awardsContinueBtn').click();
+  await expect(page.locator('#playoffScreen')).toHaveClass(/active/);
+  await page.waitForFunction(() => !!playoffState?.active && !!currentPlayoffMatch());
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('season summary continue repairs the same completed-season playoff state', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_SUMMARY_FLOW', age: 20 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2029;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 56;
+    seasonState.total = 56;
+    seasonState.wins = 46;
+    seasonState.losses = 10;
+    seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 46 ? 'win' : 'loss'));
+    seasonState.userRatings = Array.from({ length: 56 }, () => 8.2);
+    seasonState.stageProcessed = [1, 2, 3];
+    playoffState.active = false;
+    playoffState.round = 'active';
+    playoffState.matches = [];
+    playoffState.results = [];
+    showSeasonSummary();
+  });
+
+  await expect(page.locator('#summaryScreen')).toHaveClass(/active/);
+  await expect(page.locator('#summaryOffseasonBtn')).toHaveText(/继续季后赛/);
+  await page.locator('#summaryOffseasonBtn').click();
+  await expect(page.locator('#playoffScreen')).toHaveClass(/active/);
+  await page.waitForFunction(() => !!playoffState?.active && !!currentPlayoffMatch());
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('2027 world cup uses the prior champion and runner-up direct-to-group route', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_WC_RULES', age: 20 });
+
+  const routes = await page.evaluate(() => ({
+    sa: window.__OWL_WORLD_CUP.qaSet(2027, 'sa', 20).route,
+    cn: window.__OWL_WORLD_CUP.qaSet(2027, 'cn', 20).route,
+  }));
+  expect(routes).toEqual({ sa: 'direct-group', cn: 'direct-group' });
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('whole-season simulation does not silently discard the All-Star checkpoint', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_ALLSTAR_SIM', age: 17 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2025;
+    careerState.v13RuleIntroSeen2025 = true;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 18;
+    seasonState.wins = 9;
+    seasonState.losses = 9;
+    seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 18 ? (i % 2 ? 'loss' : 'win') : null));
+    seasonState.stageProcessed = [1];
+    seasonState.stageBreakPending = null;
+    seasonState.v71AllStar = null;
+    seasonState.v71AllStarPending = false;
+    renderSeason();
+    showScreen('season');
+    window.__OWL_V18_FULL_SEASON();
+  });
+
+  await page.waitForFunction(() => {
+    const overlay = document.getElementById('seasonEventOverlay');
+    return !!seasonState?.v71AllStarPending && !!overlay && !overlay.classList.contains('hidden');
+  }, null, { timeout: 12_000 });
+  await expect(page.locator('#seasonEventContent')).toContainText('全明星');
+  const attend = page.locator('#v71AttendAllStar, #v34AttendAllStar').first();
+  const withdraw = page.locator('#v71WithdrawAllStar, #v34WithdrawAllStar').first();
+  if (await attend.isVisible().catch(() => false)) await attend.click();
+  else if (await withdraw.isVisible().catch(() => false)) await withdraw.click();
+  const close = page.locator('#v71CloseAllStar, #v34CloseAllStar').first();
+  if (await close.isVisible().catch(() => false)) await close.click();
+  await page.waitForFunction(() => Number(seasonState?.played || 0) > 19, null, { timeout: 12_000 });
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('repeated MVPs apply fatigue and trigger a season MVP celebration', async ({ page }) => {
+  const monitor = await freshApp(page, { viewport: { width: 1280, height: 720 } });
+  await createCareer(page, { year: 2023, playerName: 'E2E_MVP', age: 20 });
+
+  const result = await page.evaluate(() => {
+    careerState.seasonYear = 2025;
+    careerState.v13RuleIntroSeen2025 = true;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 56;
+    seasonState.total = 56;
+    seasonState.wins = 46;
+    seasonState.losses = 10;
+    seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 46 ? 'win' : 'loss'));
+    seasonState.userRatings = Array.from({ length: 56 }, () => 8.4);
+    careerState.careerArchive = [
+      { year: 2023, honors: ['常规赛最有价值选手'] },
+      { year: 2024, honors: ['常规赛最有价值选手'] },
+    ];
+    seasonState.awards = null;
+    const awards = ensureRegularSeasonAwards();
+    awards.mvp.userRank = 1;
+    renderRegularSeasonAwards();
+    openRegularSeasonAwards();
+    return { fatigue: awards.mvpFatigue, bodyFont: getComputedStyle(document.body).fontSize };
+  });
+
+  expect(result.fatigue).toEqual({ streak: 2, penalty: 6 });
+  expect(result.bodyFont).toBe('17px');
+  await page.waitForFunction(() => document.body.classList.contains('season-mvp-burst'));
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});

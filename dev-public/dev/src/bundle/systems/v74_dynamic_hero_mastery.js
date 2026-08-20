@@ -299,12 +299,13 @@
       const isUser=team.name===careerState.team?.name;
       if(isUser){
         const avg=getSeasonAverageRating?.()||7;
-        return {team,isUser,wins:userWins,losses:userLosses,mapDiff:Math.round((userWins-userLosses)*2.15+(avg-7)*3.5)};
+        return {team,isUser,wins:userWins,losses:userLosses,mapDiff:Math.round((userWins-userLosses)*2.15+(avg-7)*3.5),lp:userWins+Number(seasonState.majorBonusLP||0)};
       }
       const delta=(Number(team.strength)||mean)-mean;
       const rate=clamp(.50+delta*.017+stableSeasonNoise(team.name,year*101+played,5)*.009,.24,.76);
       const wins=clamp(Math.round(played*rate),0,played),losses=played-wins;
-      return {team,isUser,wins,losses,mapDiff:Math.round((wins-losses)*2+stableSeasonNoise(team.name,year+played*17,6))};
+      const major=clamp(Math.round(Math.max(0,delta)/4+stableSeasonNoise(team.name,year+played*17,6)),0,8);
+      return {team,isUser,wins,losses,mapDiff:Math.round((wins-losses)*2+stableSeasonNoise(team.name,year+played*17,6)),lp:wins+major};
     });
     rows.sort((a,b)=>b.wins-a.wins||b.mapDiff-a.mapDiff||(Number(b.team.strength)||80)-(Number(a.team.strength)||80));
     rows.forEach((r,i)=>r.rank=i+1);
@@ -1618,4 +1619,3 @@
     }
   `;document.head.appendChild(st);}
 })();
-

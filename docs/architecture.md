@@ -1,6 +1,6 @@
 # OWL 选手之路：运行时架构
 
-更新时间：2026-08-20
+更新时间：2026-08-21
 
 ## 1. 范围与现状
 
@@ -35,6 +35,14 @@ window.__OWL_RUNTIME.simulation.clearTimer()
 ```
 
 `render.register` 对同一个渲染函数只安装一个 wrapper，再通过 keyed hook 运行多个后处理。`key` 用来保证重复加载或重复注册不会产生重复副作用。当前已迁移的历史后处理包括 RC18 的英雄专项/整季按钮文案、RC10/RC11 的页面文案清理、RC12 的 Stage 结算提示、RC22 的报价/术语/赛事卡片后处理，以及 Alpha1 的报价标签位置修正。
+
+### Alpha1 Batch 3 的公共约束
+
+- OWL2（2024–2026）常规赛完成后的榜单以 `syntheticFinalStandings()` 为最终来源；进行中的榜单使用 `v741LiveStandings()`。两者都必须返回 `wins`、`losses` 和 `lp`，赛季页、联盟榜单和季后赛资格不能各自重新推算 LP。
+- 整季模拟在 Stage 2 结算后若存在 `v71AllStarPending`，必须先暂停并交给既有全明星 runtime；玩家处理全明星后再通过公共恢复协议继续，不能在批处理器内直接清掉 pending 标记。
+- 年度奖项页和赛季总结页的“进入季后赛”都允许从旧存档重建 `playoffState`，恢复入口集中在 `095-inline.js` 的 `openRecoveredPlayoffs()`，不在两个按钮上复制初始化逻辑。
+- 世界杯 2026+ 的晋级路线由 `vwcRoute()` 统一决定：上届冠亚军直通小组赛，其他国家按 2026 的邀请赛 / Conference Cup / 突破路线分流；跨届结果持久化在 `worldChampion` 和 `worldRunnerUp`，旧存档缺字段时由迁移逻辑补齐。
+- MVP 连续获奖的衰减记录在 `seasonState.awards.mvpFatigue`，由年度奖项生成阶段一次性应用；庆祝动效只在奖项页首次打开时触发，不参与数值结算。
 
 ## 3. 渲染协议
 

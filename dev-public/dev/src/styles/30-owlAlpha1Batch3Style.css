@@ -1,0 +1,42 @@
+/* Desktop readability pass. Keep mobile dimensions governed by the existing
+   responsive rules; this only lifts the dense PC baseline and tiny metadata. */
+@media (min-width: 761px) {
+  body { font-size: 17px; }
+  .offseason-app .offseason-kicker,
+  .offseason-app .training-summary-item span,
+  .offseason-app .training-attr-name span,
+  .offseason-app .training-cost,
+  .offseason-app .age-change-tag,
+  .offseason-app .v74-offseason-grid > span,
+  .offseason-app .v74-decay-note { font-size: 12px; }
+  .offseason-app .training-attr-name strong { font-size: 18px; }
+  .offseason-app .training-value span { font-size: 13px; }
+  .offseason-app .training-breakdown,
+  .offseason-app .training-points-card span,
+  .offseason-app .v74-offseason-heroes p { font-size: 14px; }
+  .season-app .season-track-head span,
+  .season-app .season-legend { font-size: 13px; }
+  .season-app .season-progress-copy { font-size: 19px; }
+  .b2-standings-table { font-size: 14px; }
+  .b2-standings-table th { font-size: 12px; }
+  .b2-team-cell b { font-size: 14px; }
+  .b2-team-cell small { font-size: 11px; }
+  .owl-mvp-fatigue-note { margin-top: 12px; padding: 9px 11px; border: 1px dashed var(--accent); border-radius: 12px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+}
+
+.season-mvp-burst::after {
+  content: "👑  ✦  🎉  ✦  👑  ✦  🎉";
+  position: fixed;
+  left: 50%;
+  top: 18%;
+  z-index: 10120;
+  font-size: clamp(28px, 7vw, 58px);
+  pointer-events: none;
+  animation: seasonMvpBurst 1.6s ease both;
+}
+
+@keyframes seasonMvpBurst {
+  0% { opacity: 0; transform: translate(-50%, 28px) scale(.7); }
+  30% { opacity: 1; transform: translate(-50%, 0) scale(1.12); }
+  100% { opacity: 0; transform: translate(-50%, -46px) scale(1); }
+}
