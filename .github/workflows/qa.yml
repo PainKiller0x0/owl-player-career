@@ -1,0 +1,221 @@
+name: OWL QA Gate
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owl-qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-qa:
+    name: Static QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check release structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            "dev-public/dev/index.html"
+            "dev-public/dev/src"
+            "dev-public/dev/src/modules/094-shared.runtime.js"
+            "dev-public/dev/src/patches/090-inline.js"
+            "dev-public/dev/src/patches/091-inline.js"
+            "dev-public/dev/src/patches/092-inline.js"
+            "dev-public/dev/src/patches/094-inline.js"
+            "src/worker-dev.js"
+            "wrangler.dev.toml"
+          )
+          for path in "${required[@]}"; do
+            if [[ ! -e "$path" ]]; then
+              echo "::error file=$path::Required release path is missing"
+              exit 1
+            fi
+          done
+          echo "Release structure OK"
+
+      - name: JavaScript syntax gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find dev-public/dev/src -type f -name '*.js' | sort)
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "::error::No JavaScript files found under dev-public/dev/src"
+            exit 1
+          fi
+
+          failed=0
+          for file in "${files[@]}"; do
+            if ! node --check "$file" >/dev/null; then
+              echo "::error file=$file::JavaScript syntax check failed"
+              failed=1
+            fi
+          done
+
+          echo "Checked ${#files[@]} JavaScript files"
+          exit "$failed"
+
+      - name: Local asset reference gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const root = path.resolve('dev-public/dev');
+          const htmlPath = path.join(root, 'index.html');
+          const html = fs.readFileSync(htmlPath, 'utf8');
+          const refs = [];
+          const re = /\b(?:src|href)\s*=\s*["']([^"']+)["']/gi;
+          let match;
+          while ((match = re.exec(html))) refs.push(match[1]);
+
+          const ignored = /^(?:#|https?:|data:|mailto:|javascript:)/i;
+          const missing = [];
+          let checked = 0;
+
+          for (const raw of refs) {
+            if (!raw || ignored.test(raw)) continue;
+            let clean = raw.split('#')[0].split('?')[0];
+            if (!clean) continue;
+            try { clean = decodeURIComponent(clean); } catch (_) {}
+
+            if (clean.startsWith('/dev/')) clean = clean.slice('/dev/'.length);
+            else if (clean.startsWith('/')) continue;
+
+            const target = path.resolve(root, clean);
+            if (!target.startsWith(root + path.sep) && target !== root) {
+              missing.push(`${raw} (escapes release root)`);
+              continue;
+            }
+            checked++;
+            if (!fs.existsSync(target)) missing.push(raw);
+          }
+
+          if (missing.length) {
+            console.error(`Missing local assets (${missing.length}):`);
+            for (const item of missing) console.error(`  - ${item}`);
+            process.exit(1);
+          }
+          console.log(`Checked ${checked} local HTML asset references: all present`);
+          NODE
+
+      - name: Native browser dialog regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          function walk(dir, out = []) {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) walk(full, out);
+              else if (entry.isFile() && entry.name.endsWith('.js')) out.push(full);
+            }
+            return out;
+          }
+
+          function stripCommentsAndStrings(src) {
+            let out = '';
+            let state = 'code';
+            let quote = '';
+            for (let i = 0; i < src.length; i++) {
+              const ch = src[i], next = src[i + 1];
+              if (state === 'code') {
+                if (ch === '/' && next === '/') { state = 'line'; out += '  '; i++; continue; }
+                if (ch === '/' && next === '*') { state = 'block'; out += '  '; i++; continue; }
+                if (ch === '"' || ch === "'" || ch === '`') { state = 'string'; quote = ch; out += ' '; continue; }
+                out += ch;
+                continue;
+              }
+              if (state === 'line') {
+                if (ch === '\n') { state = 'code'; out += '\n'; } else out += ' ';
+                continue;
+              }
+              if (state === 'block') {
+                if (ch === '*' && next === '/') { state = 'code'; out += '  '; i++; }
+                else out += ch === '\n' ? '\n' : ' ';
+                continue;
+              }
+              if (state === 'string') {
+                if (ch === '\\') { out += '  '; i++; continue; }
+                if (ch === quote) { state = 'code'; out += ' '; }
+                else out += ch === '\n' ? '\n' : ' ';
+              }
+            }
+            return out;
+          }
+
+          const files = walk('dev-public/dev/src');
+          const violations = [];
+          const direct = /(^|[^\w$.])(alert|confirm|prompt)\s*\(/gm;
+          const globalCall = /\b(?:window|globalThis|self)\s*\.\s*(alert|confirm|prompt)\s*\(/gm;
+
+          for (const file of files) {
+            const source = stripCommentsAndStrings(fs.readFileSync(file, 'utf8'));
+            for (const regex of [direct, globalCall]) {
+              regex.lastIndex = 0;
+              let m;
+              while ((m = regex.exec(source))) {
+                const index = m.index;
+                const line = source.slice(0, index).split('\n').length;
+                violations.push(`${file}:${line}: native dialog call`);
+              }
+            }
+          }
+
+          if (violations.length) {
+            console.error('Native browser dialogs are forbidden in release code:');
+            for (const item of [...new Set(violations)]) console.error(`  - ${item}`);
+            console.error('Use window.__OWL_CONFIRM / __OWL_V16_MODAL instead.');
+            process.exit(1);
+          }
+          console.log(`Scanned ${files.length} JS files: no native alert/confirm/prompt calls`);
+          NODE
+
+      - name: Whitespace regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            git diff --check HEAD^ HEAD
+          else
+            git diff --check
+          fi
+
+      - name: QA summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## OWL Static QA"
+            echo ""
+            echo "- Branch/ref: \`${GITHUB_REF}\`"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Gate: release structure / JS syntax / local assets / native dialogs / whitespace"
+            echo ""
+            echo "后续计划：静态门禁稳定后，再接 Playwright 新档、整季、存读档与多视口 E2E。"
+          } >> "$GITHUB_STEP_SUMMARY"
