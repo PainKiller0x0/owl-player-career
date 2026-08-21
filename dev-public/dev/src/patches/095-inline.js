@@ -102,8 +102,15 @@
   // Capture the two public season-end CTAs before legacy listeners can return
   // early on old saves whose playoffState says "active" but is not initialized.
   document.addEventListener('click', event => {
+    const directButton = event.target?.closest?.('#enterPlayoffsBtn');
     const awardsButton = event.target?.closest?.('#awardsContinueBtn');
     const summaryButton = event.target?.closest?.('#summaryOffseasonBtn');
+    if (directButton && document.getElementById('seasonScreen')?.classList.contains('active')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (!openRecoveredPlayoffs()) enterPlayoffs();
+      return;
+    }
     if (awardsButton && document.getElementById('awardsScreen')?.classList.contains('active') && /进入季后赛|返回季后赛/.test(awardsButton.textContent || '')) {
       event.preventDefault();
       event.stopImmediatePropagation();

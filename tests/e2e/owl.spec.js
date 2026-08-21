@@ -381,6 +381,40 @@ test('healthy players do not receive the voluntary retirement action at 25', asy
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });
 
+test('season page playoff CTA rebuilds a stale future postseason cache', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_PLAYOFF_CTA', age: 20 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2032;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 56;
+    seasonState.total = 56;
+    seasonState.wins = 56;
+    seasonState.losses = 0;
+    seasonState.results = Array.from({ length: 56 }, () => 'win');
+    seasonState.userRatings = Array.from({ length: 56 }, () => 8.4);
+    seasonState.stageProcessed = [1, 2, 3];
+    seasonState.stageBreakPending = null;
+    seasonState.finalStandingsCache = null;
+    seasonState.v34Postseason = { year: 2031, resolved: true, userQualified: false, userSeed: null, logs: [] };
+    seasonState.v34PostseasonTeams = TEAMS.filter(team => team.name !== careerState.team.name).slice(0, 8);
+    playoffState.active = false;
+    playoffState.round = 'active';
+    playoffState.matches = [];
+    renderSeason();
+    showScreen('season');
+  });
+
+  await expect(page.locator('#enterPlayoffsBtn')).toBeVisible();
+  await page.locator('#enterPlayoffsBtn').click();
+  await expect(page.locator('#playoffScreen')).toHaveClass(/active/);
+  await page.waitForFunction(() => !!playoffState?.active && !!currentPlayoffMatch());
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
 test('annual awards continue repairs a completed season with an uninitialized playoff state', async ({ page }) => {
   const monitor = await freshApp(page);
   await createCareer(page, { year: 2023, playerName: 'E2E_AWARDS_FLOW', age: 20 });
