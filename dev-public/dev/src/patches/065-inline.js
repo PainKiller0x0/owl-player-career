@@ -231,7 +231,7 @@
     return{teams:[...rows.slice(0,6).map(r=>r.team),a3.winner,b3.winner],logs,userQualified:[a3.winner,b3.winner].some(t=>t.name===me),userSeed:a3.winner.name===me?7:b3.winner.name===me?8:null};
   }
   function ensurePostseason34(simulateUser=false){
-    if(seasonState.v34PostseasonTeams?.length===8)return{teams:seasonState.v34PostseasonTeams,logs:seasonState.v34Postseason?.logs||[],userQualified:seasonState.v34PostseasonTeams.some(t=>t.name===careerState.team?.name),userSeed:careerState.postseasonSeed||null};
+    if(Number(seasonState.v34Postseason?.year)===year34()&&seasonState.v34PostseasonTeams?.length===8)return{teams:seasonState.v34PostseasonTeams,logs:seasonState.v34Postseason?.logs||[],userQualified:seasonState.v34PostseasonTeams.some(t=>t.name===careerState.team?.name),userSeed:careerState.postseasonSeed||null};
     const rows=standings34(),res=year34()>=2035?buildWildCard2035_34(rows,simulateUser):buildPlayIn2027_34(rows,simulateUser);seasonState.v34PostseasonTeams=res.teams;seasonState.v34Postseason={year:year34(),logs:res.logs,userQualified:res.userQualified,userSeed:res.userSeed,resolved:true};if(res.userSeed)careerState.postseasonSeed=res.userSeed;return res;
   }
   function qualifierLabel34(){return year34()>=2035?'Wild Card':'Play-in';}

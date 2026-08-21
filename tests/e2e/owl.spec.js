@@ -337,6 +337,10 @@ test('season summary continue repairs the same completed-season playoff state', 
     playoffState.round = 'active';
     playoffState.matches = [];
     playoffState.results = [];
+    // Reproduce the supplied save: a 2029 season carrying an eight-team
+    // postseason cache that was actually generated for 2027.
+    seasonState.v34Postseason = { year: 2027, resolved: true, userQualified: false, userSeed: null, logs: [] };
+    seasonState.v34PostseasonTeams = TEAMS.filter(team => team.active !== false && team.name !== careerState.team.name).slice(0, 8);
     showSeasonSummary();
   });
 
