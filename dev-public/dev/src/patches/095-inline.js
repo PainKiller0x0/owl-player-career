@@ -6,7 +6,9 @@
     let streak = 0;
     for (const record of [...(careerState.careerArchive || [])].reverse()) {
       const honors = (record.honors || []).map(h => typeof normalizeHonorName === 'function' ? normalizeHonorName(h) : h);
-      if (honors.includes('MVP') || honors.includes('常规赛最有价值选手')) streak++;
+      const fromHonors = honors.includes('MVP') || honors.includes('常规赛最有价值选手');
+      const fromAwards = Number(record.awards?.mvp?.userRank) === 1 || record.awards?.mvp?.winner?.isUser === true;
+      if (fromHonors || fromAwards) streak++;
       else break;
     }
     return streak;

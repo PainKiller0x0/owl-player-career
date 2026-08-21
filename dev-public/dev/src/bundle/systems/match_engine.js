@@ -175,6 +175,15 @@
       return 0;
     }
 
+    // 实力差先经过“优势区间”校准：10分以内只给正常优势，超过10分才逐步进入碾压区。
+    function mapFightWinProbability(diff) {
+      const value=Number(diff)||0, gap=Math.abs(value), direction=value<0?-1:1;
+      const edge=gap<=10?gap*.015:.15+(gap-10)*.025;
+      return clamp(.5+direction*edge,.12,.88);
+    }
+    window.__OWL_BALANCE=window.__OWL_BALANCE||{};
+    window.__OWL_BALANCE.mapFightWinProbability=mapFightWinProbability;
+
     function teamMapPower(roster, map, tactic, enemyTactic, isHome) {
       const profile = getTeamProfile(roster);
       const individual = roster.map(p => roleEffective(p,map,matchState.style,isHome && p.isUser));
@@ -491,7 +500,7 @@
 
     function resolveInteractiveFight(session, personalSwing=0, decisionMeta=null) {
       const diff = (session.homeData.power-session.awayData.power) + session.momentum + session.ultSwing + personalSwing + randomCentered(2.8);
-      const homeProb = 1/(1+Math.exp(-diff/7));
+      const homeProb = mapFightWinProbability(diff);
       const homeWin = Math.random()<homeProb;
       if(homeWin) {
         session.homeFights++;
@@ -736,7 +745,7 @@
         }
 
         const diff = (homeData.power-awayData.power) + momentum + ultSwing + personalSwing + randomCentered(2.8);
-        const homeProb = 1/(1+Math.exp(-diff/7));
+        const homeProb = mapFightWinProbability(diff);
         const homeWin = Math.random()<homeProb;
         if(homeWin) {
           homeFights++;
@@ -809,6 +818,5 @@
 
     init();
   
-
 
 

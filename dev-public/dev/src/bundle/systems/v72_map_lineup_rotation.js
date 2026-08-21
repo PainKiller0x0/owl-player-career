@@ -206,7 +206,7 @@
     const homeData=teamMapPower(matchState.homeRoster,map,tactics.home,tactics.away,true),awayData=teamMapPower(matchState.awayRoster,map,tactics.away,tactics.home,false);
     let homeFights=0,awayFights=0,momentum=0;const logs=[{map:`M${matchState.mapIndex+1}`,side:'event',text:`${map.name} 开始。你本图未进入首发，比赛切换为观战结算。`}];
     for(let i=1;i<=map.fights;i++){
-      const diff=(homeData.power-awayData.power)+momentum+randomCentered(3.0),homeWin=Math.random()<1/(1+Math.exp(-diff/7));
+      const diff=(homeData.power-awayData.power)+momentum+randomCentered(3.0),homeWin=Math.random()<mapFightWinProbability(diff);
       if(homeWin){homeFights++;momentum=clamp(momentum+.55,-2.5,2.5);}else{awayFights++;momentum=clamp(momentum-.55,-2.5,2.5);}
       if(i===Math.ceil(map.fights/2))logs.push({map:`M${matchState.mapIndex+1}·中段`,side:homeWin?'home':'away',text:homeWin?'我方轮换阵容在中段抢到节奏。':'对方利用阵容适配取得中段主动。'});
     }
@@ -322,5 +322,4 @@
   };
 
   if(!document.getElementById('v72LineupStyle')){const st=document.createElement('style');st.id='v72LineupStyle';st.textContent=`.v72-bench-card{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:5px;padding:8px 10px;border:1px dashed var(--line);border-radius:11px;background:rgba(0,0,0,.025);font-size:10px}.v72-bench-card span{color:var(--muted)}.v72-bench-card strong{color:var(--ink)}.v72-bench-card small{color:var(--muted);text-align:right}.v72-lineup-hint{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin-bottom:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.5)}.v72-lineup-hint span{font-size:10px;color:var(--muted)}.v72-lineup-hint strong{font-size:12px}.v72-lineup-hint small{grid-column:1/-1;color:var(--muted)}.v72-lineup-hint.in strong{color:#25875f}.v72-lineup-hint.out strong{color:#c26a36}html[data-theme="dark"] .v72-bench-card,html[data-theme="dark"] .v72-lineup-hint{background:rgba(255,255,255,.045)}@media(max-width:720px){.v72-bench-card{grid-template-columns:1fr}.v72-bench-card small{text-align:left}}`;document.head.appendChild(st);}
-
 

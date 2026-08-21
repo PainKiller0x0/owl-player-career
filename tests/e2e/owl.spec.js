@@ -596,8 +596,8 @@ test('repeated MVPs apply fatigue and trigger a season MVP celebration', async (
     seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 46 ? 'win' : 'loss'));
     seasonState.userRatings = Array.from({ length: 56 }, () => 8.4);
     careerState.careerArchive = [
-      { year: 2023, honors: ['常规赛最有价值选手'] },
-      { year: 2024, honors: ['常规赛最有价值选手'] },
+      { year: 2023, awards: { mvp: { userRank: 1 } } },
+      { year: 2024, awards: { mvp: { winner: { isUser: true } } } },
     ];
     seasonState.awards = null;
     const awards = ensureRegularSeasonAwards();
@@ -611,5 +611,51 @@ test('repeated MVPs apply fatigue and trigger a season MVP celebration', async (
   expect(result.bodyFont).toBe('17px');
   await page.waitForFunction(() => document.body.classList.contains('season-mvp-burst'));
   await expect(page.locator('.season-mvp-confetti i')).toHaveCount(32);
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('playoff balance needs a ten-point gap for dominance and FMVP needs a standout performance', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_BALANCE', age: 20 });
+
+  const result = await page.evaluate(() => {
+    careerState.careerArchive = [
+      { honors: ['总冠军', 'MVP', '总决赛MVP'] },
+      { honors: ['总冠军', 'MVP', '总决赛MVP'] },
+    ];
+    const fmvp = window.__OWL_BALANCE.rankFinalsMvpCandidates([
+      { name: 'Rookie', rating: 8.25, isUser: true, overall: 87 },
+      { name: '队友A', rating: 8.3, isUser: false, overall: 95 },
+      { name: '队友B', rating: 7.0, isUser: false, overall: 82 },
+    ]);
+    const noStandout = window.__OWL_BALANCE.rankFinalsMvpCandidates([
+      { name: 'Rookie', rating: 7.9, isUser: true, overall: 87 },
+      { name: '队友A', rating: 8.1, isUser: false, overall: 95 },
+      { name: '队友B', rating: 7.7, isUser: false, overall: 82 },
+    ]);
+    playoffState.results = [{ rating: 8.3 }];
+    playoffState.round = 'champion';
+    seasonState.wins = 42;
+    seasonState.losses = 14;
+    seasonState.total = 56;
+    const training = getTrainingPointBreakdown(21);
+    return {
+      mapNine: window.__OWL_BALANCE.mapFightWinProbability(9),
+      mapTen: window.__OWL_BALANCE.mapFightWinProbability(10),
+      mapTwenty: window.__OWL_BALANCE.mapFightWinProbability(20),
+      fmvp: fmvp.winner.name,
+      impression: fmvp.winner.impression,
+      noStandout: noStandout.winner.name,
+      playoffTrainingBonus: training.playoffPerformanceBonus,
+    };
+  });
+
+  expect(result.mapNine).toBeLessThan(0.66);
+  expect(result.mapTen).toBeGreaterThan(result.mapNine);
+  expect(result.mapTwenty).toBeGreaterThan(0.85);
+  expect(result.fmvp).toBe('Rookie');
+  expect(result.impression).toBeGreaterThan(0);
+  expect(result.noStandout).toBe('队友A');
+  expect(result.playoffTrainingBonus).toBeGreaterThan(0);
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });

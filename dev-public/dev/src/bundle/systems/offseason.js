@@ -324,10 +324,14 @@
       const winRate=seasonState.total?seasonState.wins/seasonState.total:.5;
       const ratingBonus=clamp((avg-6.5)*.12,-.12,.24);
       const seasonBonus=winRate>=.70?.12:winRate>=.60?.09:winRate>=.52?.05:winRate>=.44?.01:winRate>=.35?-.04:-.08;
-      const achievementBonus=playoffState.round==='champion'?.18:playoffState.round==='runnerup'?.12:getPlayoffResultLabel()==='季后赛季军'?.08:estimateSeasonRank()<=8?.04:0;
+      const playoffRatings=(playoffState.results||[]).map(result=>Number(result.rating)).filter(Number.isFinite);
+      const playoffAverage=playoffRatings.length?playoffRatings.reduce((sum,rating)=>sum+rating,0)/playoffRatings.length:0;
+      const playoffPerformanceBonus=playoffAverage>=8.2?.08:playoffAverage>=7.6?.05:playoffAverage>=7.0?.02:0;
+      const achievementBase=playoffState.round==='champion'?.18:playoffState.round==='runnerup'?.12:getPlayoffResultLabel()==='季后赛季军'?.08:estimateSeasonRank()<=8?.04:0;
+      const achievementBonus=achievementBase+playoffPerformanceBonus;
       const multiplier=clamp(1.34+ratingBonus+seasonBonus+achievementBonus,1.2,1.8);
       const total=clamp(Math.round(base*multiplier),0,18);
-      return {base,total,multiplier:Number(multiplier.toFixed(2)),avg,winRate,ratingBonus,seasonBonus,achievementBonus};
+      return {base,total,multiplier:Number(multiplier.toFixed(2)),avg,winRate,ratingBonus,seasonBonus,achievementBonus,playoffPerformanceBonus};
     }
 
     function applyAgeNaturalChanges(nextAge) {
@@ -413,7 +417,7 @@
           <div class="training-summary-item"><span>年龄基础</span><strong>${b.base}</strong></div>
           <div class="training-summary-item ${b.ratingBonus>=0?'good':'bad'}"><span>个人评分</span><strong>${b.avg.toFixed(1)} / ${b.ratingBonus>=0?'+':''}${b.ratingBonus.toFixed(2)}</strong></div>
           <div class="training-summary-item ${b.seasonBonus>=0?'good':'bad'}"><span>常规赛表现</span><strong>${Math.round(b.winRate*100)}% / ${b.seasonBonus>=0?'+':''}${b.seasonBonus.toFixed(2)}</strong></div>
-          <div class="training-summary-item ${b.achievementBonus>0?'good':''}"><span>赛季成绩</span><strong>${b.achievementBonus>0?'+':''}${b.achievementBonus.toFixed(2)}</strong></div>
+          <div class="training-summary-item ${b.achievementBonus>0?'good':''}"><span>赛季成绩</span><strong>${b.achievementBonus>0?'+':''}${b.achievementBonus.toFixed(2)}${b.playoffPerformanceBonus?` · 季后赛表现 +${b.playoffPerformanceBonus.toFixed(2)}`:''}</strong></div>
         </div>
         <div class="training-points-card"><strong>${offseasonState.trainingRemaining} / ${offseasonState.trainingPoints}</strong><span>剩余训练点数</span><div class="training-breakdown">基础 ${b.base} 点 × ${b.multiplier.toFixed(2)} 成长倍率 = ${b.total} 点</div></div>
         <div class="meeting-note"><strong>年龄自然变化：</strong>反应与操作可能下滑；意识、决策和指挥仍可能增长。</div>
@@ -821,5 +825,4 @@
     }
 
     /* ---------------- 比赛模拟 V0.2 · 赛季事件 V0.1 ---------------- */
-
 

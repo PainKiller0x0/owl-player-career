@@ -62,8 +62,14 @@
       return 77+(nameScore%9)+randomCentered(1.2);
     }
 
+    function seriesWinProbability(diff) {
+      if(typeof mapFightWinProbability==='function') return mapFightWinProbability(diff);
+      const value=Number(diff)||0,gap=Math.abs(value),direction=value<0?-1:1,edge=gap<=10?gap*.015:.15+(gap-10)*.025;
+      return clamp(.5+direction*edge,.12,.88);
+    }
+
     function simulatePlayoffWinner(teamA,teamB) {
-      const chance=clamp(.5+(careerLikeTeamPower(teamA)-careerLikeTeamPower(teamB))*.018,.28,.72);
+      const chance=clamp(seriesWinProbability(careerLikeTeamPower(teamA)-careerLikeTeamPower(teamB)),.28,.72);
       return Math.random()<chance?teamA:teamB;
     }
 
@@ -89,7 +95,7 @@
       const [teamA,teamB]=getBracketTeams(match); if(!teamA||!teamB) return null;
       const target=match.target;
       // 高顺位拥有首图选图权与轻微系列赛优势。
-      const chance=clamp(.5+(careerLikeTeamPower(teamA)-careerLikeTeamPower(teamB))*.021+seriesSeedEdge(teamA,teamB),.23,.77);
+      const chance=clamp(seriesWinProbability(careerLikeTeamPower(teamA)-careerLikeTeamPower(teamB))+seriesSeedEdge(teamA,teamB),.23,.77);
       let a=0,b=0; while(a<target&&b<target){ if(Math.random()<chance)a++; else b++; }
       const winner=a===target?teamA:teamB, loser=a===target?teamB:teamA;
       match.result={teamA,teamB,winner,loser,scoreA:a,scoreB:b,score:`${a}:${b}`,isPlayer:false};
@@ -154,6 +160,36 @@
       if(match.id==='G1') { resolveFinalsMVP(); if(won) playChampionBurst(); }
     }
 
+    function fmvpImpressionScore(player) {
+      if(!player?.isUser) return 0;
+      const records=careerState.careerArchive||[];
+      const hasHonor=(record,kind)=>{
+        const values=(record.honors||[]).map(raw=>String(typeof normalizeHonorName==='function'?normalizeHonorName(raw):raw));
+        if(kind==='title') return values.some(value=>value.includes('总冠军'));
+        if(kind==='fmvp') return values.some(value=>/总决赛.*(MVP|最有价值)|FMVP/i.test(value));
+        return values.some(value=>/MVP|最有价值/i.test(value)&&!(/总决赛|FMVP/i.test(value))) || Number(record.awards?.mvp?.userRank)===1 || record.awards?.mvp?.winner?.isUser===true;
+      };
+      const titles=records.filter(record=>hasHonor(record,'title')).length;
+      const mvps=records.filter(record=>hasHonor(record,'mvp')).length;
+      const fmvps=records.filter(record=>hasHonor(record,'fmvp')).length;
+      const bond=Math.max(0,Number(careerState.teammateBond||50)-50)*.006;
+      const trust=Math.max(0,Number(careerState.coachTrust||60)-60)*.004;
+      return clamp(titles*.06+mvps*.12+fmvps*.18+bond+trust,0,2.2);
+    }
+
+    function rankFinalsMvpCandidates(candidates) {
+      const rows=(candidates||[]).map(candidate=>({...candidate,impression:fmvpImpressionScore(candidate)}));
+      if(!rows.length) return {winner:null,candidates:[],standout:false};
+      const average=rows.reduce((sum,row)=>sum+Number(row.rating||0),0)/rows.length;
+      const standout=rows.filter(row=>Number(row.rating||0)>=7.8&&Number(row.rating||0)>=average+.25);
+      const pool=standout.length?standout:rows.map(row=>({...row,impression:0}));
+      pool.sort((a,b)=>(b.rating*10+b.impression)-(a.rating*10+a.impression)||b.rating-a.rating);
+      return {winner:pool[0],candidates:rows,standout:!!standout.length};
+    }
+
+    window.__OWL_BALANCE=window.__OWL_BALANCE||{};
+    window.__OWL_BALANCE.rankFinalsMvpCandidates=rankFinalsMvpCandidates;
+
     function resolveFinalsMVP() {
       if(playoffState.fmvp) return playoffState.fmvp;
       const grand=getBracketMatch('G1'); if(!grand?.result) return null;
@@ -168,8 +204,8 @@
       } else {
         candidates=createRoster(championTeam,false).map(player=>({name:player.name,team:championTeam.name,role:player.role,rating:clamp(6.9+(player.overall-78)*.05+randomCentered(.55),5.8,9.6),isUser:false}));
       }
-      candidates.sort((a,b)=>b.rating-a.rating);
-      playoffState.fmvp={...candidates[0],season:careerState.seasonYear}; return playoffState.fmvp;
+      const ranked=rankFinalsMvpCandidates(candidates);
+      playoffState.fmvp={...ranked.winner,season:careerState.seasonYear}; return playoffState.fmvp;
     }
 
     function renderFmvpCard() {
@@ -281,7 +317,7 @@
         const ourTac=chooseTactic(ourRoster,map),theirTac=chooseTactic(theirRoster,map);
         const ourFit=teamMapPower(ourRoster,map,ourTac,theirTac,true).power;
         const theirFit=teamMapPower(theirRoster,map,theirTac,ourTac,false).power;
-        const chance=clamp(.5+(ourFit-theirFit)*.028+regularMomentum+(playerHigher?.012:-.012)+currentCareerMatchBonus()*.012,.24,.82);
+        const chance=clamp(seriesWinProbability(ourFit-theirFit)+regularMomentum+(playerHigher?.012:-.012)+currentCareerMatchBonus()*.012,.24,.82);
         const homeWon=Math.random()<chance;
         if(homeWon)ourMaps++;else theirMaps++;
         mapLog.push(`${picker==='home'?'我方':'对方'}选${map.name}·${homeWon?'我方胜':'对方胜'}`);
@@ -310,7 +346,4 @@
         showScreen(careerState.team?'team':'builder');
       }
     }
-
-
-
 

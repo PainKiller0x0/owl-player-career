@@ -220,8 +220,8 @@
     getTrainingPointBreakdown=function(nextAge){
       const ageBase=AGE_BASE_TRAINING_POINTS[nextAge]??0,initial=careerState.initialOvr||Number(getMyOvr()==='--'?78:getMyOvr());
       const developmentBonus=nextAge<=21?(initial<=72?3:initial<=76?2:initial<=80?1:0):0;const base=ageBase+developmentBonus;
-      const avg=getSeasonAverageRating(),winRate=seasonState.total?seasonState.wins/seasonState.total:.5,ratingBonus=clamp((avg-6.5)*.12,-.12,.24),seasonBonus=winRate>=.70?.12:winRate>=.60?.09:winRate>=.52?.05:winRate>=.44?.01:winRate>=.35?-.04:-.08,achievementBonus=playoffState.round==='champion'?.18:playoffState.round==='runnerup'?.12:getPlayoffResultLabel()==='季后赛季军'?.08:estimateSeasonRank()<=8?.04:0,multiplier=clamp(1.34+ratingBonus+seasonBonus+achievementBonus,1.2,1.8),total=clamp(Math.round(base*multiplier),0,24);
-      return{base,ageBase,developmentBonus,total,multiplier:Number(multiplier.toFixed(2)),avg,winRate,ratingBonus,seasonBonus,achievementBonus};
+      const avg=getSeasonAverageRating(),winRate=seasonState.total?seasonState.wins/seasonState.total:.5,ratingBonus=clamp((avg-6.5)*.12,-.12,.24),seasonBonus=winRate>=.70?.12:winRate>=.60?.09:winRate>=.52?.05:winRate>=.44?.01:winRate>=.35?-.04:-.08,playoffRatings=(playoffState.results||[]).map(result=>Number(result.rating)).filter(Number.isFinite),playoffAverage=playoffRatings.length?playoffRatings.reduce((sum,rating)=>sum+rating,0)/playoffRatings.length:0,playoffPerformanceBonus=playoffAverage>=8.2?.08:playoffAverage>=7.6?.05:playoffAverage>=7.0?.02:0,achievementBase=playoffState.round==='champion'?.18:playoffState.round==='runnerup'?.12:getPlayoffResultLabel()==='季后赛季军'?.08:estimateSeasonRank()<=8?.04:0,achievementBonus=achievementBase+playoffPerformanceBonus,multiplier=clamp(1.34+ratingBonus+seasonBonus+achievementBonus,1.2,1.8),total=clamp(Math.round(base*multiplier),0,24);
+      return{base,ageBase,developmentBonus,total,multiplier:Number(multiplier.toFixed(2)),avg,winRate,ratingBonus,seasonBonus,achievementBonus,playoffPerformanceBonus};
     };
     const _v32RenderTrainingBase=renderTrainingCamp;
     renderTrainingCamp=function(wrap){_v32RenderTrainingBase(wrap);const b=offseasonState.trainingBreakdown||getTrainingPointBreakdown(careerState.age);const first=wrap.querySelector('.training-summary-item strong');if(first)first.textContent=b.developmentBonus?`${b.base}（年龄${b.ageBase}+潜力${b.developmentBonus}）`:String(b.base);};
@@ -276,7 +276,6 @@
       _v32OpenNextPlayoffMatchBase(mode);
       if(mode==='detail'&&matchState.context==='playoff'&&matchState.homeRoster&&careerState.team){matchState.homeRoster=v32EnsureUserInActiveRoster(matchState.homeRoster,careerState.team);renderMatch();}
     };
-
 
 
 
