@@ -169,6 +169,43 @@ test('manual save -> reload -> load slot restores the active career', async ({ p
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });
 
+test('save payload removes rebuildable caches and restores compact team refs', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_COMPACT_SAVE', age: 19 });
+
+  const result = await page.evaluate(() => {
+    seasonState.stageTables = { qa: [{ team: careerState.team }] };
+    seasonState.finalStandingsCache = [{ team: careerState.team }];
+    seasonState.v762FinalStandingsCache = [{ team: careerState.team }];
+    const payload = window.__OWL_PUBLIC_BETA.captureSave('manual');
+    const compact = JSON.stringify(payload);
+    const restored = window.__OWL_PUBLIC_BETA.restorePayload(payload);
+    return {
+      format: payload.saveFormat,
+      bytes: new TextEncoder().encode(compact).length,
+      cacheKeys: ['stageTables', 'finalStandingsCache', 'v741FinalStandingsCache', 'v762FinalStandingsCache', 'v34StageTables']
+        .filter((key) => Object.prototype.hasOwnProperty.call(payload.seasonState, key)),
+      opponentRef: payload.seasonState.opponents[0],
+      careerTeamRef: payload.careerState.team,
+      restored,
+      restoredOpponent: seasonState.opponents[0]?.short,
+      restoredTeam: careerState.team?.short,
+      restoredStageTables: Object.prototype.hasOwnProperty.call(seasonState, 'stageTables'),
+    };
+  });
+
+  expect(result.format).toBe('compact-v1');
+  expect(result.bytes).toBeLessThan(3_500_000);
+  expect(result.cacheKeys).toEqual([]);
+  expect(typeof result.opponentRef).toBe('string');
+  expect(typeof result.careerTeamRef).toBe('string');
+  expect(result.restored).toBe(true);
+  expect(result.restoredOpponent).toBeTruthy();
+  expect(result.restoredTeam).toBeTruthy();
+  expect(result.restoredStageTables).toBe(false);
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
 test('2023 career advances into 2024/2025/2026 with three Stage structure', async ({ page }) => {
   const monitor = await freshApp(page);
   await createCareer(page, { year: 2023, playerName: 'E2E_FUTURE', age: 18 });

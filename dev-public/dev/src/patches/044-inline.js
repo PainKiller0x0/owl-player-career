@@ -8,6 +8,7 @@
   const GAME_VERSION='2.0 Alpha 1 · Living World Foundation';
   const INTERNAL_VERSION='V10.0.0';
   const SAVE_VERSION=1;
+  const SAVE_FORMAT='compact-v1';
   const SLOT_COUNT=10;
   const KEY_PREFIX='owl_player_path_public_save_';
   const CURRENT_SLOT_KEY='owl_player_path_current_slot_v1';
@@ -25,6 +26,24 @@
     if(k==='timer'||k==='resetArmTimer')return null;
     return x;
   }));
+  const REBUILDABLE_SEASON_FIELDS=Object.freeze(['stageTables','finalStandingsCache','v741FinalStandingsCache','v762FinalStandingsCache','v34StageTables']);
+  const TEAM_REF_KEYS=new Set(['team','opponent','homeTeam','awayTeam','winner','runnerUp','champion','teamA','teamB','teamSelectionTarget']);
+  function compactTeamRefs(v,key=''){
+    if(Array.isArray(v)){v.forEach((x,i)=>{v[i]=compactTeamRefs(x,key)});return v}
+    if(!v||typeof v!=='object')return v;
+    if(TEAM_REF_KEYS.has(key)&&v.short)return v.short;
+    Object.entries(v).forEach(([k,x])=>{v[k]=compactTeamRefs(x,k)});
+    return v;
+  }
+  function compactSavePayload(payload){
+    const p=compactTeamRefs(payload),season=p?.seasonState||{};
+    REBUILDABLE_SEASON_FIELDS.forEach(k=>{delete season[k]});
+    if(Array.isArray(season.opponents))season.opponents=season.opponents.map(t=>t?.short||t?.name||t);
+    if(Array.isArray(season.v34PostseasonTeams))season.v34PostseasonTeams=season.v34PostseasonTeams.map(t=>t?.short||t?.name||t);
+    if(Array.isArray(p?.playoffState?.teams))p.playoffState.teams=p.playoffState.teams.map(t=>t?.short||t?.name||t);
+    if(p&&typeof p==='object')p.saveFormat=SAVE_FORMAT;
+    return p;
+  }
   const nowIso=()=>new Date().toISOString();
   function toast(msg){const n=$('#v800Toast');if(!n)return;n.textContent=msg;n.classList.add('show');clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('show'),1700);}
   function getCurrentSlot(){const n=Number(localStorage.getItem(CURRENT_SLOT_KEY)||1);return n>=1&&n<=SLOT_COUNT?n:1}
@@ -42,17 +61,17 @@
   }
   function captureSave(reason='auto'){
     if(restoring||!isResumablePayload({state,careerState,seasonState}))return null;
-    return{
+    return compactSavePayload({
       saveVersion:SAVE_VERSION,gameVersion:GAME_VERSION,internalVersion:INTERNAL_VERSION,savedAt:nowIso(),reason,screen:safeScreen(),
       state:clone(state),careerState:clone(careerState),seasonState:clone(seasonState),playoffState:clone(playoffState),offseasonState:clone(offseasonState),
       injuryState:clone(injuryState),careerViewState:clone(careerViewState),gameSettings:clone(gameSettings),
       teamMeta:teamMetaSnapshot(),fantasyWorld:window.__OWL_V800_WORLD_IO?.export?.()||null
-    };
+    });
   }
   function summaryFromPayload(p){
     const c=p?.careerState||{},s=p?.state||{};
     return{
-      name:s.playerName||'Rookie',role:s.role||'未选位置',team:c.team?.name||c.contract?.teamName||'尚未签约',
+      name:s.playerName||'Rookie',role:s.role||'未选位置',team:resolveTeam(c.team)?.name||c.contract?.teamName||'尚未签约',
       year:Number(c.seasonYear||p?.fantasyWorld?.selection?.startYear||2019),age:Number(c.age||16),careerYears:Number(c.careerYears||1),
       mode:c.simulationMode==='history'?'历史模拟':'梦幻模拟',savedAt:p?.savedAt||null,retired:!!c.retired,screen:p?.screen||'cover'
     };
@@ -97,7 +116,7 @@
     if(p.screen==='match')p.screen=p.matchState?.context==='playoff'?'playoff':'season';
     if(!['cover','mode','builder','role','reveal','team','season','playoff','summary','career','offseason','retirement','retiredCareer'].includes(p.screen))p.screen=p.careerState?.team?'season':'builder';
     p.saveVersion=SAVE_VERSION;
-    return p;
+    return compactSavePayload(p);
   }
   function parseStored(key){
     const raw=localStorage.getItem(key);if(!raw)return null;
@@ -218,18 +237,18 @@
   function exportSlot(n=getCurrentSlot()){
     const r=readSlot(n);if(!r.payload){toast('这个槽位还没有存档');return}
     const s=summaryFromPayload(r.payload),name=`owl_career_${String(s.name).replace(/[^\w\u4e00-\u9fff-]+/g,'_')}_${s.year}_slot${n}.json`;
-    downloadText(name,JSON.stringify(r.payload,null,2));toast(`✓ 已导出槽位 ${n}`);
+    downloadText(name,JSON.stringify(r.payload));toast(`✓ 已导出槽位 ${n}`);
   }
 
   function resolveTeam(v){
     if(!v)return v;
-    const short=typeof v==='object'?v.short:null,name=typeof v==='object'?v.name:String(v);
+    const short=typeof v==='object'?v.short:String(v),name=typeof v==='object'?v.name:String(v);
     return TEAMS.find(t=>(short&&t.short===short)||t.name===name)||v;
   }
   function reviveRefs(v,key=''){
     if(Array.isArray(v))return v.map(x=>reviveRefs(x,key));
+    if(TEAM_REF_KEYS.has(key)&&(typeof v==='string'||(v&&typeof v==='object'&&(v.short||v.name))))return resolveTeam(v);
     if(!v||typeof v!=='object')return v;
-    if(['team','opponent','homeTeam','awayTeam','winner','runnerUp','champion','teamA','teamB'].includes(key)&&(v.short||v.name))return resolveTeam(v);
     const out={};
     Object.entries(v).forEach(([k,x])=>out[k]=reviveRefs(x,k));
     return out;
@@ -263,11 +282,12 @@
       if(seasonState.timer){clearTimeout(seasonState.timer);seasonState.timer=null}
       window.__OWL_V800_WORLD_IO?.import?.(p.fantasyWorld||{selection:{mode:p.careerState?.simulationMode||'fantasy',startYear:p.careerState?.startYear||2019}});
       applyTeamMeta(p.teamMeta||[]);
+      REBUILDABLE_SEASON_FIELDS.forEach(k=>{delete seasonState[k]});
       assignRoot(state,p.state);assignRoot(careerState,reviveRefs(p.careerState));assignRoot(seasonState,reviveRefs(p.seasonState));
       assignRoot(playoffState,reviveRefs(p.playoffState));assignRoot(offseasonState,reviveRefs(p.offseasonState));assignRoot(injuryState,p.injuryState);assignRoot(careerViewState,p.careerViewState);
       Object.assign(gameSettings,p.gameSettings||{});
       state.team=resolveTeam(state.team);careerState.team=resolveTeam(careerState.team);
-      seasonState.opponents=(seasonState.opponents||[]).map(resolveTeam);seasonState.timer=null;seasonState.resetArmTimer=null;seasonState.simulating=false;
+      seasonState.opponents=(seasonState.opponents||[]).map(resolveTeam);seasonState.v34PostseasonTeams=(seasonState.v34PostseasonTeams||[]).map(resolveTeam);seasonState.timer=null;seasonState.resetArmTimer=null;seasonState.simulating=false;
       if(playoffState.teams)playoffState.teams=playoffState.teams.map(resolveTeam);
       (offseasonState.offers||[]).forEach(o=>o.team=resolveTeam(o.team));
       if(offseasonState.signedOffer?.team)offseasonState.signedOffer.team=resolveTeam(offseasonState.signedOffer.team);
