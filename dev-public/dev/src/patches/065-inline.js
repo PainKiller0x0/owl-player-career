@@ -202,6 +202,10 @@
 
   function standings34(){
     const y=year34();if(y<2027)return null;if(seasonState.finalStandingsCache?.v34)return seasonState.finalStandingsCache;
+    if(Number(seasonState.played||0)>=Number(seasonState.total||0)&&typeof window.__OWL_V34_STANDINGS_OVERRIDE==='function'){
+      const rows=window.__OWL_V34_STANDINGS_OVERRIDE();
+      if(Array.isArray(rows)&&rows.length){rows.v34=true;seasonState.finalStandingsCache=rows;return rows;}
+    }
     const total=Number(seasonState.total||56),teams=activeTeams34(),userLP=Number(seasonState.wins||0)+Number(seasonState.majorBonusLP||0),rows=teams.map(team=>{
       if(team.name===careerState.team?.name)return{team,wins:seasonState.wins,losses:total-seasonState.wins,mapDiff:Math.round((seasonState.wins-seasonState.losses)*2.1),lp:userLP,isUser:true};
       let str=Number(team.strength||80);if(expansionTeam34(team)&&y===2035)str-=3;const rate=clamp(.5+(str-80)*.018+stableSeasonNoise(team.name,y,4)*.01,.18,.82),wins=clamp(Math.round(total*rate),Math.max(2,Math.round(total*.14)),Math.round(total*.86)),major=clamp(Math.round((str-78)/6+stableSeasonNoise(team.name,88+y,2)),0,8);return{team,wins,losses:total-wins,mapDiff:Math.round((wins-total/2)*2+stableSeasonNoise(team.name,177+y,7)),lp:wins+major,isUser:false};

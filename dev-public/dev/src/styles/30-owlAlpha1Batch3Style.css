@@ -35,6 +35,32 @@
   animation: seasonMvpBurst 1.6s ease both;
 }
 
+.season-mvp-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 10119;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.season-mvp-confetti i {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--c);
+  opacity: 0;
+  animation: seasonMvpConfetti 1.85s var(--d) cubic-bezier(.18,.72,.26,1) both;
+}
+
+@keyframes seasonMvpConfetti {
+  0% { opacity: 0; transform: translate3d(var(--x), -20px, 0) rotate(0deg); }
+  14% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(calc(var(--x) * .72), var(--y), 0) rotate(var(--r)); }
+}
+
 @keyframes seasonMvpBurst {
   0% { opacity: 0; transform: translate(-50%, 28px) scale(.7); }
   30% { opacity: 1; transform: translate(-50%, 0) scale(1.12); }

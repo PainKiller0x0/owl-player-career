@@ -83,7 +83,7 @@
     if(opening||seasonState.simulating||seasonState.currentEvent||seasonState.eventDue||seasonState.stageBreakPending)return;
     const wc=careerState.worldCup?.seasons?.[careerState.seasonYear];
     if(wc?.result==='国家队落选'&&!used('miss-worldcup')){setTimeout(()=>openSpecialTraining('miss-worldcup','落选之后，训练室的灯还亮着','国家队名单没有你的名字。你没有去社媒写小作文，而是把空出来的国际赛训练窗口拿来补自己的英雄短板。',3.6),80);return}
-    const as=seasonState.v71AllStar;if(as&&as.year===careerState.seasonYear&&!as.selected&&!seasonState.v71AllStarPending&&!used('miss-allstar')){setTimeout(()=>openSpecialTraining('miss-allstar','全明星周末没你的票，那就自己加练','别人去参加全明星，你留下来继续训练。节目效果没有，英雄熟练度可以有。',3.3),80);return}
+    const as=seasonState.v71AllStar;if(as&&as.year===careerState.seasonYear&&(!as.selected||as.participation==='decline')&&!seasonState.v71AllStarPending&&!used('miss-allstar')){setTimeout(()=>openSpecialTraining('miss-allstar',as.participation==='decline'?'主动退出全明星，那就把时间用在训练上':'全明星周末没你的票，那就自己加练',as.participation==='decline'?'你主动退出了全明星，训练室为你留了一晚。可以针对英雄短板加练，也可以选择休息。':'别人去参加全明星，你留下来继续训练。节目效果没有，英雄熟练度可以有。',3.3),80);return}
     const rows=(careerState.v75StoryHistory||[]).filter(x=>Number(x.year)===Number(careerState.seasonYear)).slice(-4);
     if(rows.length>=4&&rows.every(x=>Number(x.mapsPlayed||0)===0)&&!used('dnp-streak'))setTimeout(()=>openSpecialTraining('dnp-streak','板凳坐久了，就自己把门踹开','连续多场DNP后，教练允许你做一轮额外英雄专项。光坐板凳领工资确实很舒服，可惜对职业生涯没什么帮助。',3.0),80);
   }
@@ -102,7 +102,7 @@
 
   // All-Star close is created dynamically. Capture the fact before the old listener removes the overlay,
   // then the next season render opens the special-training follow-up.
-  document.addEventListener('click',e=>{if(e.target?.closest?.('#v71CloseAllStar'))setTimeout(()=>{opening=false;maybeSpecialTraining()},120)},true);
+  document.addEventListener('click',e=>{if(e.target?.closest?.('#v71CloseAllStar,#v34CloseAllStar'))setTimeout(()=>{opening=false;maybeSpecialTraining()},120)},true);
 
   normalizeStoredTeamNames();cleanupDnpRivalPollution();
   window.__OWL_V14={version:V14,teamZh,cleanupDnpRivalPollution,openSpecialTraining,maybeSpecialTraining,weakestHeroes,translateVisibleTeams,finalWording,polish};

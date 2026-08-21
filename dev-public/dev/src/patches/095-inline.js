@@ -31,6 +31,21 @@
     document.body.classList.remove('season-mvp-burst');
     void document.body.offsetWidth;
     document.body.classList.add('season-mvp-burst');
+    document.querySelector('.season-mvp-confetti')?.remove();
+    const layer = document.createElement('div');
+    layer.className = 'season-mvp-confetti';
+    const colors = ['#ff6438', '#ffd166', '#35c98b', '#62c7ff', '#f08ad8', '#fff4dc'];
+    for (let i = 0; i < 32; i += 1) {
+      const piece = document.createElement('i');
+      piece.style.setProperty('--x', `${Math.round((Math.random() - .5) * Math.min(window.innerWidth * .9, 840))}px`);
+      piece.style.setProperty('--y', `${Math.round(window.innerHeight * (.58 + Math.random() * .32))}px`);
+      piece.style.setProperty('--r', `${Math.round((Math.random() - .5) * 960)}deg`);
+      piece.style.setProperty('--d', `${(Math.random() * .14).toFixed(2)}s`);
+      piece.style.setProperty('--c', colors[i % colors.length]);
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 2100);
     setTimeout(() => document.body.classList.remove('season-mvp-burst'), 1700);
   }
 

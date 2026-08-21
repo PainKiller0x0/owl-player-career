@@ -320,6 +320,67 @@ test('2025 final standings keep the season LP and record in sync', async ({ page
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });
 
+test('2027+ standings modal uses the same final standings as season qualification', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_FUTURE', age: 20 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2032;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.played = 56;
+    seasonState.total = 56;
+    seasonState.wins = 30;
+    seasonState.losses = 26;
+    seasonState.majorBonusLP = 2;
+    seasonState.results = Array.from({ length: 56 }, (_, i) => (i < 30 ? 'win' : 'loss'));
+    seasonState.userRatings = Array.from({ length: 56 }, () => 7.7);
+    seasonState.stageProcessed = [1, 2, 3];
+    seasonState.stageBreakPending = null;
+    seasonState.finalStandingsCache = null;
+    seasonState.v34Postseason = null;
+    seasonState.v34PostseasonTeams = [];
+    renderSeason();
+    showScreen('season');
+  });
+
+  const expected = await page.evaluate(() => ({
+    rank: estimateSeasonRank(),
+    wins: seasonState.wins,
+    losses: seasonState.losses,
+    lp: seasonState.wins + Number(seasonState.majorBonusLP || 0),
+  }));
+  await page.locator('#seasonYearChip').click();
+  const userRow = page.locator('#b2StandingsBody tr.user');
+  await expect(userRow).toContainText(String(expected.wins));
+  await expect(userRow).toContainText(String(expected.losses));
+  await expect(userRow).toContainText(String(expected.lp));
+  await expect(userRow.locator('.b2-rank')).toHaveText(String(expected.rank));
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
+test('healthy players do not receive the voluntary retirement action at 25', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_RETIRE', age: 20 });
+
+  const result = await page.evaluate(() => {
+    careerState.age = 25;
+    careerState.injuryHistory = [];
+    seasonState.played = seasonState.total;
+    seasonState.wins = 30;
+    seasonState.losses = Number(seasonState.total) - 30;
+    playoffState.round = 'active';
+    return {
+      canConsider: window.__OWL_V23_UX.canConsiderRetirement(),
+      shouldShow: shouldShowRetirementDecision(),
+    };
+  });
+
+  expect(result).toEqual({ canConsider: false, shouldShow: false });
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
 test('annual awards continue repairs a completed season with an uninitialized playoff state', async ({ page }) => {
   const monitor = await freshApp(page);
   await createCareer(page, { year: 2023, playerName: 'E2E_AWARDS_FLOW', age: 20 });
@@ -439,6 +500,51 @@ test('whole-season simulation does not silently discard the All-Star checkpoint'
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });
 
+test('withdrawing from a 2027+ All-Star opens the comeback training or rest event', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_WITHDRAW', age: 20 });
+
+  await page.evaluate(() => {
+    careerState.seasonYear = 2027;
+    seasonState.active = false;
+    setupSeason(false);
+    seasonState.eventSchedule = [];
+    seasonState.v71AllStar = {
+      year: 2027,
+      selected: true,
+      starter: false,
+      allStarMvp: false,
+      risingEligible: false,
+      risingMvp: false,
+      sniperEntered: false,
+      sniperWin: false,
+      allRoundEntered: false,
+      allRoundWin: false,
+      breadth: 4,
+      widow: 80,
+      winner: 'East',
+      side: '东部',
+      opponent: '西部',
+      global: false,
+      participation: null,
+      popApplied: false,
+      popGain: 4,
+    };
+    seasonState.v71AllStarPending = false;
+    careerState.v14SpecialHeroTraining = [];
+    renderSeason();
+    showScreen('season');
+    window.__OWL_V34_FUTURE.allStar(false);
+  });
+
+  await page.locator('#v34WithdrawAllStar').click();
+  await expect(page.locator('#v34CloseAllStar')).toBeVisible();
+  await page.locator('#v34CloseAllStar').click();
+  await expect(page.locator('#seasonEventContent')).toContainText('主动退出全明星');
+  await expect(page.locator('#v14ApplySpecial, #v14SkipSpecial')).toHaveCount(2);
+  expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
+});
+
 test('repeated MVPs apply fatigue and trigger a season MVP celebration', async ({ page }) => {
   const monitor = await freshApp(page, { viewport: { width: 1280, height: 720 } });
   await createCareer(page, { year: 2023, playerName: 'E2E_MVP', age: 20 });
@@ -470,5 +576,6 @@ test('repeated MVPs apply fatigue and trigger a season MVP celebration', async (
   expect(result.fatigue).toEqual({ streak: 2, penalty: 6 });
   expect(result.bodyFont).toBe('17px');
   await page.waitForFunction(() => document.body.classList.contains('season-mvp-burst'));
+  await expect(page.locator('.season-mvp-confetti i')).toHaveCount(32);
   expectCleanRuntime(monitor.runtimeErrors, monitor.dialogs);
 });

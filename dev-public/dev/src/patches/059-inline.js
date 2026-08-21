@@ -26,7 +26,7 @@
     const regularDone=Number(seasonState.played)>=Number(seasonState.total);
     const qualified=regularDone&&estimateSeasonRank()<=8;
     const playoffDone=['champion','runnerup','eliminated'].includes(playoffState.round);
-    return age>=23&&age<29&&regularDone&&(!qualified||playoffDone);
+    return (age>=29||injuryRetireTrigger23())&&age<30&&regularDone&&(!qualified||playoffDone);
   }
 
   function injectRetirementAction23(){
