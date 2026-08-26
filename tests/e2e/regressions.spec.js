@@ -170,6 +170,25 @@ test('regression: 2019 team selection maps Pacific to East and Atlantic to West'
   expectCleanRuntime(monitor);
 });
 
+test('regression: 2019 standings reuse the Pacific-as-East team mapping', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2019-season-start');
+  await page.locator('#seasonYearChip').click();
+  const regions = await page.evaluate(() => {
+    const read = name => {
+      const row = [...document.querySelectorAll('#b2StandingsBody tbody tr')].find(item => item.querySelector('.b2-team-cell b')?.textContent.trim() === name);
+      const badge = row?.querySelector('.b2-region-badge');
+      return { label: badge?.textContent.trim() || '', className: badge?.className || '' };
+    };
+    return { atl: read('亚特兰大君临'), gzc: read('广州冲锋') };
+  });
+  expect(regions).toEqual({
+    atl: { label: '西部', className: 'b2-region-badge west' },
+    gzc: { label: '东部', className: 'b2-region-badge east' },
+  });
+  expectCleanRuntime(monitor);
+});
+
 test('regression: career season chip opens the total standings for historical seasons', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2023-pre-playoffs');
