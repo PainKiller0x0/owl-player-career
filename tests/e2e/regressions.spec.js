@@ -201,6 +201,67 @@ test('regression: regular-season MVP celebration fires during season-end render'
   expectCleanRuntime(monitor);
 });
 
+test('regression: Role Star quotas match OWL history instead of custom-role count', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2019-season-start');
+  const historical = await page.evaluate(() => {
+    const collect = year => {
+      careerState.seasonYear = year;
+      careerState.startYear = year;
+      v50ApplySeasonWorld(year);
+      seasonState.active = false;
+      setupSeason(false);
+      seasonState.played = seasonState.total;
+      seasonState.userRatings = Array.from({ length: seasonState.total }, () => 7.5);
+      seasonState.awards = null;
+      const awards = ensureRegularSeasonAwards();
+      renderRegularSeasonAwards();
+      const roleCard = [...document.querySelectorAll('#regularAwardsContent .award-card')].find(card => card.querySelector('h3')?.textContent.includes('职责之星'));
+      return {
+        year,
+        counts: Object.fromEntries(Object.entries(awards.roleStars || {}).map(([key, value]) => [key, value.winners?.length || 0])),
+        header: roleCard?.querySelector('.award-card-head span')?.textContent.trim() || '',
+        rows: [...document.querySelectorAll('#regularAwardsContent .award-role-row')].map(row => row.textContent.replace(/\s+/g, ' ').trim()),
+      };
+    };
+    return [2019, 2020, 2021, 2022, 2023].map(collect);
+  });
+  expect(historical.map(item => item.counts)).toEqual([
+    { tank: 4, damage: 4, support: 4 },
+    { tank: 4, damage: 5, support: 4 },
+    { tank: 4, damage: 4, support: 4 },
+    { tank: 4, damage: 4, support: 4 },
+    { tank: 4, damage: 4, support: 4 },
+  ]);
+  expect(historical.find(item => item.year === 2020).header).toBe('坦克4人 · 输出5人 · 支援4人');
+  expect(historical.at(-1).header).toBe('坦克4人 · 输出4人 · 支援4人');
+  await loadQaScenario(page, '2025-pre-finals');
+  const future = await page.evaluate(() => {
+    seasonState.awards = null;
+    const fresh = ensureRegularSeasonAwards();
+    fresh.roleStars.tank.winners = fresh.roleStars.tank.winners.slice(0, 3);
+    seasonState.awards = fresh;
+    const migrated = ensureRegularSeasonAwards();
+    renderRegularSeasonAwards();
+    const roleCard = [...document.querySelectorAll('#regularAwardsContent .award-card')].find(card => card.querySelector('h3')?.textContent.includes('职责之星'));
+    return {
+      counts: Object.fromEntries(Object.entries(migrated.roleStars).map(([key, value]) => [key, value.winners?.length || 0])),
+      header: roleCard?.querySelector('.award-card-head span')?.textContent.trim() || '',
+    };
+  });
+  expect(future).toEqual({ counts: { tank: 4, damage: 4, support: 4 }, header: '坦克4人 · 输出4人 · 支援4人' });
+  expectCleanRuntime(monitor);
+});
+
+test('regression: cover copy uses the 18-year OWL entry age', async ({ page }) => {
+  const monitor = await freshApp(page);
+  const copy = await page.locator('#coverScreen').innerText();
+  expect(copy).toContain('从18–26岁选择职业起点');
+  expect(copy).toContain('18–26岁自选起点 · 30岁退役');
+  expect(copy).not.toMatch(/16\s*岁|16\s*[–～~-]\s*26/);
+  expectCleanRuntime(monitor);
+});
+
 test('regression: training-point decay keeps a three-point floor', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, 'retirement-age29');

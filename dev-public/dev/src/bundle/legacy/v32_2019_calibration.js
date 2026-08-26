@@ -200,15 +200,15 @@
     };
     function v32PastAwardWinners(type){return careerState.careerArchive.map(r=>r.awards?.[type]?.winner?.name).filter(Boolean);}
     ensureRegularSeasonAwards=function(){
-      if(seasonState.awards?.roleStars&&Object.values(seasonState.awards.roleStars)[0]?.winners)return seasonState.awards;
+      const quotas=window.__OWL_ROLE_STAR_RULES?.quotas?.(careerState.seasonYear)||{tank:4,damage:4,support:4};if(seasonState.awards?.roleStars&&Object.entries(quotas).every(([g,count])=>seasonState.awards.roleStars[g]?.winners?.length===count))return seasonState.awards;
       const pool=buildRegularAwardLeaguePool(),mvpHistory=v32PastAwardWinners('mvp'),rookieHistory=new Set(v32PastAwardWinners('rookie'));
       const last=mvpHistory.at(-1),recent=new Set(mvpHistory.slice(-3));
       const mvp=rankAwardCandidates(pool,p=>p.rating*11.5+p.ovr*.16+p.wins*.62+(!p.isUser&&p.name===last?-7.0:!p.isUser&&recent.has(p.name)?-3.0:0));
       let rookiePool=pool.filter(p=>p.rookie&&!rookieHistory.has(p.name));if(careerState.careerYears>1)rookiePool=rookiePool.filter(p=>!p.isUser);
       if(!rookiePool.length){const fallbackName=`新秀${careerState.seasonYear}`;rookiePool=[{id:`fallback-rookie-${careerState.seasonYear}`,isUser:false,name:fallbackName,team:pick(TEAMS).name,role:pick(ROLES).name,rating:rand(69,78)/10,ovr:rand(78,88),wins:rand(9,19),popularity:rand(20,65),rookie:true,roleQuality:rand(78,90)}];}
       const rookie=rankAwardCandidates(rookiePool,p=>p.rating*10.5+p.ovr*.16+p.wins*.48);rookie.userEligible=careerState.careerYears===1;if(!rookie.userEligible)rookie.userRank=null;
-      const community=rankAwardCandidates(pool,p=>p.popularity*.72+p.rating*2.7+p.wins*.18),roleStars={};
-      ROLES.forEach(role=>{const r=rankAwardCandidates(pool.filter(p=>p.role===role.name),p=>p.rating*9.8+p.ovr*.21+p.wins*.34+p.roleQuality*.08);r.winners=r.top5.slice(0,2);roleStars[role.name]=r;});
+      const community=rankAwardCandidates(pool,p=>p.popularity*.72+p.rating*2.7+p.wins*.18),roleStars={},groups={tank:pool.filter(p=>window.__OWL_ROLE_STAR_RULES?.group?.(p.role)==='tank'),damage:pool.filter(p=>window.__OWL_ROLE_STAR_RULES?.group?.(p.role)==='damage'),support:pool.filter(p=>window.__OWL_ROLE_STAR_RULES?.group?.(p.role)==='support')};
+      Object.entries(groups).forEach(([group,list])=>{const r=rankAwardCandidates(list,p=>p.rating*9.8+p.ovr*.21+p.wins*.34+p.roleQuality*.08);r.winners=r.top5.slice(0,quotas[group]);roleStars[group]=r;});
       seasonState.awards={mvp,rookie,community,roleStars,generatedYear:careerState.seasonYear};return seasonState.awards;
     };
 
@@ -276,6 +276,5 @@
       _v32OpenNextPlayoffMatchBase(mode);
       if(mode==='detail'&&matchState.context==='playoff'&&matchState.homeRoster&&careerState.team){matchState.homeRoster=v32EnsureUserInActiveRoster(matchState.homeRoster,careerState.team);renderMatch();}
     };
-
 
 

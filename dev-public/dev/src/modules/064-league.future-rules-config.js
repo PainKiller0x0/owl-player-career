@@ -13,6 +13,10 @@
     Object.freeze({name:'利雅得日蚀',englishName:'Riyadh Eclipse',short:'RYD',city:'利雅得',division:'Pacific',conference:'West',strength:76,color:'linear-gradient(135deg,#0f8b57,#18221d)',expansion:true,country:'SA',build:'均衡建队'})
   ]);
   const RULE_YEARS=Object.freeze([2027,2030,2033,2035,2038,2040]);
+  const ROLE_STAR_QUOTAS=Object.freeze({
+    default:Object.freeze({tank:4,damage:4,support:4}),
+    2020:Object.freeze({tank:4,damage:5,support:4})
+  });
 
   function seasonFormat(year){
     const y=Number(year)||2024;
@@ -43,6 +47,7 @@
       allStar:true
     };
   }
-  const api=Object.freeze({version:1,expansionYear:EXPANSION_YEAR,expansionTeams:EXPANSION_TEAMS,ruleYears:RULE_YEARS,seasonFormat,postseason,stageBounds,specialEvents});
+  function roleStarQuotas(year){return ROLE_STAR_QUOTAS[Number(year)]||ROLE_STAR_QUOTAS.default;}
+  const api=Object.freeze({version:1,expansionYear:EXPANSION_YEAR,expansionTeams:EXPANSION_TEAMS,ruleYears:RULE_YEARS,seasonFormat,postseason,stageBounds,specialEvents,roleStarQuotas});
   global.__OWL_FUTURE_RULES_CONFIG=api;
 })(window);

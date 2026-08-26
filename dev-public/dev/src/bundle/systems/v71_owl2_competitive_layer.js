@@ -79,6 +79,8 @@
   function v71Conference(team){return (team?.division==='Atlantic'||team?.conference==='East')?'East':'West';}
   function v71ConferenceZh(teamOrKey){const k=typeof teamOrKey==='string'?teamOrKey:v71Conference(teamOrKey);return k==='East'?'东部':'西部';}
   function v71RoleGroup(role){return role==='坦克'?'tank':(/输出/.test(role)&&role!=='输出支援')?'damage':role==='长枪输出'||role==='弹道输出'?'damage':'support';}
+  function v71RoleStarQuotas(year=v71Year()){return window.__OWL_FUTURE_RULES_CONFIG?.roleStarQuotas?.(year)||{tank:4,damage:4,support:4};}
+  window.__OWL_ROLE_STAR_RULES={quotas:v71RoleStarQuotas,group:v71RoleGroup};
   function v71AvailableHeroes(year=v71Year()){return V71_HERO_CATALOG.filter(h=>h.proYear<=year);}
   function v71AvailableMaps(year=v71Year()){
     return V71_MAP_CATALOG.filter(m=>m.proYear<=year && (!m.retireYear||year<m.retireYear));
@@ -507,13 +509,13 @@
   }
   const _v71EnsureAwardsBase=ensureRegularSeasonAwards;
   ensureRegularSeasonAwards=function(){
-    if(!v71IsOwl2())return _v71EnsureAwardsBase();const cached=seasonState.awards;if(cached?.v71&&Number(cached.generatedYear)===v71Year()&&cached.mvp?.winner&&cached.rookie?.winner&&cached.mip?.winner&&cached.hawelka?.winner&&['tank','damage','support'].every(g=>cached.roleStars?.[g]?.winners?.length))return cached;
+    if(!v71IsOwl2())return _v71EnsureAwardsBase();const cached=seasonState.awards,quotas=v71RoleStarQuotas(v71Year());if(cached?.v71&&Number(cached.generatedYear)===v71Year()&&cached.mvp?.winner&&cached.rookie?.winner&&cached.mip?.winner&&cached.hawelka?.winner&&Object.entries(quotas).every(([g,count])=>cached.roleStars?.[g]?.winners?.length===count))return cached;
     const pool=buildRegularAwardLeaguePool();
     const mvp=rankAwardCandidates(pool,p=>p.rating*10+p.ovr*.16+p.wins*.50);
     const rookiePool=pool.filter(p=>p.rookie),rookie=rankAwardCandidates(rookiePool.length?rookiePool:pool.slice(0,1),p=>p.rating*10+p.ovr*.15+p.wins*.4);rookie.userEligible=careerState.careerYears===1;if(!rookie.userEligible)rookie.userRank=null;
     const hawelka=rankAwardCandidates(pool,v71HawelkaScore);
     const groupRows={tank:pool.filter(p=>v71RoleGroup(p.role)==='tank'),damage:pool.filter(p=>v71RoleGroup(p.role)==='damage'),support:pool.filter(p=>v71RoleGroup(p.role)==='support')};
-    const roleStars={};Object.entries(groupRows).forEach(([g,list])=>{const ranked=list.map(p=>({...p,awardScore:p.rating*9+p.ovr*.20+p.wins*.28+p.roleQuality*.08+randomCentered(.5)})).sort((a,b)=>b.awardScore-a.awardScore),count=g==='tank'?3:4,userIndex=ranked.findIndex(p=>p.isUser);roleStars[g]={winners:ranked.slice(0,count),userRank:userIndex>=0?userIndex+1:null};});
+    const roleStars={};Object.entries(groupRows).forEach(([g,list])=>{const ranked=list.map(p=>({...p,awardScore:p.rating*9+p.ovr*.20+p.wins*.28+p.roleQuality*.08+randomCentered(.5)})).sort((a,b)=>b.awardScore-a.awardScore),count=quotas[g],userIndex=ranked.findIndex(p=>p.isUser);roleStars[g]={winners:ranked.slice(0,count),userRank:userIndex>=0?userIndex+1:null};});
     const prev=careerState.careerArchive?.[careerState.careerArchive.length-1],userPrev=prev?.ovr||Number(getMyOvr()==='--'?78:getMyOvr())-1;
     const mipPool=pool.filter(p=>!p.rookie).map(p=>({...p,improvement:p.isUser?(p.ovr-userPrev):Math.round((v71Hash01(`${p.name}|mip|${v71Year()}`)*12)-3)})),mipCandidates=mipPool.length?mipPool:pool.map(p=>({...p,improvement:0}));
     const mip=rankAwardCandidates(mipCandidates,p=>p.improvement*8+p.rating*2+p.ovr*.04);mip.userEligible=careerState.careerYears>1;if(!mip.userEligible)mip.userRank=null;
@@ -521,9 +523,9 @@
   };
   const _v71RenderAwardsBase=renderRegularSeasonAwards;
   renderRegularSeasonAwards=function(){
-    if(!v71IsOwl2())return _v71RenderAwardsBase();const a=ensureRegularSeasonAwards();document.getElementById('awardsSeasonChip').textContent=`🏆 ${v71Year()} 赛季`;
-    const roleLabel={tank:'坦克',damage:'输出',support:'支援'},rows=['tank','damage','support'].map(g=>{const r=a.roleStars[g],names=r.winners.map(x=>x.name).join(' · '),my=v71RoleGroup(state.role)===g;return `<div class="award-role-row ${my?'mine':''}"><div class="award-role-label">${g==='tank'?'🛡️':g==='damage'?'🎯':'💉'} ${roleLabel[g]}</div><div class="award-role-winner"><strong>${names}</strong><span>${g==='tank'?'3名':'4名'}年度职责之星</span></div><div class="award-role-rank">${my?`你的排名<br><strong>${awardRankText(r.userRank,true)}</strong>`:'年度职责之星'}</div></div>`}).join('');
-    els.regularAwardsContent.innerHTML=`${awardSpotlightCard('👑','常规赛最有价值选手','全年常规赛与Major阶段综合表现',a.mvp,true)}<article class="award-card"><div class="award-card-head"><h3>🌟 年度职责之星</h3><span>坦克3人 · 输出4人 · 支援4人</span></div><div class="award-role-list">${rows}</div></article>${awardSpotlightCard('🌱','Alarm年度最佳新秀奖','首个OWL赛季限定',a.rookie,a.rookie.userEligible)}${awardSpotlightCard('📈','年度进步最快选手','新秀不参与，比较上一完整赛季',a.mip,a.mip.userEligible)}${awardSpotlightCard('❤️','Dennis Hawelka奖','团队精神、公众影响与职业风范',a.hawelka,true)}`;
+    if(!v71IsOwl2())return _v71RenderAwardsBase();const a=ensureRegularSeasonAwards(),quotas=v71RoleStarQuotas(v71Year());document.getElementById('awardsSeasonChip').textContent=`🏆 ${v71Year()} 赛季`;
+    const roleLabel={tank:'坦克',damage:'输出',support:'支援'},rows=['tank','damage','support'].map(g=>{const r=a.roleStars[g],names=r.winners.map(x=>x.name).join(' · '),my=v71RoleGroup(state.role)===g;return `<div class="award-role-row ${my?'mine':''}"><div class="award-role-label">${g==='tank'?'🛡️':g==='damage'?'🎯':'💉'} ${roleLabel[g]}</div><div class="award-role-winner"><strong>${names}</strong><span>${quotas[g]}名年度职责之星</span></div><div class="award-role-rank">${my?`你的排名<br><strong>${awardRankText(r.userRank,true)}</strong>`:'年度职责之星'}</div></div>`}).join('');
+    els.regularAwardsContent.innerHTML=`${awardSpotlightCard('👑','常规赛最有价值选手','全年常规赛与Major阶段综合表现',a.mvp,true)}<article class="award-card"><div class="award-card-head"><h3>🌟 年度职责之星</h3><span>坦克${quotas.tank}人 · 输出${quotas.damage}人 · 支援${quotas.support}人</span></div><div class="award-role-list">${rows}</div></article>${awardSpotlightCard('🌱','Alarm年度最佳新秀奖','首个OWL赛季限定',a.rookie,a.rookie.userEligible)}${awardSpotlightCard('📈','年度进步最快选手','新秀不参与，比较上一完整赛季',a.mip,a.mip.userEligible)}${awardSpotlightCard('❤️','Dennis Hawelka奖','团队精神、公众影响与职业风范',a.hawelka,true)}`;
     const rank=estimateSeasonRank();els.awardsContinueBtn.textContent=rank<=8?(playoffState.active?'🏆 返回季后赛':'🏆 进入季后赛'):'📊 进入赛季结算';
   };
 
@@ -531,7 +533,7 @@
   HONOR_ICONS['常规赛最有价值选手']='👑';HONOR_ICONS['年度职责之星']='🌟';HONOR_ICONS['Alarm年度最佳新秀奖']='🌱';HONOR_ICONS['年度进步最快选手']='📈';HONOR_ICONS['Dennis Hawelka奖']='❤️';HONOR_ICONS['狙王']='🎯';HONOR_ICONS['全能王']='🎲';
   const _v71DeriveHonorsBase=deriveSeasonHonors;
   deriveSeasonHonors=function(record,index){
-    if(!v71IsOwl2())return _v71DeriveHonorsBase(record,index);const h=[],a=ensureRegularSeasonAwards();if(a.mvp.userRank===1)h.push('常规赛最有价值选手');const g=v71RoleGroup(state.role);if(a.roleStars[g]?.userRank&&a.roleStars[g].userRank<=(g==='tank'?3:4))h.push('年度职责之星');if(a.hawelka.userRank===1)h.push('Dennis Hawelka奖');if(a.mip.userEligible&&a.mip.userRank===1)h.push('年度进步最快选手');if(a.rookie.userEligible&&a.rookie.userRank===1)h.push('Alarm年度最佳新秀奖');if(record.result==='总冠军')h.push('总冠军');if(record.result==='总冠军'&&playoffState.fmvp?.isUser)h.push('总决赛最有价值选手');return[...new Set(h)];
+    if(!v71IsOwl2())return _v71DeriveHonorsBase(record,index);const h=[],a=ensureRegularSeasonAwards(),quotas=v71RoleStarQuotas(v71Year());if(a.mvp.userRank===1)h.push('常规赛最有价值选手');const g=v71RoleGroup(state.role);if(a.roleStars[g]?.userRank&&a.roleStars[g].userRank<=quotas[g])h.push('年度职责之星');if(a.hawelka.userRank===1)h.push('Dennis Hawelka奖');if(a.mip.userEligible&&a.mip.userRank===1)h.push('年度进步最快选手');if(a.rookie.userEligible&&a.rookie.userRank===1)h.push('Alarm年度最佳新秀奖');if(record.result==='总冠军')h.push('总冠军');if(record.result==='总冠军'&&playoffState.fmvp?.isUser)h.push('总决赛最有价值选手');return[...new Set(h)];
   };
 
   // ---------- 赛季规则弹窗 ----------

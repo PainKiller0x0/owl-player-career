@@ -449,7 +449,7 @@
       markStageBreakIfNeeded();if(seasonState.stageBreakPending){if(seasonState.timer)clearTimeout(seasonState.timer);seasonState.timer=null;seasonState.simulating=false;}renderSeason();
     };
 
-    // Awards use the real historical roster pool instead of placeholder names. Role Stars select two per custom position.
+    // Awards use the real historical roster pool instead of placeholder names. Role Stars follow OWL's three official roles.
     buildRegularAwardLeaguePool=function(){
       const pool=[];TEAMS.forEach(team=>historicalRosterEntries(team).forEach((e,i)=>{const [name,role,ovr]=e;pool.push({id:`ai-${team.short}-${name}`,isUser:false,name,team:team.name,role,rating:clamp(6.30+(ovr-78)*.088+(team.strength-80)*.020+randomCentered(.30),5.8,8.75),ovr,wins:clamp(Math.round(14+(team.strength-80)*.75+rand(-3,3)),4,26),popularity:clamp(30+(ovr-78)*3+rand(-12,12),10,98),rookie:['Haksal','guxue','Corey','DDing','Erster'].includes(name),roleQuality:ovr});}));pool.push(getSeasonUserAwardProfile());return pool;
     };
@@ -463,12 +463,13 @@
     };
     renderRegularSeasonAwards=function(){
       const awards=ensureRegularSeasonAwards();document.getElementById('awardsSeasonChip').textContent=`🏆 ${careerState.seasonYear} 赛季`;
-      const roleRows=ROLES.map(role=>{const result=awards.roleStars[role.name],mine=role.name===state.role,winners=result.winners||result.top5.slice(0,2);return `<div class="award-role-row ${mine?'mine':''}"><div class="award-role-label">${role.icon} ${role.name}</div><div class="award-role-winner">${winners.map(w=>`<strong>${w.name}</strong><span>${w.team}</span>`).join('<br>')}</div><div class="award-role-rank">${mine?`你的排名<br><strong>${result.userRank<=2?'🏆 入选':result.userRank?`第 ${result.userRank} 名`:'未入榜'}</strong>`:'职责之星 ×2'}</div></div>`;}).join('');
-      els.regularAwardsContent.innerHTML=`${awardSpotlightCard('👑','最有价值选手','只展示得主与你是否进入前五',awards.mvp,true)}<article class="award-card"><div class="award-card-head"><h3>🎯 职责之星</h3><span>每个位置评选2名</span></div><div class="award-role-list">${roleRows}</div><div class="award-footnote">每个自定义位置选出2名职责之星，你只参与当前主位置「${state.role}」的评选。</div></article>${awardSpotlightCard('🌱','最佳新秀','新秀赛季限定',awards.rookie,awards.rookie.userEligible)}${awardSpotlightCard('🤝','社区之星','综合公众关注与赛季影响力',awards.community,true)}`;
+      const quotas=window.__OWL_ROLE_STAR_RULES?.quotas?.(careerState.seasonYear)||{tank:4,damage:4,support:4},groups=[['tank','🛡️','坦克'],['damage','🎯','输出'],['support','💉','支援']];
+      const roleRows=groups.map(([group,icon,label])=>{const result=awards.roleStars[group],mine=window.__OWL_ROLE_STAR_RULES?.group?.(state.role)===group,winners=result.winners||result.top5.slice(0,quotas[group]);return `<div class="award-role-row ${mine?'mine':''}"><div class="award-role-label">${icon} ${label}</div><div class="award-role-winner">${winners.map(w=>`<strong>${w.name}</strong><span>${w.team}</span>`).join('<br>')}</div><div class="award-role-rank">${mine?`你的排名<br><strong>${result.userRank<=quotas[group]?'🏆 入选':result.userRank?`第 ${result.userRank} 名`:'未入榜'}</strong>`:'年度职责之星'}</div></div>`;}).join('');
+      els.regularAwardsContent.innerHTML=`${awardSpotlightCard('👑','最有价值选手','只展示得主与你是否进入前五',awards.mvp,true)}<article class="award-card"><div class="award-card-head"><h3>🎯 职责之星</h3><span>坦克${quotas.tank}人 · 输出${quotas.damage}人 · 支援${quotas.support}人</span></div><div class="award-role-list">${roleRows}</div><div class="award-footnote">按 OWL 当年三大职责评选，你只参与当前主职责「${groups.find(([group])=>window.__OWL_ROLE_STAR_RULES?.group?.(state.role)===group)?.[2]||state.role}」的评选。</div></article>${awardSpotlightCard('🌱','最佳新秀','新秀赛季限定',awards.rookie,awards.rookie.userEligible)}${awardSpotlightCard('🤝','社区之星','综合公众关注与赛季影响力',awards.community,true)}`;
       const rank=estimateSeasonRank();els.awardsContinueBtn.textContent=rank<=6?'🏆 进入季后赛':rank<=12?'🎟️ 进入入围赛':'📊 进入赛季结算';
     };
     const _v30DeriveHonors=deriveSeasonHonors;
-    deriveSeasonHonors=function(record,index){const h=_v30DeriveHonors(record,index).filter(x=>x!=='职责之星');const awards=ensureRegularSeasonAwards();if((awards.roleStars[state.role]?.userRank||99)<=2)h.push('职责之星');(seasonState.stageTitles||[]).forEach(x=>h.push(x));return [...new Set(h)];};
+    deriveSeasonHonors=function(record,index){const h=_v30DeriveHonors(record,index).filter(x=>x!=='职责之星');const awards=ensureRegularSeasonAwards(),group=window.__OWL_ROLE_STAR_RULES?.group?.(state.role),quotas=window.__OWL_ROLE_STAR_RULES?.quotas?.(careerState.seasonYear)||{tank:4,damage:4,support:4};if(group&&((awards.roleStars[group]?.userRank||99)<=quotas[group]))h.push('职责之星');(seasonState.stageTitles||[]).forEach(x=>h.push(x));return [...new Set(h)];};
 
     const _v31FinalAwardsRenderer=renderRegularSeasonAwards;
     renderRegularSeasonAwards=function(){
@@ -502,7 +503,6 @@
 
     // Refresh season/player labels and hide old basketball wording.
     document.querySelectorAll('.season-chip').forEach(node=>{if(node.textContent.includes('2026'))node.textContent=node.textContent.replace('2026','2019');});
-
 
 
 
