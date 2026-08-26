@@ -49,6 +49,11 @@ test('regression: total standings show the same colored East/West badges as team
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2023-pre-playoffs');
   await page.locator('#seasonYearChip').click();
+  const overlayStyle = await page.locator('#b2StandingsOverlay').evaluate(el => {
+    const style = getComputedStyle(el);
+    return { position: style.position, top: style.top, left: style.left, zIndex: style.zIndex };
+  });
+  expect(overlayStyle).toMatchObject({ position: 'fixed', top: '0px', left: '0px' });
   await expect(page.locator('#b2StandingsBody')).toContainText('东部');
   await expect(page.locator('#b2StandingsBody')).toContainText('西部');
   expect(await page.locator('#b2StandingsBody .b2-region-badge.east').count()).toBeGreaterThan(0);
