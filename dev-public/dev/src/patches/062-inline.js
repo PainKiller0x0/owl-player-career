@@ -42,7 +42,7 @@
   const _openPlayoff32=openNextPlayoffMatch;
   openNextPlayoffMatch=function(mode='quick'){
     const out=_openPlayoff32.apply(this,arguments);
-    if(mode==='detail'&&(typeof v71StrategicEra==='function'?v71StrategicEra():Number(careerState.seasonYear)>=2025)&&matchState.context==='playoff'){
+    if(mode==='detail'&&(typeof v71StrategicEra==='function'?v71StrategicEra():Number(careerState.seasonYear)===2025)&&matchState.context==='playoff'){
       const d=document.getElementById('matchDesc');
       if(d)d.textContent=`${matchState.targetWins===4?'总决赛 FT4':'本轮 FT3'} · 选图 → 换人 → Hero Ban`;
     }

@@ -10,6 +10,7 @@
     2023:Object.freeze({year:2023,total:16,stageGames:[8,8],stageNames:['Spring Stage','Summer Stage'],milestones:[8],allStarAfter:null,heroBan:false,mapVoting:false}),
     2024:Object.freeze({year:2024,total:56,stageGames:[19,18,19],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[19,37,56],allStarAfter:2,heroBan:false,mapVoting:false}),
     2025:Object.freeze({year:2025,total:56,stageGames:[19,18,19],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[19,37,56],allStarAfter:2,heroBan:true,mapVoting:true}),
+    2026:Object.freeze({year:2026,total:56,stageGames:[19,18,19],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[19,37,56],allStarAfter:2,heroBan:false,mapVoting:false}),
     2033:Object.freeze({year:2033,total:56,stageGames:[19,18,19],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[19,37,56],allStarAfter:2,heroBan:false,mapVoting:false}),
     2035:Object.freeze({year:2035,total:68,stageGames:[23,22,23],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[23,45,68],allStarAfter:2,heroBan:false,mapVoting:false}),
     2038:Object.freeze({year:2038,total:46,stageGames:[15,15,16],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[15,30,46],allStarAfter:2,heroBan:false,mapVoting:false}),
@@ -24,6 +25,7 @@
     if(y===2038)return FORMAT_TABLE[2038];
     if(y>=2035)return FORMAT_TABLE[2035];
     if(y>=2033)return FORMAT_TABLE[2033];
+    if(y>=2026)return FORMAT_TABLE[2026];
     if(y>=2025)return FORMAT_TABLE[2025];
     if(y>=2024)return FORMAT_TABLE[2024];
     return FORMAT_TABLE[y]||FORMAT_TABLE[2019];

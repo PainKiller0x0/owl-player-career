@@ -383,7 +383,7 @@
     else if(y>=2035)bullets=[`联盟24队，东西部各12队；常规赛 ${f.total} 场。`,'第1～6直通季后赛；第7～14进入FT3单败Wild Card，争最后2席。','Stage 3阶段赛事为EWC · Overwatch；All-Star保留。'];
     else if(y>=2033)bullets=['20队、56场、3个Stage；第1～6直通季后赛，第7～10进入Play-in。','自由市场开始出现1年短约救火合同。','Stage 3阶段赛事为EWC · Overwatch，沙特中立场；All-Star保留。'];
     else if(y>=2030)bullets=['20队、56场、3个Stage；第1～6直通季后赛，第7～10进入Play-in。','Stage 3阶段赛事改为EWC · Overwatch，沙特阿拉伯中立场、高奖金。','All-Star继续在Major 2后举行。'];
-    else bullets=['20队、56场、3个Stage。','第1～6直通正式季后赛；第7～10进入Play-in，争最后2席。','2025竞技规则继续使用，不额外叠加Hero Ban复杂度。'];
+    else bullets=['20队、56场、3个Stage。','第1～6直通正式季后赛；第7～10进入Play-in，争最后2席。','2026起回归基础竞技流程，不额外叠加Hero Ban复杂度。'];
     return{title:`${y} OWL · 赛季规则`,summary:f.summary,bullets};
   }
   function openFutureRulebook34(){const overlay=document.getElementById('seasonEventOverlay'),holder=document.getElementById('seasonEventContent');if(!overlay||!holder)return;const r=futureRulebook34();holder.innerHTML=`<div class="season-event-top"><span class="season-event-kicker">OWL ${year34()} · SEASON RULEBOOK</span><span class="season-event-round">未来规则</span></div><div class="season-event-icon">📖</div><h2 class="season-event-title">${r.title}</h2><div class="season-event-copy"><p>${r.summary}</p><ul>${r.bullets.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="season-event-choices"><button class="season-event-choice" id="v34RulebookDone"><div><strong>返回常规赛 →</strong></div></button></div>`;document.getElementById('v34RulebookDone')?.addEventListener('click',()=>overlay.classList.add('hidden'));overlay.classList.remove('hidden');}

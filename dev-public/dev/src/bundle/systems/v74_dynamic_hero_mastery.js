@@ -749,7 +749,7 @@
     const top=Number(pool[0]?.value||0),elite=pool.filter(h=>h.value>=88).length,solid=pool.filter(h=>h.value>=78).length;
     const breadth=typeof v71HeroPoolBreadth==='function'?v71HeroPoolBreadth(player):solid;
     const third=Number(pool[Math.min(2,pool.length-1)]?.value||top),fragility=Math.max(0,top-third);
-    const banEra=year>=2025&&year<2033;
+    const banEra=year===2025;
     let premium=(top-82)*.22+elite*.65+Math.min(8,breadth)*.28-fragility*.18;
     if(banEra)premium+=Math.min(10,solid)*.42+Math.max(0,4-fragility)*.30;
     else premium*=.55;
@@ -786,7 +786,7 @@
       const card=wrap?.querySelector(`[data-offer-id="${offer.id}"]`);if(!card||card.querySelector('.v75-offer-hero'))return;
       const h=offer.heroMarket;if(!h)return;
       const node=document.createElement('div');node.className='v75-offer-hero';
-      node.innerHTML=`<span>🎮 英雄池市场评价</span><strong>${h.label}</strong><small>${v71Year()+1>=2025&&v71Year()+1<2033?`抗Ban深度 ${h.breadth} · 精通以上 ${h.elite}`:`英雄池宽度 ${h.breadth} · 精通以上 ${h.elite}`} · 市场修正 ${h.premium>=0?'+':''}${h.premium}</small>`;
+      node.innerHTML=`<span>🎮 英雄池市场评价</span><strong>${h.label}</strong><small>${v71Year()+1===2025?`抗Ban深度 ${h.breadth} · 精通以上 ${h.elite}`:`英雄池宽度 ${h.breadth} · 精通以上 ${h.elite}`} · 市场修正 ${h.premium>=0?'+':''}${h.premium}</small>`;
       card.appendChild(node);
     });
   };

@@ -106,7 +106,7 @@
     removeLegacyTips(document);
     const y=Number(careerState.seasonYear||0),simpleIntro=simplifyRuleIntro();
     const eventOverlay=document.getElementById('seasonEventOverlay'),introVisible=eventOverlay&&!eventOverlay.classList.contains('hidden')&&document.getElementById('seasonEventContent')?.classList.contains('v19-simple-rule-intro');
-    if(y>=2025&&y<2033&&!introVisible&&!simpleIntro){const host=document.getElementById('v74HeroDevelopmentPanel')||document.querySelector('#seasonScreen .season-track-card');teachOnce('hero-ban',host,'Hero Ban：比赛前会禁用部分英雄；英雄池越深，越不容易被针对。');}
+    if(y===2025&&!introVisible&&!simpleIntro){const host=document.getElementById('v74HeroDevelopmentPanel')||document.querySelector('#seasonScreen .season-track-card');teachOnce('hero-ban',host,'Hero Ban：比赛前会禁用部分英雄；英雄池越深，越不容易被针对。');}
     const major=seasonState.v71LastMajorSummary;
     if(major&&major.v34Type==='ewc'){
       const host=document.querySelector('#v741SeasonInlineMilestone .v71-major-result,#seasonScreen .v71-major-result,#seasonScreen .stage-break-card');teachOnce('ewc',host,'EWC：电竞世界杯的 Overwatch 项目，在沙特中立场举行；奖金很高，但不是年度总冠军。');

@@ -2,27 +2,57 @@ const { test, expect } = require('@playwright/test');
 const { freshApp, loadQaScenario } = require('./helpers/app');
 const { expectCleanRuntime, expectScreen } = require('./helpers/assertions');
 
-test('regression: 2033 leaves the Hero Ban era and keeps the three-Stage boundaries', async ({ page }) => {
+test('regression: Hero Ban is only active in the real 2025 experiment season', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2025-stage2');
   const result = await page.evaluate(() => {
-    careerState.seasonYear = 2033;
-    seasonState.active = false;
-    setupSeason(false);
-    const format = v71SeasonFormat();
-    const stages = [19, 20, 37, 38, 56].map(played => {
-      seasonState.played = played;
-      return [played, v71StageNo()];
-    });
+    const check = year => {
+      careerState.seasonYear = year;
+      seasonState.active = false;
+      setupSeason(false);
+      seasonState.played = 0;
+      return { year, strategicDraft: v71HasStrategicDraft(), format: window.getSeasonFormat(year) };
+    };
     return {
-      strategicDraft: v71HasStrategicDraft(),
-      total: format.total,
-      stages,
-      heroBanRule: window.getSeasonFormat(2033).heroBan,
+      2025: check(2025),
+      2026: check(2026),
+      2033: check(2033),
     };
   });
-  expect(result).toMatchObject({ strategicDraft: false, total: 56, heroBanRule: false });
-  expect(result.stages).toEqual([[19, 2], [20, 2], [37, 3], [38, 3], [56, 3]]);
+  expect(result[2025]).toMatchObject({ strategicDraft: true, format: { heroBan: true, mapVoting: true } });
+  expect(result[2026]).toMatchObject({ strategicDraft: false, format: { heroBan: false, mapVoting: false } });
+  expect(result[2033]).toMatchObject({ strategicDraft: false, format: { heroBan: false, mapVoting: false } });
+  expectCleanRuntime(monitor);
+});
+
+test('regression: 2023 Seoul Infernal keeps a visible offline logo after rebrand', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2023-pre-playoffs');
+  const result = await page.evaluate(() => {
+    const team = TEAMS.find(item => item.name === '首尔烈火');
+    const holder = document.createElement('div');
+    holder.innerHTML = teamLogoMarkup(team);
+    const image = holder.querySelector('img');
+    return { short: team?.short, displayShort: team?.displayShort, logo: team?.logo || '', src: image?.getAttribute('src') || '' };
+  });
+  expect(result).toMatchObject({ short: 'PHI', displayShort: 'INF' });
+  expect(result.logo).toMatch(/^data:image\/svg\+xml/);
+  expect(result.src).toMatch(/^data:image\/svg\+xml/);
+  const svg = result.src.includes(';base64,')
+    ? Buffer.from(result.src.split(',')[1], 'base64').toString('utf8')
+    : decodeURIComponent(result.src.split(',')[1]);
+  expect(svg).toContain('首尔烈火');
+  expectCleanRuntime(monitor);
+});
+
+test('regression: total standings show the same colored East/West badges as team selection', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2023-pre-playoffs');
+  await page.locator('#seasonYearChip').click();
+  await expect(page.locator('#b2StandingsBody')).toContainText('东部');
+  await expect(page.locator('#b2StandingsBody')).toContainText('西部');
+  expect(await page.locator('#b2StandingsBody .b2-region-badge.east').count()).toBeGreaterThan(0);
+  expect(await page.locator('#b2StandingsBody .b2-region-badge.west').count()).toBeGreaterThan(0);
   expectCleanRuntime(monitor);
 });
 

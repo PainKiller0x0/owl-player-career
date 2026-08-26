@@ -72,7 +72,9 @@
 
   function v71Year(){return Number(careerState.seasonYear||2019);}
   function v71IsOwl2(){return v71Year()>=2024;}
-  function v71StrategicEra(){return v71Year()>=2025 && v71Year()<2033;}
+  // Hero Ban / Map Voting were a 2025 OWCS experiment; the 2026 season returns
+  // to the base match flow until a later rule explicitly reintroduces them.
+  function v71StrategicEra(){return v71Year()===2025;}
   function v71HasStrategicDraft(){return v71StrategicEra() && matchState.context!=='allstar';}
   function v71Conference(team){return (team?.division==='Atlantic'||team?.conference==='East')?'East':'West';}
   function v71ConferenceZh(teamOrKey){const k=typeof teamOrKey==='string'?teamOrKey:v71Conference(teamOrKey);return k==='East'?'东部':'西部';}

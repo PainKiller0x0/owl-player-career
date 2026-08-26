@@ -414,7 +414,7 @@
     const rec=vwcEnsureRecord();if(!rec||rec.completed)return rec;const st=rec.stageState;if(!st||st.done||st.index>=st.opponents.length)return rec;
     const opp=st.opponents[st.index],meta={year:rec.year,stage:st.stage,index:st.index,opponent:opp,country:rec.representingCountry,roundLabel:vwcKnockoutRoundLabel(st)||VWC_STAGE_LABEL[st.stage]||st.stage};
     document.getElementById('vwcOverlay')?.classList.add('ui-hidden');
-    setupMatch(false,3,{playerVenue:'neutral',mapSelectionEnabled:typeof v71StrategicEra==='function'?v71StrategicEra():rec.year>=2025,firstMapPicker:'home'});
+    setupMatch(false,3,{playerVenue:'neutral',mapSelectionEnabled:typeof v71StrategicEra==='function'?v71StrategicEra():rec.year===2025,firstMapPicker:'home'});
     matchState.context='worldcup';matchState.worldCupMeta=meta;
     matchState.homeTeam=vwcNationalTeam(rec.representingCountry,rec,true);matchState.awayTeam=vwcNationalTeam(opp,rec,false);
     matchState.homeRoster=vwcDetailedRoster(rec,rec.representingCountry,true);matchState.awayRoster=vwcDetailedRoster(rec,opp,false);

@@ -65,6 +65,7 @@
     function v51OfflineLogoFor(team){
       if(!team)return v51BadgeLogo('OWL','OWL');
       const display=team.displayShort||team.short;
+      if(display&&display!==team.short)return V51_OFFLINE_LOGOS[display]||v51BadgeLogo(display,team.name);
       return V51_OFFLINE_LOGOS[team.short]||v51BadgeLogo(display,team.name);
     }
     function v51ApplyOfflineLogos(){TEAMS.forEach(t=>{t.logo=v51OfflineLogoFor(t);});if(careerState.team)careerState.team.logo=v51OfflineLogoFor(careerState.team);}
@@ -134,7 +135,5 @@
         <button class="primary-btn" id="v42ContinueStageBtn">进入 Stage ${next} →</button>
       </div>`;
     };
-
-
 
 
