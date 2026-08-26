@@ -89,7 +89,7 @@
     state.role = '弹道输出';
     state.playerName = 'QA Player';
     state.playerCountry = 'cn';
-    state.playerStartAge = Math.max(16, Number(age) - (Number(year) - Number(startYear)));
+    state.playerStartAge = Math.max(18, Number(age) - (Number(year) - Number(startYear)));
     state.locked = qaAttributes(82);
     // Keep node fixtures on the historical roster path. The scenario contract
     // tests lifecycle/UI state, not fantasy-world generation.
@@ -150,7 +150,7 @@
   }
 
   function build2019Start() {
-    qaBase({ year: 2019, startYear: 2019, age: 16 });
+    qaBase({ year: 2019, startYear: 2019, age: 18 });
     qaSetRegularProgress(0, 0);
   }
 
@@ -351,8 +351,8 @@
       window.__OWL_PUBLIC_BETA.restorePayload({
         saveVersion: 1,
         screen: 'cover',
-        state: { role: null, playerName: 'Rookie', playerCountry: 'cn', playerStartAge: 16, locked: {} },
-        careerState: { team: null, starters: [], bench: [], contract: null, simulationMode: 'fantasy', startYear: 2019, seasonYear: 2019, startAge: 16, birthYear: 2003, age: 16, careerYears: 1, careerArchive: [], roleHistory: [], retired: false, peakOvr: 0 },
+        state: { role: null, playerName: 'Rookie', playerCountry: 'cn', playerStartAge: 18, locked: {} },
+        careerState: { team: null, starters: [], bench: [], contract: null, simulationMode: 'fantasy', startYear: 2019, seasonYear: 2019, startAge: 18, birthYear: 2001, age: 18, careerYears: 1, careerArchive: [], roleHistory: [], retired: false, peakOvr: 0 },
         seasonState: { active: false, total: 28, played: 0, wins: 0, losses: 0, results: [], opponents: [], userRatings: [], eventSchedule: [], eventTriggeredAt: [], eventHistory: [], eventDue: false, currentEvent: null, simulating: false },
         playoffState: { active: false, teams: [], matches: [], round: 'active', results: [] },
         offseasonState: { active: false, phase: 'review', offers: [] },

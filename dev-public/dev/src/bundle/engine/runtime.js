@@ -412,18 +412,18 @@
     }
 
     function normalizePlayerStartAge(value) {
-      return Math.max(16,Math.min(26,Math.round(Number(value)||16)));
+      return Math.max(18,Math.min(26,Math.round(Number(value)||18)));
     }
 
     function getPlayerAgeHint(age=normalizePlayerStartAge(state.playerStartAge)) {
-      if(age<=17) return `${age}岁 · 成长窗口最长，但2019世界杯年龄不足`;
+      if(age<=18) return `${age}岁 · 成长窗口最长，世界杯国家队资格不设年龄门槛`;
       if(age<=20) return `${age}岁 · 年轻新秀，成长与即战力比较均衡`;
       if(age<=23) return `${age}岁 · 接近或处于巅峰期，成长空间开始收窄`;
       return `${age}岁 · 成熟即战力开局，距离30岁退役更近`;
     }
 
     function updatePlayerAgePreview() {
-      const age=normalizePlayerStartAge(els.playerAgeSelect?.value||state.playerStartAge||16);
+      const age=normalizePlayerStartAge(els.playerAgeSelect?.value||state.playerStartAge||18);
       state.playerStartAge=age;
       if(els.playerAgeSelect&&els.playerAgeSelect.value!==String(age))els.playerAgeSelect.value=String(age);
       if(els.playerAgeBadgePreview)els.playerAgeBadgePreview.textContent=String(age);
@@ -434,7 +434,7 @@
     function confirmPlayerName(skip=false) {
       state.playerName=skip?'Rookie':normalizePlayerName(els.playerNameInput.value);
       state.playerCountry=els.playerCountrySelect?.value||state.playerCountry||'cn';
-      state.playerStartAge=normalizePlayerStartAge(els.playerAgeSelect?.value||state.playerStartAge||16);
+      state.playerStartAge=normalizePlayerStartAge(els.playerAgeSelect?.value||state.playerStartAge||18);
       enterBuilder();
     }
 
@@ -470,10 +470,10 @@
       state.role = null;
       state.playerName = 'Rookie';
       state.playerCountry = 'cn';
-      state.playerStartAge = 16;
+      state.playerStartAge = 18;
       if(els.playerNameInput) els.playerNameInput.value='';
       if(els.playerCountrySelect) els.playerCountrySelect.value='cn';
-      if(els.playerAgeSelect) els.playerAgeSelect.value='16';
+      if(els.playerAgeSelect) els.playerAgeSelect.value='18';
       updatePlayerAgePreview();
       resetBuildOnly();
       els.selectedRoleCopy.textContent = '请选择一个位置';
@@ -482,5 +482,3 @@
       showScreen('role');
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
-
-

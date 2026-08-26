@@ -30,7 +30,7 @@
       careerState.bench = [];
       careerState.rank = null;
       careerState.contract = null;
-      const selectedStartAge=Math.max(16,Math.min(26,Number(state.playerStartAge)||16));
+      const selectedStartAge=Math.max(18,Math.min(26,Number(state.playerStartAge)||18));
       const selectedStartYear=Number(careerState.startYear||careerState.seasonYear||2019);
       careerState.seasonYear = 2019;
       careerState.careerYears = 1;
@@ -465,6 +465,5 @@
       }
       return array;
     }
-
 
 

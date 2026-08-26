@@ -2,9 +2,29 @@ const { test, expect } = require('@playwright/test');
 const { freshApp, createCareer } = require('./helpers/app');
 const { expectCleanRuntime, expectNoSimulationDeadlock, expectScreen } = require('./helpers/assertions');
 
+test('creation: OWL career entry age starts at 18', async ({ page }) => {
+  const monitor = await freshApp(page);
+  const result = await page.evaluate(() => ({
+    firstOption: document.querySelector('#playerAgeSelect option')?.value,
+    options: [...document.querySelectorAll('#playerAgeSelect option')].map(option => Number(option.value)),
+    badge: document.querySelector('#playerAgeBadgePreview')?.textContent,
+    preview: document.querySelector('#playerAgePreview')?.textContent,
+    normalized: normalizePlayerStartAge(16),
+    defaultAge: state.playerStartAge,
+  }));
+  expect(result.firstOption).toBe('18');
+  expect(result.options).not.toContain(16);
+  expect(result.options).not.toContain(17);
+  expect(result.badge).toBe('18');
+  expect(result.preview).toBe('· 18岁');
+  expect(result.normalized).toBe(18);
+  expect(result.defaultAge).toBe(18);
+  expectCleanRuntime(monitor);
+});
+
 test('season: whole-season simulation advances beyond one match', async ({ page }) => {
   const monitor = await freshApp(page);
-  await createCareer(page, { year: 2019, playerName: 'E2E_WHOLE', age: 17 });
+  await createCareer(page, { year: 2021, playerName: 'E2E_WHOLE', age: 18 });
   await page.evaluate(() => { seasonState.eventSchedule = []; seasonState.eventTriggeredAt = []; seasonState.eventDue = false; seasonState.currentEvent = null; renderSeason(); });
   const before = await page.evaluate(() => Number(seasonState.played || 0));
   await page.locator('#fullSimSeasonBtn').click();
@@ -54,7 +74,7 @@ test('season: completed regular season keeps stage processing and annual playoff
 
 test('season: whole-season simulation pauses at the All-Star checkpoint instead of skipping it', async ({ page }) => {
   const monitor = await freshApp(page);
-  await createCareer(page, { year: 2023, playerName: 'E2E_ALLSTAR_SIM', age: 17 });
+  await createCareer(page, { year: 2023, playerName: 'E2E_ALLSTAR_SIM', age: 18 });
   await page.evaluate(() => {
     careerState.seasonYear = 2025;
     careerState.v13RuleIntroSeen2025 = true;

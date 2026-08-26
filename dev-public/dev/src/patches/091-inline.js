@@ -11,7 +11,7 @@
   function b2DecorateAge(){
     const facts=document.querySelector('#careerTeamScreen .rc27-contract-facts');if(!facts)return;facts.classList.add('b2-four-facts');
     let age=facts.querySelector('.b2-age-fact');if(!age){age=document.createElement('div');age.className='b2-age-fact';facts.appendChild(age)}
-    age.innerHTML=`<span>当前年龄</span><strong>${Number(careerState?.age||state?.playerStartAge||16)} 岁</strong>`;
+    age.innerHTML=`<span>当前年龄</span><strong>${Number(careerState?.age||state?.playerStartAge||18)} 岁</strong>`;
   }
   window.__OWL_RUNTIME?.render?.register('renderCareerTeam','b2-age',b2DecorateAge);
   b2DecorateAge();

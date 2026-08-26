@@ -46,3 +46,19 @@ test('worldcup: 2027 prior champion and runner-up receive direct-to-group routes
   expect(routes).toEqual({ sa: 'direct-group', cn: 'direct-group' });
   expectCleanRuntime(monitor);
 });
+
+test('worldcup: no extra age gate applies after the 18-year OWL entry threshold', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadAndVerifyScenario(page, 'worldcup-selection');
+  const records = await page.evaluate(() => {
+    const rookie = window.__OWL_WORLD_CUP.qaSet(2019, 'cn', 18);
+    const veteran = window.__OWL_WORLD_CUP.qaSet(2026, 'cn', 40);
+    return {
+      rookie: { phase: rookie.phase, pendingStage: rookie.pendingStage, completed: rookie.completed, result: rookie.result },
+      veteran: { phase: veteran.phase, pendingStage: veteran.pendingStage, completed: veteran.completed, result: veteran.result },
+    };
+  });
+  expect(records.rookie).toMatchObject({ phase: 'selection', pendingStage: 'selection', completed: false, result: null });
+  expect(records.veteran).toMatchObject({ phase: 'selection', pendingStage: 'selection', completed: false, result: null });
+  expectCleanRuntime(monitor);
+});

@@ -27,9 +27,9 @@
       awaitingTeamChoice:false,
       teamSelectionTarget:null,
       teamSelectManual:false,
-      age:16,
-      startAge:16,
-      birthYear:2003,
+      age:18,
+      startAge:18,
+      birthYear:2001,
       retired:false,
       retirementReason:null,
       careerArchive:[],
@@ -309,5 +309,4 @@
     }
 
     /* ---------------- 赛季随机事件 V0.1 ---------------- */
-
 

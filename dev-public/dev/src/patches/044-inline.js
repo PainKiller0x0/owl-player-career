@@ -72,7 +72,7 @@
     const c=p?.careerState||{},s=p?.state||{};
     return{
       name:s.playerName||'Rookie',role:s.role||'未选位置',team:resolveTeam(c.team)?.name||c.contract?.teamName||'尚未签约',
-      year:Number(c.seasonYear||p?.fantasyWorld?.selection?.startYear||2019),age:Number(c.age||16),careerYears:Number(c.careerYears||1),
+      year:Number(c.seasonYear||p?.fantasyWorld?.selection?.startYear||2019),age:Number(c.age||18),careerYears:Number(c.careerYears||1),
       mode:c.simulationMode==='history'?'历史模拟':'梦幻模拟',savedAt:p?.savedAt||null,retired:!!c.retired,screen:p?.screen||'cover'
     };
   }
@@ -105,10 +105,11 @@
     if(v>SAVE_VERSION)throw new Error(`该存档版本(${v})高于当前游戏支持版本(${SAVE_VERSION})`);
     p.state=p.state||{};p.careerState=p.careerState||{};p.seasonState=p.seasonState||{};p.playoffState=p.playoffState||{};p.offseasonState=p.offseasonState||{};
     p.injuryState=p.injuryState||{};p.careerViewState=p.careerViewState||{tab:'overview'};p.gameSettings=p.gameSettings||{};
-    // 1.1 RC2：旧档没有“开局年龄”字段时，从首季档案/当前年龄与生涯年数反推；历史旧档默认仍保持16岁起步。
+    // 1.1 RC2：旧档没有“开局年龄”字段时，从首季档案/当前年龄与生涯年数反推；已有历史年龄保留，新档缺失时默认18岁。
     const firstArchiveAge=Number(p.careerState.careerArchive?.[0]?.age);
-    const inferredStartAge=Number.isFinite(firstArchiveAge)&&firstArchiveAge>0?firstArchiveAge:Number(p.careerState.age||16)-Math.max(0,Number(p.careerState.careerYears||1)-1);
-    const startAge=Math.max(16,Math.min(26,Math.round(Number(p.state.playerStartAge||p.careerState.startAge||inferredStartAge)||16)));
+    const inferredStartAge=Number.isFinite(firstArchiveAge)&&firstArchiveAge>0?firstArchiveAge:Number(p.careerState.age||18)-Math.max(0,Number(p.careerState.careerYears||1)-1);
+    const rawStartAge=Number(p.state.playerStartAge??p.careerState.startAge??inferredStartAge);
+    const startAge=Number.isFinite(rawStartAge)&&rawStartAge>0?Math.min(26,Math.round(rawStartAge)):18;
     p.state.playerStartAge=startAge;p.careerState.startAge=startAge;
     if(!Number.isFinite(Number(p.careerState.birthYear))){const inferredStartYear=Number(p.careerState.startYear||(Number(p.careerState.seasonYear||2019)-Math.max(0,Number(p.careerState.careerYears||1)-1))||2019);p.careerState.birthYear=inferredStartYear-startAge;}
     p.careerState.tradeHistory=p.careerState.tradeHistory||[];

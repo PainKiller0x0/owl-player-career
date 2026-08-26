@@ -194,10 +194,8 @@
           <label class="name-input-wrap age-input-wrap">
             <span>开局年龄</span>
             <div class="age-select-control">
-              <span class="age-badge-preview" id="playerAgeBadgePreview" aria-hidden="true">16</span>
+              <span class="age-badge-preview" id="playerAgeBadgePreview" aria-hidden="true">18</span>
               <select id="playerAgeSelect" aria-label="选择开局年龄">
-                <option value="16" selected>16岁</option>
-                <option value="17">17岁</option>
                 <option value="18">18岁</option>
                 <option value="19">19岁</option>
                 <option value="20">20岁</option>
@@ -209,9 +207,9 @@
                 <option value="26">26岁</option>
               </select>
             </div>
-            <small id="playerAgeHint">16岁 · 成长窗口最长，但2019世界杯年龄不足</small>
+            <small id="playerAgeHint">18岁 · 成长窗口最长，世界杯国家队资格不设年龄门槛</small>
           </label>
-          <div class="name-preview">赛场显示：<span id="playerCountryPreview" class="name-preview-flag"></span><strong id="playerNamePreview">Rookie</strong><span class="name-preview-age" id="playerAgePreview">· 16岁</span></div>
+          <div class="name-preview">赛场显示：<span id="playerCountryPreview" class="name-preview-flag"></span><strong id="playerNamePreview">Rookie</strong><span class="name-preview-age" id="playerAgePreview">· 18岁</span></div>
           <div class="name-actions">
             <button class="secondary-btn" id="skipPlayerNameBtn">跳过，使用 Rookie</button>
             <button class="primary-btn" id="confirmPlayerNameBtn">确认名字 →</button>
@@ -607,7 +605,7 @@
         <div class="top-actions"><button class="ghost-btn" id="backSummaryFromCareerBtn">← 返回赛季结算</button></div>
       </header>
       <div class="season-chip" id="careerDataSeasonChip">🏆 2019 赛季</div>
-      <div class="career-data-heading"><h2>📊 生涯数据</h2><p id="careerDataSubcopy">职业生涯第 1 年 · 16岁 · OVR —</p></div>
+      <div class="career-data-heading"><h2>📊 生涯数据</h2><p id="careerDataSubcopy">职业生涯第 1 年 · 18岁 · OVR —</p></div>
       <nav class="career-tabs" id="careerTabs">
         <button class="career-tab active" data-career-tab="overview">📊 生涯概览</button>
         <button class="career-tab" data-career-tab="honors">🏆 荣誉墙</button>
@@ -784,19 +782,19 @@
   </section>
 
   <script src="src/bundle/00_runtime_preamble.js"></script>
-  <script src="src/bundle/data/base.js"></script>
+  <script src="src/bundle/data/base.js?v=age18-worldcup-20260826"></script>
   <script src="src/bundle/data/competitions.js"></script>
-  <script src="src/bundle/engine/runtime.js"></script>
+  <script src="src/bundle/engine/runtime.js?v=age18-worldcup-20260826"></script>
   <script src="src/bundle/systems/tournament.js"></script>
-  <script src="src/bundle/systems/creation.js"></script>
-  <script src="src/bundle/systems/career_team.js"></script>
+  <script src="src/bundle/systems/creation.js?v=age18-worldcup-20260826"></script>
+  <script src="src/bundle/systems/career_team.js?v=age18-worldcup-20260826"></script>
   <script src="src/bundle/systems/season_events.js"></script>
   <script src="src/bundle/systems/regular_season.js"></script>
   <script src="src/bundle/systems/playoffs.js"></script>
   <script src="src/bundle/systems/season_summary.js"></script>
   <script src="src/bundle/ui/theme_fx.js"></script>
   <script src="src/bundle/systems/career_history.js"></script>
-  <script src="src/bundle/systems/offseason.js"></script>
+  <script src="src/bundle/systems/offseason.js?v=age18-worldcup-20260826"></script>
   <script src="src/bundle/systems/match_engine.js"></script>
   <script src="src/bundle/legacy/v30_2019_rules.js"></script>
   <script src="src/bundle/legacy/v32_2019_calibration.js"></script>
@@ -905,7 +903,7 @@
   </section>
 </div>
 
-<script src="src/patches/044-inline.js"></script>
+<script src="src/patches/044-inline.js?v=age18-worldcup-20260826"></script>
 
 
 <script src="src/patches/045-inline.js"></script>
@@ -913,9 +911,9 @@
 
 <script src="src/patches/046-inline.js"></script>
 
-<script src="src/patches/047-inline.js"></script>
+<script src="src/patches/047-inline.js?v=age18-worldcup-20260826"></script>
 <link rel="stylesheet" href="src/styles/09-potentialStyle.css">
-<script src="src/patches/048-inline.js"></script>
+<script src="src/patches/048-inline.js?v=age18-worldcup-20260826"></script>
 <link rel="stylesheet" href="src/styles/10-v13FlowStyle.css">
 <script src="src/patches/049-inline.js"></script>
 <link rel="stylesheet" href="src/styles/11-v14DepthStyle.css">
@@ -985,13 +983,13 @@
 
 <!-- ===== OWL Alpha1 Batch 2 · Feedback 10-18 ===== -->
 <link rel="stylesheet" href="src/styles/29-owlAlpha1Batch2Style.css?v=7feae3e">
-<script src="src/patches/091-inline.js?v=2d396d8"></script>
+<script src="src/patches/091-inline.js?v=age18-worldcup-20260826"></script>
 <script src="src/patches/092-inline.js"></script>
 <script src="src/patches/093-inline.js"></script>
 <script src="src/patches/094-inline.js"></script>
 <link rel="stylesheet" href="src/styles/30-owlAlpha1Batch3Style.css">
 <script src="src/patches/095-inline.js"></script>
 <link rel="stylesheet" href="src/styles/31-qa-tools.css">
-<script src="src/patches/096-qa-tools.js"></script>
+<script src="src/patches/096-qa-tools.js?v=age18-worldcup-20260826"></script>
 </body>
 </html>

@@ -171,7 +171,7 @@
       role: null,
       playerName: 'Rookie',
       playerCountry: 'cn',
-      playerStartAge: 16,
+      playerStartAge: 18,
       locked: {},
       round: 0,
       team: null,
@@ -181,7 +181,6 @@
       hasRolled: false,
       rolling: false
     };
-
 
 
 

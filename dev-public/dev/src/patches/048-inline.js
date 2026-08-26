@@ -41,7 +41,7 @@
       breakthroughPending:false,breakthroughHistory:[],lastScoredYear:null,lastScoreDelta:0,lastScoreReasons:[],lastTrainingBonusYear:null};
   }
   function ensurePotentialProfile(opts={}){
-    const age=Math.max(16,Math.min(26,Number(careerState.startAge||state.playerStartAge||careerState.age||16)));
+    const age=Math.max(18,Math.min(26,Number(careerState.startAge||state.playerStartAge||careerState.age||18)));
     let p=careerState.potentialProfile;
     if(!p||typeof p!=='object'){
       // 已经在跑的旧档不随机改命：默认归入最中性的“稳步成长”。
@@ -104,7 +104,7 @@
   hardReset=function(...args){const out=_hardResetPotential.apply(this,args);state.careerSeed=freshSeed();state.playerPotentialType=null;careerState.potentialProfile=null;return out;};
   const _confirmNamePotential=confirmPlayerName;
   confirmPlayerName=function(skip=false){
-    const age=Math.max(16,Math.min(26,Number(els.playerAgeSelect?.value||state.playerStartAge||16)));
+    const age=Math.max(18,Math.min(26,Number(els.playerAgeSelect?.value||state.playerStartAge||18)));
     state.playerStartAge=age;state.careerSeed=state.careerSeed||freshSeed();
     const old=careerState.potentialProfile;
     if(!old||Number(old.rollAge)!==age||old.rollRole!==state.role)careerState.potentialProfile=makeProfile(rollType(age),age);
@@ -264,7 +264,7 @@
     version:VERSION,profiles:PROFILES,ensure:()=>JSON.parse(JSON.stringify(ensurePotentialProfile())),
     factor:(age=careerState.age)=>currentGrowthFactor(Number(age)),decline:(age=careerState.age)=>declineFactor(ensurePotentialProfile().type,Number(age))*destinyDeclineFactor(),
     destinyText:()=>destinyText(),phaseText:(age=careerState.age)=>phaseText(Number(age)),
-    qaForce:(type='steady',score=0,level=0)=>{careerState.potentialProfile=makeProfile(PROFILES[type]?type:'steady',Number(careerState.startAge||state.playerStartAge||16));careerState.potentialProfile.destinyScore=Number(score)||0;careerState.potentialProfile.destinyLevel=clampP(Number(level)||0,0,2);state.playerPotentialType=careerState.potentialProfile.type;return JSON.parse(JSON.stringify(careerState.potentialProfile));},
-    qaScore:(record)=>scoreSeason(record),qaRoll:(age)=>rollType(Number(age)||16),qaChance:()=>breakthroughChance()
+    qaForce:(type='steady',score=0,level=0)=>{careerState.potentialProfile=makeProfile(PROFILES[type]?type:'steady',Number(careerState.startAge||state.playerStartAge||18));careerState.potentialProfile.destinyScore=Number(score)||0;careerState.potentialProfile.destinyLevel=clampP(Number(level)||0,0,2);state.playerPotentialType=careerState.potentialProfile.type;return JSON.parse(JSON.stringify(careerState.potentialProfile));},
+    qaScore:(record)=>scoreSeason(record),qaRoll:(age)=>rollType(Number(age)||18),qaChance:()=>breakthroughChance()
   };
 })();

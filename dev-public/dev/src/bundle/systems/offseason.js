@@ -603,7 +603,7 @@
       const avg=ratings.length?ratings.reduce((s,x)=>s+x.rating,0)/ratings.length:0;
       const d=getRetirementSummaryData();
       document.getElementById('retirementTitle').textContent=`${careerState.age}岁，职业生涯落幕`;
-      document.getElementById('retirementCopy').textContent=`${careerState.retirementReason}。你从${careerState.startAge||state.playerStartAge||16}岁进入联盟，共征战 ${archive.length} 个完整赛季，最终以 ${state.role} 身份摘下耳机。`;
+      document.getElementById('retirementCopy').textContent=`${careerState.retirementReason}。你从${careerState.startAge||state.playerStartAge||18}岁进入联盟，共征战 ${archive.length} 个完整赛季，最终以 ${state.role} 身份摘下耳机。`;
       document.getElementById('retirementStats').innerHTML=[
         ['生涯赛季',archive.length],['总战绩',`${wins}-${losses}`],['平均评分',avg?avg.toFixed(1):'未出场'],['最高总评',careerState.peakOvr||getMyOvr()],['最佳成绩',bestCareerResult()],['历史分',d.historyScore]
       ].map(([label,value])=>`<div class="retirement-stat"><span>${label}</span><strong>${value}</strong></div>`).join('');

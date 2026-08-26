@@ -1,5 +1,5 @@
 /* ============================================================================
-   Public Beta 1.1 RC2 · WORLD CUP + AGE INTEGRATION
+   Public Beta 1.1 RC2 · WORLD CUP INTEGRATION
    国家队观察 / 试训 / 7人名单 / 资格赛 / 小组赛 / 淘汰赛 / 国家队履历
    史实举办年：2016/2017/2018/2019/2023/2026；当前生涯从2019开始。
    2027+ 为架空动态世界：每年举办一届，国家队资格赛与俱乐部赛季并行，主赛在本作俱乐部年终总决赛后进行。
@@ -154,7 +154,6 @@
     const home=state.playerCountry||'cn',route=vwcRoute(year,home);
     rec={version:VWC_VERSION,year,homeCountry:home,representingCountry:home,breakthrough:false,route,phase:'selection',nextStage:null,pendingStage:'selection',selected:false,starter:false,roster:[],matches:[],observerReport:[],events:[],eventCount:0,nationalCohesion:50,selectionChoice:null,selectionRank:null,eventMods:{power:0,rating:0},declineMedia:null,standbyEligible:false,standbyChecked:false,standbyPending:false,completed:false,result:null,worldChampion:null,worldRunnerUp:null,createdAt:new Date().toISOString()};
     root.seasons[year]=rec;
-    if(Number(careerState.age||16)<18){rec.phase='ineligible';rec.pendingStage=null;rec.completed=true;rec.result='年龄不符合参赛资格';rec.note=`${careerState.age}岁 · 未达到当届成年参赛要求`;return rec;}
     if(route==='no-team'){rec.phase='no-team';rec.pendingStage=null;rec.completed=true;rec.result='当届国家/地区未进入世界杯计划';return rec;}
     if(route==='breakthrough'){rec.breakthrough=true;rec.representingCountry=vwcBreakthroughHost(home,year);rec.note=`以 ${vwcCountryName(home)} 突破选手身份竞争 ${vwcCountryName(rec.representingCountry)} 的7人名单`;}
     return rec;
