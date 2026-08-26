@@ -204,6 +204,18 @@ test('regression: career season chip opens the total standings for historical se
   expectCleanRuntime(monitor);
 });
 
+test('regression: standings trigger survives season-chip replacement', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2019-season-start');
+  await page.evaluate(() => {
+    const chip = document.getElementById('seasonYearChip');
+    chip?.replaceWith(chip.cloneNode(true));
+  });
+  await page.locator('#seasonYearChip').click({ force: true });
+  await expect(page.locator('#b2StandingsBody')).toContainText('亚特兰大君临');
+  expectCleanRuntime(monitor);
+});
+
 test('regression: regular-season MVP celebration fires during season-end render', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2025-pre-finals');
