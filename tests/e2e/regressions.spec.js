@@ -61,6 +61,23 @@ test('regression: total standings show the same colored East/West badges as team
   expectCleanRuntime(monitor);
 });
 
+test('regression: 2019 team selection maps Pacific to East and Atlantic to West', async ({ page }) => {
+  const monitor = await freshApp(page);
+  const groups = await page.evaluate(() => {
+    careerState.startYear = 2019;
+    careerState.seasonYear = 2019;
+    careerState.teamSelectManual = true;
+    v50ApplySeasonWorld(2019);
+    renderTeamChoiceWheel();
+    return window.__OWL_V771_TEAM_QA();
+  });
+  const east = groups.find(group => group.region === 'East');
+  const west = groups.find(group => group.region === 'West');
+  expect(east).toMatchObject({ label: '太平洋赛区', teams: expect.arrayContaining(['GZC', 'CDH']) });
+  expect(west).toMatchObject({ label: '大西洋赛区', teams: expect.arrayContaining(['ATL', 'BOS']) });
+  expectCleanRuntime(monitor);
+});
+
 test('regression: career season chip opens the total standings for historical seasons', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2023-pre-playoffs');

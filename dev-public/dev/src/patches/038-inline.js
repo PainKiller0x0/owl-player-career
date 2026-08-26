@@ -134,12 +134,12 @@
   function y(){return Number(careerState.seasonYear||careerState.startYear||2019)}
   function region(team){
     const yr=y();
-    if(yr===2019)return team.division==='Atlantic'?'East':'West';
+    if(yr===2019)return team.division==='Atlantic'?'West':'East';
     if(yr>=2020&&yr<=2023)return EAST_BY_YEAR[yr]?.has(team.short)?'East':'West';
     return team.conference==='East'||team.division==='Atlantic'?'East':'West';
   }
   function label(key){
-    if(y()===2019)return key==='East'?'大西洋赛区':'太平洋赛区';
+    if(y()===2019)return key==='East'?'太平洋赛区':'大西洋赛区';
     return key==='East'?'东部赛区':'西部赛区';
   }
   function badge(key){return `<span class="division-badge ${key==='East'?'atlantic':'pacific'}">${key==='East'?'EAST':'WEST'} · ${label(key)}</span>`;}
