@@ -1,0 +1,19 @@
+/* OWL Alpha1 Batch 4 · compact award / World Cup / final-portrait polish. */
+.v97-format-badge{display:inline-block;padding:2px 7px;border:1px solid var(--line);border-radius:999px;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.04em}
+.vwc-note{display:block;margin-top:10px;line-height:1.75}
+.award-role-row{grid-template-columns:92px minmax(0,1fr) 112px;gap:8px;padding:9px 10px}
+.award-role-winner strong{line-height:1.35;white-space:normal}
+.award-role-winner span,.award-role-rank{font-size:11px;line-height:1.35}
+.v97-history-rank{display:flex;align-items:baseline;gap:10px;margin:8px 0 10px;padding:9px 11px;border:1px solid rgba(255,122,67,.28);border-radius:12px;background:rgba(255,122,67,.07)}
+.v97-history-rank span{color:var(--muted);font-size:11px}.v97-history-rank strong{color:var(--accent);font-size:17px}.v97-history-rank em{color:var(--muted);font-size:10px;font-style:normal}
+.v97-history-rank-label{display:block;margin-top:5px;color:var(--accent);font-size:11px;font-style:normal;font-weight:900}
+.owl-role-star-burst::after{content:"🌟  ✦  🌟";position:fixed;left:50%;top:21%;z-index:10120;font-size:clamp(24px,6vw,48px);pointer-events:none;animation:owlRoleStarBurst 1.35s ease both}
+.owl-role-star-confetti{position:fixed;inset:0;z-index:10119;overflow:hidden;pointer-events:none}
+.owl-role-star-confetti i{position:absolute;top:-14px;left:50%;width:7px;height:12px;border-radius:2px;background:var(--c);opacity:0;animation:owlRoleStarConfetti 1.5s var(--d) cubic-bezier(.18,.72,.26,1) both}
+@keyframes owlRoleStarConfetti{0%{opacity:0;transform:translate3d(var(--x),-18px,0) rotate(0)}16%{opacity:.9}100%{opacity:0;transform:translate3d(calc(var(--x) * .66),var(--y),0) rotate(var(--r))}}
+@keyframes owlRoleStarBurst{0%{opacity:0;transform:translate(-50%,22px) scale(.72)}30%{opacity:1;transform:translate(-50%,0) scale(1.08)}100%{opacity:0;transform:translate(-50%,-35px) scale(1)}}
+@media(max-width:760px){
+  .award-role-row{grid-template-columns:64px minmax(0,1fr) 82px;gap:6px;padding:8px 7px}
+  .award-role-label{font-size:12px}.award-role-winner strong{font-size:13px}.award-role-winner span,.award-role-rank{font-size:10px}
+  .v97-history-rank{gap:7px;flex-wrap:wrap}.v97-history-rank strong{font-size:15px}
+}

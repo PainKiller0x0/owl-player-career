@@ -1,12 +1,12 @@
 # OWL 选手之路：运行时架构
 
-更新时间：2026-08-21
+更新时间：2026-08-27
 
 ## 1. 范围与现状
 
 这是一个按固定 `<script>` 顺序加载的单页游戏。`dev-public/dev/index.html` 负责装配核心 bundle、历史年份 patch 和 Alpha1 patch；它不是模块打包器，因此脚本之间通过全局函数、`seasonState`、`careerState` 和少量 `window.__OWL_*` API 协作。基础 bundle 加载完成后，`094-shared.runtime.js` 先于历史 patch 加载，后续 patch 都可以直接复用它。
 
-本次重构的目标是收敛跨年份重复的流程控制，不改变年份规则、比赛数值、阶段赛结算或 UI 文案。年份差异仍由各自 Adapter 保留。
+本次重构的目标是收敛跨年份重复的流程控制，并把本轮已确认的赛制、世界杯名单和生涯后期规则放回明确的规则入口。比赛数值与阶段赛结算仍由既有系统负责；展示层只做信息收口，不在各页面重复推导。
 
 ## 2. 模块边界
 
@@ -15,7 +15,7 @@
 | Core | `src/bundle/systems/regular_season.js`、`season_events.js` | 单场/快速模拟、事件内容、基础渲染 | 判断某个历史年份的赛制 |
 | Era Adapter | `src/patches/049-inline.js`、`053-inline.js`、`054-inline.js`、`065-inline.js`、`091-inline.js`、`src/bundle/systems/v71_owl2_competitive_layer.js`、`v74_dynamic_hero_mastery.js` | 年份规则、阶段节点、地图池、队伍与赛事差异 | 自己重新实现公共暂停/恢复协议 |
 | Shared Runtime | `src/modules/094-shared.runtime.js` | 渲染 hook、版本元信息、模拟生命周期、事件恢复 | 比赛胜负、阶段资格、奖项数值 |
-| Feature Patch | `src/patches/090-inline.js`、`091-inline.js`、`092-inline.js`、`094-inline.js` | 单一 UI 修正或功能后处理 | 复制一套 `renderX` 包装生命周期 |
+| Feature Patch | `src/patches/090-inline.js`、`091-inline.js`、`092-inline.js`、`094-inline.js`、`097-inline.js` | 单一 UI 修正、旧档兼容或功能后处理 | 复制一套比赛/结算数值流程 |
 | Persistence / Modal | `src/patches/044-inline.js`、`094-inline.js` | 存档主档/可重建副本、恢复降级、游戏内确认框 | 直接调用浏览器原生 `alert / confirm / prompt` |
 
 ### Shared Runtime 接口
@@ -45,6 +45,15 @@ window.__OWL_RUNTIME.simulation.clearTimer()
 - 世界杯 2026+ 的晋级路线由 `vwcRoute()` 统一决定：上届冠亚军直通小组赛，其他国家按 2026 的邀请赛 / Conference Cup / 突破路线分流；跨届结果持久化在 `worldChampion` 和 `worldRunnerUp`，旧存档缺字段时由迁移逻辑补齐。
 - MVP 连续获奖的衰减记录在 `seasonState.awards.mvpFatigue`，由年度奖项生成阶段一次性应用；庆祝动效只在奖项页首次打开时触发，不参与数值结算。动效由标题 burst 和短生命周期的 `.season-mvp-confetti` 粒子层组成。
 - 全明星退出后的专项训练复用 `050-inline.js` 的 `openSpecialTraining()`；2024–2026 监听 `v71CloseAllStar`，2027+ 监听 `v34CloseAllStar`，退出状态 `participation === 'decline'` 时提供英雄加练或跳过休息。
+
+### Alpha1 Batch 4 的规则入口与适配层
+
+- 赛制格式由 `064-league.future-rules-config.js` 统一提供：2019–2021 为 6v6，2022 年起为 5v5；页面只读取 `seasonFormat(year).format`，不在各 UI 组件内重复判断年份。旧档中的 303/GOATS 战术由 `097-inline.js` 在进入 5v5 赛季时交给 `__OWL_V24_TACTICAL_IDENTITY.ensureCurrentProfile()` 迁移。
+- 世界杯名单由 `047-inline.js` 的 `vwcPickRosterGroups()` 统一生成：2 坦克、2 输出、2 支援和 1 灵活位；支援位优先保证输出支援/战术支援的职责覆盖。旧档的 7 人名单如果不满足该结构，`vwcNormalizeRoster()` 会在读取时用当前世界池补齐并重排，保证旧档不会带着错误位置结构继续运行。
+- 世界杯国家强度继续保留可见差异但不锁死结果：2026+ 中国为 96、韩国为 97，比赛结果仍由赛前强度、事件修正和稳定随机共同决定。世界杯不增加额外年龄门槛，年龄规则只由 OWL 的 18 岁入场门槛负责。
+- 英雄专项的实际增益由 `v74_dynamic_hero_mastery.js` 与 `050-inline.js` 的同一套运行时因素共同决定，包含位置适配、当前状态、英雄熟练度、年龄潜力；赛季中特训的“自动选择”只负责选择当前最弱的两个英雄，不改变原有确认和结算流程。
+- `097-inline.js` 是本轮的 Alpha1 最终适配层：隐藏训练/转位内部计算、压缩 Dennis Hawelka 未入选文案、限制 28/29 岁合同年限、添加职责之星轻量庆祝、老将事件（27 岁起且每季最多一个）和退役历史定位标签。它不改比赛结算，只在既有流程完成后做幂等 UI/兼容收口。
+- 退役历史定位使用现有历史分，不伪造额外历史数据库；标签按 GOAT、历史前三、前五、前十、前二十五、历史百大和未进入历史榜单分段。这样导入旧档也能得到稳定标签，且不会改变历史分本身。
 
 ## 3. 渲染协议
 
@@ -155,3 +164,4 @@ fastSeasonStep
 7. 手机 P0 视口（360～430 宽）与平板 P1 视口必须无横向溢出；弹窗关闭按钮的可操作区域不得因 flex 压缩低于 40×40。
 8. PC P0（1280×720～1920×1080）与 P1（2560×1440、3440×1440）必须检查首页高度、核心区最大宽度、弹窗边界和超宽屏拉伸；低高度窗口的主要操作不能被推出视口。
 9. 存档压缩回归必须确认：旧完整 JSON 可导入、`saveFormat` 为 `compact-v1`、可重建榜单缓存不落盘、队伍短代号可恢复为运行时对象，且导出仍为可读 JSON。
+10. Alpha1 Batch 4 的 Playwright 回归覆盖赛制切换、世界杯名单迁移、年龄增益、自动特训、UI 信息级别、合同年限、退役历史定位和职责之星庆祝；当前 `npm run test:e2e` 结果为 61/61。

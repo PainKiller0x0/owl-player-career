@@ -61,9 +61,9 @@
   function v14SpecialPreview(hero,index,base=3){
     const before=Number(hero?.value||0),locked=state.locked||{};
     const attrAvg=['mechanics','decision','pool'].map(k=>Number(locked[k]?.value||75)).reduce((a,b)=>a+b,0)/3;
-    const condition=Number(careerState.condition||70),aptitude=clamp(.90+(attrAvg-72)*.006,.88,1.12),stateFactor=clamp(.94+(condition-65)*.0025,.90,1.10);
+    const condition=Number(careerState.condition||70),aptitude=clamp(.90+(attrAvg-72)*.006,.88,1.12),stateFactor=clamp(.94+(condition-65)*.0025,.90,1.10),potentialFactor=clamp(Number(window.__OWL_POTENTIAL?.factor?.(careerState.age)||1),.82,1.22);
     const lowMastery=before<70?1.25:before<80?1.12:before<90?1:.82,roleFactor=index===0?1:.72;
-    const gain=Number(base||3)*roleFactor*aptitude*stateFactor*lowMastery;
+    const gain=Number(base||3)*roleFactor*aptitude*stateFactor*potentialFactor*lowMastery;
     return Number(Math.max(0,Math.min(99,before+gain)-before).toFixed(2));
   }
   function openSpecialTraining(reason,title,copy,base=3){

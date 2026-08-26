@@ -18,7 +18,7 @@
     us:'AMER',ca:'AMER',ar:'AMER',br:'AMER',cl:'AMER',co:'AMER',cr:'AMER',ec:'AMER',gt:'AMER',hn:'AMER',mx:'AMER',pa:'AMER',pe:'AMER',pr:'AMER',
     fr:'EMEA',gb:'EMEA',fi:'EMEA',se:'EMEA',dk:'EMEA',de:'EMEA',ru:'EMEA',nl:'EMEA',be:'EMEA',es:'EMEA',pt:'EMEA',at:'EMEA',ie:'EMEA',il:'EMEA',sa:'EMEA',no:'EMEA',pl:'EMEA',it:'EMEA',is:'EMEA',cz:'EMEA',ee:'EMEA',gr:'EMEA',bh:'EMEA',lv:'EMEA',za:'EMEA',ch:'EMEA',tr:'EMEA'
   };
-  const VWC_STRENGTH={kr:96,cn:94,us:92,sa:91,fr:89,fi:89,se:88,dk:88,ca:87,gb:87,jp:87,es:86,de:86,ru:86,au:84,br:84,co:84,no:84,pl:83,nl:83,mx:83,th:82,hk:81,pt:81,at:81,ie:80,ph:80,pk:79,in:79,tw:82,nz:78,be:79,it:79,tr:81,ar:80,cl:79,pr:78};
+  const VWC_STRENGTH={kr:97,cn:96,us:92,sa:91,fr:89,fi:89,se:88,dk:88,ca:87,gb:87,jp:87,es:86,de:86,ru:86,au:84,br:84,co:84,no:84,pl:83,nl:83,mx:83,th:82,hk:81,pt:81,at:81,ie:80,ph:80,pk:79,in:79,tw:82,nz:78,be:79,it:79,tr:81,ar:80,cl:79,pr:78};
   const VWC_2019_DIRECT=new Set(['kr','cn','ca','us','fr']);
   const VWC_2023_QUALIFIER=new Set(['us','ca','mx','pr','cr','gt','co','br','cl','pe','ar','ec','be','fr','gb','it','nl','es','de','no','pl','sa','se','tr','tw','hk','id','jp','ph','kr','au','in','my','nz','sg','th']);
   const VWC_2023_WILDCARD=new Set(['dk','fi','is','pt']);
@@ -139,7 +139,7 @@
     const cfg=vwcConfig(year);if(!cfg)return null;const root=vwcRoot();let rec=root.seasons[year];
     if(rec){
       // 旧版/半截存档迁移：世界杯记录允许向前兼容，不能因为新增字段缺失在事件或比赛时崩掉。
-      rec.events=Array.isArray(rec.events)?rec.events:[];rec.matches=Array.isArray(rec.matches)?rec.matches:[];rec.roster=Array.isArray(rec.roster)?rec.roster:[];
+      rec.events=Array.isArray(rec.events)?rec.events:[];rec.matches=Array.isArray(rec.matches)?rec.matches:[];rec.roster=Array.isArray(rec.roster)?rec.roster:[];rec.roster=vwcNormalizeRoster(rec.roster,rec);
       rec.eventMods=rec.eventMods&&typeof rec.eventMods==='object'?rec.eventMods:{power:0,rating:0};
       rec.eventMods.power=Number(rec.eventMods.power||0);rec.eventMods.rating=Number(rec.eventMods.rating||0);
       rec.nationalCohesion=Number.isFinite(Number(rec.nationalCohesion))?vwcClamp(Number(rec.nationalCohesion),0,100):50;
@@ -212,11 +212,39 @@
     rec.declinePenalty={streak,popLoss,bondLoss,sameCountry:sameCountry.map(x=>x.name).slice(0,4),conditionGain:8};
     return rec.declinePenalty;
   }
+  function vwcPickRosterGroups(groups){
+    const quota={tank:2,damage:2,support:2},out=[];
+    Object.entries(quota).forEach(([g,count])=>{
+      const list=[...(groups[g]||[])].sort((a,b)=>b.selectionScore-a.selectionScore);
+      if(g==='support'){
+        const diverse=['输出支援','战术支援'].map(role=>list.find(p=>p.role===role)).filter(Boolean);
+        out.push(...[...diverse,...list.filter(p=>!diverse.includes(p))].slice(0,count));
+      }else out.push(...list.slice(0,count));
+    });
+    const selected=new Set(out.map(p=>p.name));
+    const flex=Object.values(groups).flat().filter(p=>!selected.has(p.name)).sort((a,b)=>b.selectionScore-a.selectionScore)[0];
+    if(flex)out.push({...flex,flex:true});
+    return out.sort((a,b)=>b.selectionScore-a.selectionScore);
+  }
+  function vwcRosterNeedsNormalization(roster){
+    const core=roster.filter(p=>!p.flex),groups={tank:0,damage:0,support:0};
+    core.forEach(p=>groups[vwcRoleGroup(p.role)]++);
+    return roster.length!==7||roster.filter(p=>p.flex).length!==1||groups.tank!==2||groups.damage!==2||groups.support!==2;
+  }
+  function vwcNormalizeRoster(roster,rec){
+    if(!vwcRosterNeedsNormalization(roster))return roster;
+    const groups={tank:[],damage:[],support:[]},known=new Set(roster.map(p=>p.name));
+    roster.forEach((p,index)=>groups[vwcRoleGroup(p.role)].push({...p,isUser:!!p.isUser||p.name===getPlayerName(),selectionScore:Number(p.ovr||78)+(p.isUser?100:0)-index*.01}));
+    vwcWorldPlayers(rec.year,rec.representingCountry).forEach(p=>{
+      if(known.has(p.name))return;
+      groups[vwcRoleGroup(p.role)].push({...p,selectionScore:Number(p.ovr||78)+vwcSigned(`${rec.year}|${rec.representingCountry}|migration|${p.name}`,2)});
+    });
+    return vwcPickRosterGroups(groups).map(p=>({name:p.name,role:p.role,ovr:Math.round(p.ovr),club:p.club,isUser:!!p.isUser,country:p.country,flex:!!p.flex}));
+  }
   function vwcBuildAiRoster(rec){
     const groups={tank:[],damage:[],support:[]};
     vwcWorldPlayers(rec.year,rec.representingCountry).forEach(p=>groups[vwcRoleGroup(p.role)].push({...p,selectionScore:Number(p.ovr||78)+vwcSigned(`${rec.year}|${rec.representingCountry}|reserve|${p.name}`,2)}));
-    const quota={tank:2,damage:3,support:2},out=[];Object.entries(groups).forEach(([g,list])=>{list.sort((a,b)=>b.selectionScore-a.selectionScore);out.push(...list.slice(0,quota[g]));});
-    return out.map(p=>({name:p.name,role:p.role,ovr:Math.round(p.ovr),club:p.club,isUser:false,country:p.country}));
+    return vwcPickRosterGroups(groups).map(p=>({name:p.name,role:p.role,ovr:Math.round(p.ovr),club:p.club,isUser:false,country:p.country,flex:!!p.flex}));
   }
   function vwcMaybePrepareStandby(rec){
     if(!rec?.completed||!rec.standbyEligible||rec.standbyChecked||rec.standbyPending)return false;
@@ -231,7 +259,7 @@
     if(choice!=='accept'){
       rec.events.push({kind:'standby',phase:'standby',title:'签证突发 · 国家队递补',choice:'婉拒递补',summary:'首发选手签证未能及时获批，国家队询问你是否紧急递补；你选择不改变原计划。'});vwcRenderSeasonLayer();vwcOpen();return rec;
     }
-    let roster=(rec.roster||[]).filter(p=>!p.isUser);if(roster.length<6)roster=vwcBuildAiRoster(rec);
+    let roster=(rec.roster||[]).filter(p=>!p.isUser);if(roster.length<7)roster=vwcBuildAiRoster(rec);
     const g=vwcRoleGroup(state.role),same=roster.filter(p=>vwcRoleGroup(p.role)===g).sort((a,b)=>Number(a.ovr||0)-Number(b.ovr||0));
     const remove=same[0];if(remove)roster=roster.filter(p=>p.name!==remove.name);
     roster.push({name:getPlayerName(),role:state.role,ovr:vwcOvr(),club:careerState.team?.name||'职业队',isUser:true,country:rec.homeCountry});
@@ -260,9 +288,9 @@
     rec.selectionChoice=choice.id;careerState.worldCupDeclineStreak=0;careerState.condition=vwcClamp(careerState.condition+choice.condition,0,100);rec.nationalCohesion=vwcClamp(rec.nationalCohesion+choice.cohesion,0,100);
     const pool=vwcSelectionPool(rec),groups={tank:[],damage:[],support:[]};
     pool.forEach(p=>{const g=vwcRoleGroup(p.role),heroPool=Number(state.locked?.pool?.value||75),userExtra=p.isUser?(3.2+choice.bonus+Math.max(0,(Number(careerState.popularity||18)-20)*.035)+(choice.id==='pool'?Math.max(0,heroPool-80)*.08:0)+(Number(careerState.coachTrust||60)-50)*.018):0;const score=Number(p.ovr||78)+userExtra+vwcSigned(`${rec.year}|${rec.representingCountry}|select|${p.name}`,2.6);groups[g].push({...p,selectionScore:score});});
-    const quota={tank:2,damage:3,support:2},roster=[];Object.entries(groups).forEach(([g,list])=>{list.sort((a,b)=>b.selectionScore-a.selectionScore);roster.push(...list.slice(0,quota[g]));});roster.sort((a,b)=>b.selectionScore-a.selectionScore);
+    const roster=vwcPickRosterGroups(groups);
     const user=roster.find(p=>p.isUser),roleRank=[...groups[vwcRoleGroup(state.role)]].sort((a,b)=>b.selectionScore-a.selectionScore).findIndex(p=>p.isUser)+1;
-    rec.selectionRank=roleRank||null;rec.roster=roster.map(p=>({name:p.name,role:p.role,ovr:Math.round(p.ovr),club:p.club,isUser:!!p.isUser,country:p.country}));
+    rec.selectionRank=roleRank||null;rec.roster=roster.map(p=>({name:p.name,role:p.role,ovr:Math.round(p.ovr),club:p.club,isUser:!!p.isUser,country:p.country,flex:!!p.flex}));
     rec.events.push({phase:'selection',title:'国家队选拔',choice:choice.title,summary:user?`成功进入 ${vwcCountryName(rec.representingCountry)} 7人名单`:`同职责排名第${roleRank||'—'}，未进入最终7人名单`});
     if(!user){rec.phase='not-selected';rec.pendingStage=null;rec.completed=true;rec.result='国家队落选';rec.standbyEligible=true;rec.standbyChecked=false;vwcFinalize(rec);vwcRenderSeasonLayer();vwcOpen();return rec;}
     rec.selected=true;const roleMates=roster.filter(p=>vwcRoleGroup(p.role)===vwcRoleGroup(state.role)).sort((a,b)=>b.selectionScore-a.selectionScore);rec.starter=roleMates[0]?.isUser===true;rec.phase='ready';rec.pendingStage=null;rec.nextStage=vwcFirstStage(rec);vwcMaybeMarkDue();
@@ -506,7 +534,7 @@
     let phases=['selection'];if(rec.route==='preliminary')phases.push('preliminary');if(rec.route==='wildcard')phases.push('wildcard');if(rec.route==='conference'||rec.conferenceAttempted)phases.push('conference');if(!['direct-group','preliminary'].includes(rec.route)||rec.year===2023&&rec.route==='wildcard'||rec.year===2026&&rec.route==='conference')phases.push('qualifier');phases.push('group','knockout');
     phases=[...new Set(phases)];const done=new Set((rec.events||[]).map(e=>e.phase));if(rec.selected||rec.selectionChoice)done.add('selection');return phases.map(p=>{const current=rec.pendingStage===p||rec.phase===p;return`<span class="vwc-phase ${done.has(p)?'done':current?'current':'locked'}">${vwcEsc(VWC_STAGE_LABEL[p]||p)}</span>`;}).join('');
   }
-  function vwcRosterHtml(rec){return(rec.roster||[]).map(p=>`<div class="vwc-player ${p.isUser?'user':''}"><span class="role">${vwcRoleZh(vwcRoleGroup(p.role))}</span><div><strong>${vwcEsc(p.name)}${p.isUser?' · 你':''}</strong><small>${vwcEsc(p.role)} · ${vwcEsc(p.club||'')}</small></div><strong>${p.ovr}</strong></div>`).join('');}
+  function vwcRosterHtml(rec){return(rec.roster||[]).map(p=>`<div class="vwc-player ${p.isUser?'user':''}"><span class="role">${vwcRoleZh(vwcRoleGroup(p.role))}${p.flex?' · 灵活位':''}</span><div><strong>${vwcEsc(p.name)}${p.isUser?' · 你':''}</strong><small>${vwcEsc(p.role)} · ${vwcEsc(p.club||'')}</small></div><strong>${p.ovr}</strong></div>`).join('');}
   function vwcDisplayMatchLabel(m,list,index){if(m.roundLabel)return m.roundLabel;if(m.stage!=='knockout')return VWC_STAGE_LABEL[m.stage]||m.stage;const ko=list.filter(x=>x.stage==='knockout'),pos=ko.indexOf(m),n=ko.length;if(n>=3)return ['世界杯1/4决赛','世界杯半决赛','世界杯决赛'][Math.min(pos,2)];if(n===2)return ['世界杯半决赛','世界杯决赛'][Math.min(pos,1)];return '世界杯决赛';}
   function vwcMatchesHtml(rec,filterStage=null){const list=(rec.matches||[]).filter(x=>!filterStage||x.stage===filterStage);return list.length?`<div class="vwc-match-list">${list.map((m,i)=>`<div class="vwc-match ${m.won?'win':'loss'}"><div><strong>${vwcDisplayMatchLabel(m,list,i)}</strong><small style="display:block;color:var(--muted)">vs ${vwcEsc(vwcCountryName(m.opponent))}</small></div><div class="score">${m.score}</div><div class="rating">个人 ${m.rating.toFixed(1)}分</div></div>`).join('')}</div>`:'<div class="vwc-note">暂无比赛记录。</div>';}
   function vwcRenderSelection(rec,cfg){const choices=vwcChoiceData(rec.year);return`<div class="vwc-hero"><section class="vwc-card"><div class="vwc-kicker">NATIONAL TEAM SELECTION</div><div class="vwc-big">竞争 ${vwcCountryName(rec.representingCountry)} 7人名单</div><p>${rec.breakthrough?`你的国家/地区没有进入2026世界杯计划，但你符合“突破选手”路线：以同赛区外援身份竞争 ${vwcCountryName(rec.representingCountry)} 的一个名单位置。`:'先通过国家队选拔，再进入世界杯赛程。'}</p><div class="vwc-note">${cfg.selectionWindow} · 当前 ${careerState.age}岁 · OVR ${vwcOvr()} · 公众关注 ${Math.round(careerState.popularity)}</div></section><section class="vwc-card"><div class="vwc-kicker">ROUTE</div><h3>${rec.route==='direct-group'?'正赛直通国家':rec.route==='conference'?'Conference Cup路线':rec.route==='wildcard'?'Wild Card路线':rec.route==='preliminary'?'2019预选路线':rec.breakthrough?'突破选手路线':'在线资格赛路线'}</h3><p>${rec.note||'先通过国家队选拔，再进入世界杯赛程。'}</p></section></div><section class="vwc-card"><h3>你怎么打这次试训？</h3><div class="vwc-choice-grid">${choices.map(c=>`<button class="vwc-choice" data-vwc-select="${c.id}"><b>${c.title}</b><span>${c.desc}</span><em>${c.effect}</em></button>`).join('')}</div><div class="vwc-decline-row"><button class="secondary-btn vwc-decline-btn" id="vwcDeclineSelection">不参加本届国家队选拔</button><span>需要二次确认；会触发采访与舆情。</span></div></section>`;}
@@ -620,7 +648,7 @@
 
   window.__OWL_WORLD_CUP={
     version:'Public Beta 1.6 RC1',config:vwcConfig,ensure:(y)=>vwcEnsureRecord(y),maybeMarkDue:vwcMaybeMarkDue,open:vwcOpen,close:vwcClose,resolveSelection:vwcResolveSelection,declineSelection:vwcBeginDeclineSelection,resolveDeclineInterview:vwcResolveDeclineInterview,resolveStandby:vwcResolveStandby,resolveEvent:vwcResolveEvent,playNext:vwcPlayNext,playDetailed:vwcPlayDetailed,finishDetailed:vwcFinishDetailedMatch,
-    snapshot:()=>JSON.parse(JSON.stringify(vwcRoot())),countryName:vwcCountryName,qaHash:(seed)=>vwcHash01(seed),
+    snapshot:()=>JSON.parse(JSON.stringify(vwcRoot())),countryName:vwcCountryName,power:vwcPower,qaHash:(seed)=>vwcHash01(seed),
     diagnostics:()=>{const r=vwcEnsureRecord();return{year:vwcYear(),config:vwcConfig(vwcYear()),record:r,played:seasonState.played,total:seasonState.total,ovr:vwcOvr(),country:state.playerCountry};},
     qaSet:(year=2023,country='cn',age=20)=>{careerState.seasonYear=Number(year);careerState.age=Number(age);state.playerCountry=country;const root=vwcRoot();delete root.seasons[year];const r=vwcEnsureRecord(year);return r;},
     qaForceDue:(stage)=>{const r=vwcEnsureRecord();r.selected=true;r.phase='ready';r.nextStage=stage;r.pendingStage=stage;r.roster=r.roster?.length?r.roster:[{name:getPlayerName(),role:state.role,ovr:vwcOvr(),isUser:true,club:careerState.team?.name||'TEST'}];r.starter=true;return r;},

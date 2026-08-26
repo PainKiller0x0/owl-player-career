@@ -301,7 +301,7 @@
       <div class="v25-allstar-detail-grid"><div><span>你的身份</span><strong>${selection}</strong></div><div><span>正赛结果</span><strong>${winner}获胜${r.allStarMvp?' · 你获正赛MVP':''}</strong></div><div><span>参加项目</span><strong>${events.length?events.length+'项':'—'}</strong></div></div>
       ${r.userRank?`<div class="v25-allstar-detail-grid compact"><div><span>职责票选/表现序位</span><strong>第 ${r.userRank}</strong></div><div><span>球迷序位</span><strong>第 ${r.fanRank||'—'}</strong></div><div><span>英雄池宽度</span><strong>${r.breadth??'—'}</strong></div></div>`:''}
       <div class="v25-allstar-section"><h4>你实际参加的项目</h4><p>${events.length?events.map(x=>`• ${x}`).join('<br>'):'未进入本届全明星参赛名单。'}</p></div>
-      <div class="v25-allstar-section"><h4>娱乐项目结果</h4><p>${skills.join('<br>')}</p><small>狙王 / 全能王属于全明星娱乐荣誉，只影响公众关注，不计入历史地位评分。</small></div>
+      <div class="v25-allstar-section"><h4>娱乐项目结果</h4><p>${skills.join('<br>')}</p><small><strong>狙王规则：</strong>远程英雄1v1，远程英雄池越宽、狙击熟练度越高越占优。<br><strong>全能王规则：</strong>随机英雄1v1，英雄池越宽越占优。两项只增加公众关注，不进入历史地位评分。</small></div>
       ${!r.global?`<div class="v25-allstar-section"><h4>正赛附加价值</h4><p>${winner}获得下一阶段首轮选对手优先权。</p></div>`:''}
     </div>`;
   }

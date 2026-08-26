@@ -20,10 +20,10 @@
 
   function seasonFormat(year){
     const y=Number(year)||2024;
-    if(y>=2040)return {teams:24,total:46,lens:[15,15,16],global:true,homeAway:true,summary:'24 支队伍 · 全球统一排名 · 完整主客场双循环'};
-    if(y===2038)return {teams:24,total:46,lens:[15,15,16],global:false,homeAway:true,summary:'24 支队伍 · 主客场元年 · 每个对手 1主1客'};
-    if(y>=2035)return {teams:24,total:68,lens:[23,22,23],global:false,homeAway:y>=2038,summary:'24 支队伍 · 同部4回合 / 跨部2回合'};
-    return {teams:20,total:56,lens:[19,18,19],global:false,homeAway:false,summary:'20 支队伍 · 同部4回合 / 跨部2回合'};
+    if(y>=2040)return {teams:24,total:46,lens:[15,15,16],global:true,homeAway:true,format:'5v5',summary:'24 支队伍 · 全球统一排名 · 完整主客场双循环'};
+    if(y===2038)return {teams:24,total:46,lens:[15,15,16],global:false,homeAway:true,format:'5v5',summary:'24 支队伍 · 主客场元年 · 每个对手 1主1客'};
+    if(y>=2035)return {teams:24,total:68,lens:[23,22,23],global:false,homeAway:y>=2038,format:'5v5',summary:'24 支队伍 · 同分区4回合 / 跨分区2回合'};
+    return {teams:20,total:56,lens:[19,18,19],global:false,homeAway:false,format:y<=2021?'6v6':'5v5',summary:'20 支队伍 · 同分区4回合 / 跨分区2回合'};
   }
   function postseason(year){
     const y=Number(year)||2024;

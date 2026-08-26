@@ -507,9 +507,9 @@
       const user=v74UserHero(),pool=v71HeroPool(user,Number(v71Year())),store=v74HeroStore(user),h=pool.find(x=>x.name===name);if(!h)return null;
       const before=Number(store[h.id]??h.value),locked=state.locked||{};
       const attrAvg=['mechanics','decision','pool'].map(k=>Number(locked[k]?.value||75)).reduce((a,b)=>a+b,0)/3;
-      const condition=Number(careerState.condition||70),aptitude=clamp(.90+(attrAvg-72)*.006,.88,1.12),stateFactor=clamp(.94+(condition-65)*.0025,.90,1.10);
+      const condition=Number(careerState.condition||70),aptitude=clamp(.90+(attrAvg-72)*.006,.88,1.12),stateFactor=clamp(.94+(condition-65)*.0025,.90,1.10),potentialFactor=clamp(Number(window.__OWL_POTENTIAL?.factor?.(careerState.age)||1),.82,1.22);
       const lowMastery=before<70?1.25:before<80?1.12:before<90?1:.82;
-      const gain=Number(base||3)*aptitude*stateFactor*lowMastery;
+      const gain=Number(base||3)*aptitude*stateFactor*potentialFactor*lowMastery;
       const after=clamp(before+gain,55,99);store[h.id]=after;const actual=after-before;
       careerState.v74HeroGrowthLog=careerState.v74HeroGrowthLog||[];careerState.v74HeroGrowthLog.push({year:v71Year(),stage:typeof currentStageNumber==='function'?currentStageNumber():0,hero:h.name,delta:Number(actual.toFixed(2)),source,before:Number(before.toFixed(1)),after:Number(after.toFixed(1))});careerState.v74HeroGrowthLog=careerState.v74HeroGrowthLog.slice(-220);
       return{name:h.name,before:Number(before.toFixed(1)),after:Number(after.toFixed(1)),delta:Number(actual.toFixed(2)),source};
