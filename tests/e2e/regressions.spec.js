@@ -56,6 +56,21 @@ test('regression: total standings show the same colored East/West badges as team
   expectCleanRuntime(monitor);
 });
 
+test('regression: career season chip opens the total standings for historical seasons', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2023-pre-playoffs');
+  await page.evaluate(() => {
+    renderCareerTeam();
+    showScreen('team');
+  });
+  await expect(page.locator('#teamScreen')).toHaveClass(/active/);
+  await page.locator('#careerSeasonChip').click();
+  await expect(page.locator('#b2StandingsOverlay')).not.toHaveClass(/ui-hidden/);
+  await expect(page.locator('#b2StandingsTitle')).toContainText('2023');
+  await expect(page.locator('#b2StandingsBody')).toContainText('首尔烈火');
+  expectCleanRuntime(monitor);
+});
+
 test('regression: regular-season MVP celebration fires during season-end render', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2025-pre-finals');
