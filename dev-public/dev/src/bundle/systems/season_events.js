@@ -562,6 +562,10 @@
       if(event.maxAge!=null && careerState.age>event.maxAge) return false;
       if(event.minCareer!=null && careerState.careerYears<event.minCareer) return false;
       if(event.maxCareer!=null && careerState.careerYears>event.maxCareer) return false;
+      const format=window.getSeasonFormat?.(Number(careerState.seasonYear||0));
+      const inPostseason=typeof playoffState!=='undefined'&&!!playoffState.active;
+      const inOnlineRegularSeason=format?.onlineRegularSeason===true&&!!seasonState.active&&!inPostseason&&Number(seasonState.played||0)<Number(seasonState.total||format.total);
+      if(event.id==='travel-delay'&&inOnlineRegularSeason) return false;
       return !event.condition || event.condition();
     }
 

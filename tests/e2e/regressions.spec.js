@@ -25,6 +25,43 @@ test('regression: Hero Ban is only active in the real 2025 experiment season', a
   expectCleanRuntime(monitor);
 });
 
+test('regression: pandemic online regular seasons never schedule cross-border flight events', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2019-season-start');
+  const result = await page.evaluate(() => {
+    const selectOnlyTravelCandidate = (year, inPostseason = false) => {
+      careerState.seasonYear = year;
+      careerState.startYear = year;
+      seasonState.active = false;
+      setupSeason(false);
+      playoffState.active = inPostseason;
+      seasonState.eventHistory = SEASON_EVENTS
+        .filter(event => event.id !== 'travel-delay')
+        .map(event => ({ id: event.id }));
+      seasonState.eventDue = true;
+      seasonState.currentEvent = null;
+      document.getElementById('seasonEventOverlay')?.classList.add('hidden');
+      openScheduledSeasonEvent();
+      const selected = seasonState.currentEvent?.event?.id || null;
+      seasonState.currentEvent = null;
+      seasonState.eventDue = false;
+      document.getElementById('seasonEventOverlay')?.classList.add('hidden');
+      return selected;
+    };
+    return {
+      2020: selectOnlyTravelCandidate(2020),
+      2021: selectOnlyTravelCandidate(2021),
+      '2021Playoffs': selectOnlyTravelCandidate(2021, true),
+      2022: selectOnlyTravelCandidate(2022),
+    };
+  });
+  expect(result[2020]).not.toBe('travel-delay');
+  expect(result[2021]).not.toBe('travel-delay');
+  expect(result['2021Playoffs']).toBe('travel-delay');
+  expect(result[2022]).toBe('travel-delay');
+  expectCleanRuntime(monitor);
+});
+
 test('regression: 2023 Seoul Infernal keeps a visible offline logo after rebrand', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2023-pre-playoffs');

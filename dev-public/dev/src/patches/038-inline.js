@@ -4,8 +4,8 @@
   const VER='7.7.1';
   const FORMAT_TABLE=Object.freeze({
     2019:Object.freeze({year:2019,total:28,stageGames:[7,7,7,7],stageNames:['Stage 1','Stage 2','Stage 3','Stage 4'],milestones:[7,14,21],allStarAfter:null,heroBan:false,mapVoting:false}),
-    2020:Object.freeze({year:2020,total:21,stageGames:[6,5,5,5],stageNames:['赛季前段','May Melee资格期','Summer Showdown资格期','Countdown Cup资格期'],milestones:[11,16,21],allStarAfter:null,heroBan:false,mapVoting:false}),
-    2021:Object.freeze({year:2021,total:16,stageGames:[4,4,4,4],stageNames:['May Melee资格赛','June Joust资格赛','Summer Showdown资格赛','Countdown Cup资格赛'],milestones:[4,8,12,16],allStarAfter:null,heroBan:false,mapVoting:false}),
+    2020:Object.freeze({year:2020,total:21,stageGames:[6,5,5,5],stageNames:['赛季前段','May Melee资格期','Summer Showdown资格期','Countdown Cup资格期'],milestones:[11,16,21],allStarAfter:null,heroBan:false,mapVoting:false,onlineRegularSeason:true}),
+    2021:Object.freeze({year:2021,total:16,stageGames:[4,4,4,4],stageNames:['May Melee资格赛','June Joust资格赛','Summer Showdown资格赛','Countdown Cup资格赛'],milestones:[4,8,12,16],allStarAfter:null,heroBan:false,mapVoting:false,onlineRegularSeason:true}),
     2022:Object.freeze({year:2022,total:24,stageGames:[6,6,6,6],stageNames:['Kickoff Clash资格赛','Midseason Madness资格赛','Summer Showdown资格赛','Countdown Cup资格赛'],milestones:[6,12,18,24],allStarAfter:null,heroBan:false,mapVoting:false}),
     2023:Object.freeze({year:2023,total:16,stageGames:[8,8],stageNames:['Spring Stage','Summer Stage'],milestones:[8],allStarAfter:null,heroBan:false,mapVoting:false}),
     2024:Object.freeze({year:2024,total:56,stageGames:[19,18,19],stageNames:['Stage 1','Stage 2','Stage 3'],milestones:[19,37,56],allStarAfter:2,heroBan:false,mapVoting:false}),
