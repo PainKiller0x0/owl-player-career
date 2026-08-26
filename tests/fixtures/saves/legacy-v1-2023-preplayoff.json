@@ -1,0 +1,62 @@
+{
+  "saveVersion": 1,
+  "gameVersion": "Legacy Import",
+  "screen": "season",
+  "state": {
+    "role": "弹道输出",
+    "playerName": "Legacy QA 2023",
+    "playerCountry": "cn",
+    "playerStartAge": 18,
+    "locked": {
+      "mechanics": { "value": 82, "player": "Legacy", "role": "弹道输出" },
+      "projectile": { "value": 86, "player": "Legacy", "role": "弹道输出" },
+      "hitscan": { "value": 78, "player": "Legacy", "role": "弹道输出" },
+      "positioning": { "value": 83, "player": "Legacy", "role": "弹道输出" },
+      "awareness": { "value": 81, "player": "Legacy", "role": "弹道输出" },
+      "decision": { "value": 80, "player": "Legacy", "role": "弹道输出" },
+      "synergy": { "value": 82, "player": "Legacy", "role": "弹道输出" },
+      "shotcalling": { "value": 74, "player": "Legacy", "role": "弹道输出" },
+      "cooldown": { "value": 81, "player": "Legacy", "role": "弹道输出" },
+      "survival": { "value": 82, "player": "Legacy", "role": "弹道输出" },
+      "clutch": { "value": 84, "player": "Legacy", "role": "弹道输出" },
+      "pool": { "value": 85, "player": "Legacy", "role": "弹道输出" }
+    }
+  },
+  "careerState": {
+    "team": "GZC",
+    "seasonYear": 2023,
+    "startYear": 2023,
+    "startAge": 18,
+    "birthYear": 2005,
+    "age": 18,
+    "careerYears": 1,
+    "contract": { "years": 2, "remaining": 2, "salary": 15, "rolePromise": "新秀首发", "teamName": "广州冲锋" },
+    "careerArchive": [],
+    "roleHistory": [],
+    "retired": false,
+    "peakOvr": 84
+  },
+  "seasonState": {
+    "active": true,
+    "total": 56,
+    "played": 56,
+    "wins": 35,
+    "losses": 21,
+    "results": ["win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win", "win", "loss", "win", "win", "win", "loss", "win"],
+    "opponents": ["ATL", "BOS", "DAL", "FLA", "HOU", "LDN", "LAG", "LAV", "NYE", "PHI", "SFS", "SEO", "SHD", "TOR", "VAN", "WAS", "ATL", "BOS", "DAL", "FLA", "HOU", "LDN", "LAG", "LAV", "NYE", "PHI", "SFS", "SEO", "SHD", "TOR", "VAN", "WAS", "ATL", "BOS", "DAL", "FLA", "HOU", "LDN", "LAG", "LAV", "NYE", "PHI", "SFS", "SEO", "SHD", "TOR", "VAN", "WAS", "ATL", "BOS", "DAL", "FLA", "HOU", "LDN", "LAG", "LAV"],
+    "userRatings": [7.0, 7.2, 7.4, 7.1, 7.5, 7.3, 7.0, 7.6, 7.2, 7.3],
+    "eventSchedule": [],
+    "eventTriggeredAt": [],
+    "eventHistory": [],
+    "eventDue": false,
+    "currentEvent": null,
+    "stageProcessed": [1, 2, 3],
+    "awardsViewed": true,
+    "simulating": false
+  },
+  "playoffState": { "active": false, "teams": [], "matches": [], "round": "active", "results": [] },
+  "offseasonState": { "active": false, "phase": "review", "offers": [] },
+  "injuryState": {},
+  "careerViewState": { "tab": "overview" },
+  "gameSettings": { "matchDetailsEnabled": false }
+}

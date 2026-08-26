@@ -1,0 +1,62 @@
+{
+  "saveVersion": 1,
+  "gameVersion": "Legacy Import",
+  "screen": "season",
+  "state": {
+    "role": "弹道输出",
+    "playerName": "Legacy QA 2019",
+    "playerCountry": "cn",
+    "playerStartAge": 16,
+    "locked": {
+      "mechanics": { "value": 78, "player": "Legacy", "role": "弹道输出" },
+      "projectile": { "value": 82, "player": "Legacy", "role": "弹道输出" },
+      "hitscan": { "value": 74, "player": "Legacy", "role": "弹道输出" },
+      "positioning": { "value": 79, "player": "Legacy", "role": "弹道输出" },
+      "awareness": { "value": 76, "player": "Legacy", "role": "弹道输出" },
+      "decision": { "value": 75, "player": "Legacy", "role": "弹道输出" },
+      "synergy": { "value": 77, "player": "Legacy", "role": "弹道输出" },
+      "shotcalling": { "value": 70, "player": "Legacy", "role": "弹道输出" },
+      "cooldown": { "value": 76, "player": "Legacy", "role": "弹道输出" },
+      "survival": { "value": 78, "player": "Legacy", "role": "弹道输出" },
+      "clutch": { "value": 80, "player": "Legacy", "role": "弹道输出" },
+      "pool": { "value": 81, "player": "Legacy", "role": "弹道输出" }
+    }
+  },
+  "careerState": {
+    "team": "GZC",
+    "seasonYear": 2019,
+    "startYear": 2019,
+    "startAge": 16,
+    "birthYear": 2003,
+    "age": 16,
+    "careerYears": 1,
+    "contract": { "years": 2, "remaining": 2, "salary": 12, "rolePromise": "新秀首发", "teamName": "广州冲锋" },
+    "careerArchive": [],
+    "roleHistory": [],
+    "retired": false,
+    "peakOvr": 80
+  },
+  "seasonState": {
+    "active": true,
+    "total": 28,
+    "played": 7,
+    "wins": 4,
+    "losses": 3,
+    "results": ["win", "loss", "win", "win", "loss", "win", "loss", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+    "opponents": ["ATL", "BOS", "DAL", "FLA", "HOU", "LDN", "LAG", "LAV", "NYE", "PHI", "SFS", "SEO", "SHD", "TOR", "VAN", "WAS", "ATL", "BOS", "DAL", "FLA", "HOU", "LDN", "LAG", "LAV", "NYE", "PHI", "SFS", "SEO"],
+    "userRatings": [7.1, 6.8, 7.5, 7.3, 6.9, 7.2, 7.0],
+    "eventSchedule": [],
+    "eventTriggeredAt": [],
+    "eventHistory": [],
+    "eventDue": false,
+    "currentEvent": null,
+    "stageProcessed": [],
+    "awardsViewed": false,
+    "simulating": false
+  },
+  "playoffState": { "active": false, "teams": [], "matches": [], "round": "active", "results": [] },
+  "offseasonState": { "active": false, "phase": "review", "offers": [] },
+  "injuryState": {},
+  "careerViewState": { "tab": "overview" },
+  "gameSettings": { "matchDetailsEnabled": false }
+}

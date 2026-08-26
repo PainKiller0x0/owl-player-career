@@ -36,7 +36,16 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright E2E
-        run: npm run test:e2e
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            npm run test:e2e:smoke
+          elif [[ "${{ github.event_name }}" == "push" ]]; then
+            npm run test:e2e:core
+          else
+            npm run test:e2e
+          fi
 
       - name: Upload Playwright evidence
         if: always()

@@ -5,6 +5,9 @@
   "description": "QA tooling for OWL Player Career",
   "scripts": {
     "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test --grep-invert @visual --grep \"smoke:\"",
+    "test:e2e:core": "playwright test --grep-invert @visual",
+    "test:e2e:visual": "playwright test visual.spec.js",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui"
   },

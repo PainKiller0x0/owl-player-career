@@ -43,6 +43,9 @@ jobs:
             "dev-public/dev/src/patches/091-inline.js"
             "dev-public/dev/src/patches/092-inline.js"
             "dev-public/dev/src/patches/094-inline.js"
+            "dev-public/dev/src/patches/095-inline.js"
+            "dev-public/dev/src/patches/096-qa-tools.js"
+            "dev-public/dev/src/styles/31-qa-tools.css"
             "src/worker-dev.js"
             "wrangler.dev.toml"
           )
