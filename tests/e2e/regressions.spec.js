@@ -45,6 +45,46 @@ test('regression: 2023 Seoul Infernal keeps a visible offline logo after rebrand
   expectCleanRuntime(monitor);
 });
 
+test('regression: Guangzhou Charge uses its own offline logo instead of the short-code fallback', async ({ page }) => {
+  const monitor = await freshApp(page);
+  const result = await page.evaluate(() => {
+    const team = TEAMS.find(item => item.short === 'GZC');
+    const holder = document.createElement('div');
+    holder.innerHTML = teamLogoMarkup(team);
+    const image = holder.querySelector('img');
+    return { src: image?.getAttribute('src') || '', fallback: holder.querySelector('.team-logo-fallback')?.textContent || '' };
+  });
+  expect(result.src).toMatch(/^data:image\/svg\+xml;charset=UTF-8,/);
+  expect(result.src).not.toContain('%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2288%22');
+  expect(result.fallback).toBe('GZC');
+  expectCleanRuntime(monitor);
+});
+
+test('regression: World Cup rejection training blocks whole-season resume until resolved', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await loadQaScenario(page, '2019-season-start');
+  const before = await page.evaluate(() => {
+    const year = careerState.seasonYear;
+    const record = careerState.worldCup.seasons[year];
+    Object.assign(record, { phase: 'not-selected', pendingStage: null, standbyPending: false, completed: true, result: '国家队落选' });
+    seasonState.played = seasonState.total;
+    seasonState.stageProcessed = [];
+    seasonState.eventDue = true;
+    seasonState.v13ResumeWholeAfterWorldCup = true;
+    seasonState.simulating = false;
+    window.__OWL_WORLD_CUP.close();
+    return { eventDue: seasonState.eventDue, simulating: seasonState.simulating, resumeAfterWorldCup: seasonState.v13ResumeWholeAfterWorldCup };
+  });
+  await expect(page.locator('#seasonEventOverlay')).not.toHaveClass(/hidden/);
+  await expect(page.locator('#seasonEventContent')).toContainText('落选之后');
+  expect(before).toMatchObject({ eventDue: true, simulating: false, resumeAfterWorldCup: false });
+  await page.locator('#v14SkipSpecial').click();
+  await expect(page.locator('#seasonEventOverlay')).toHaveClass(/hidden/);
+  const after = await page.evaluate(() => ({ pending: !!seasonState.v14SpecialTrainingPending, deferred: !!seasonState.v14SpecialTrainingDeferred, resume: !!seasonState.v14ResumeWholeAfterSpecialTraining, simulating: !!seasonState.simulating }));
+  expect(after).toEqual({ pending: false, deferred: false, resume: false, simulating: false });
+  expectCleanRuntime(monitor);
+});
+
 test('regression: total standings show the same colored East/West badges as team selection', async ({ page }) => {
   const monitor = await freshApp(page);
   await loadQaScenario(page, '2023-pre-playoffs');

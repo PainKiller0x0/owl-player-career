@@ -48,6 +48,15 @@
   function trainedKey(reason){return`${careerState.seasonYear}:${reason}`}
   function used(reason){return trainHistory().some(x=>x.key===trainedKey(reason))}
   let opening=false;
+  function resumeDeferredWhole(){const resume=!!seasonState.v14ResumeWholeAfterSpecialTraining;seasonState.v14ResumeWholeAfterSpecialTraining=false;seasonState.v14SpecialTrainingDeferred=false;if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(140);}
+  function deferWholeForSpecialTraining(){
+    const resume=!!(seasonState.v13ResumeWholeAfterWorldCup||seasonState.v71ResumeWholeAfterAllStar||seasonState.v34ResumeWholeAfterAllStar);
+    if(!resume)return false;
+    seasonState.v14ResumeWholeAfterSpecialTraining=true;seasonState.v14SpecialTrainingDeferred=true;
+    seasonState.v13ResumeWholeAfterWorldCup=false;seasonState.v71ResumeWholeAfterAllStar=false;seasonState.v34ResumeWholeAfterAllStar=false;
+    return true;
+  }
+  function openDeferredSpecialTraining(){seasonState.v14SpecialTrainingDeferred=false;if(!maybeSpecialTraining())resumeDeferredWhole();}
   function weakestHeroes(){const pool=window.__OWL_V800_HERO_IO?.pool?.(careerState.seasonYear)||[];return [...pool].sort((a,b)=>Number(a.value)-Number(b.value)).slice(0,8)}
   function v14SpecialPreview(hero,index,base=3){
     const before=Number(hero?.value||0),locked=state.locked||{};
@@ -60,6 +69,7 @@
   function openSpecialTraining(reason,title,copy,base=3){
     if(opening||used(reason))return false;const overlay=document.getElementById('seasonEventOverlay'),holder=document.getElementById('seasonEventContent');if(!overlay||!holder)return false;
     if(!overlay.classList.contains('hidden'))return false;const heroes=weakestHeroes();if(!heroes.length)return false;opening=true;
+    seasonState.v14SpecialTrainingPending=true;
     const selected=[];
     const draw=()=>{
       holder.innerHTML=`<div class="season-event-top"><span class="season-event-kicker">EXTRA TRAINING · 发愤图强</span><span class="season-event-round">${careerState.seasonYear} · 赛季中特训</span></div><h2 class="season-event-title">🔥 ${title}</h2><div class="season-event-copy"><p>${copy}</p><p>主练 / 副练；低熟练度追赶更快。涨幅受状态、机械、决策与英雄池影响。</p></div><div class="v14-special-hero-grid">${heroes.map(h=>{const idx=selected.indexOf(h.name),tag=idx===0?'主练':idx===1?'副练':'',preview=idx>=0?v14SpecialPreview(h,idx,base):v14SpecialPreview(h,selected.length?1:0,base);return`<button class="v14-special-hero ${idx>=0?'selected':''}" data-v14-hero="${h.name}"><span class="v14-special-top"><strong>${h.name}</strong>${tag?`<em class="v800-hero-role-tag ${idx===0?'primary':'secondary'}">${tag}</em>`:''}</span><span>当前 ${Number(h.value).toFixed(1)} · ${idx>=0?'预计':'若选'} +${preview.toFixed(2)}</span></button>`}).join('')}</div><div class="v14-special-summary"><span>${selected.length?`已选 ${selected.length}/2 · ${selected.map((x,i)=>`${i===0?'主练':'副练'} ${x}`).join(' / ')}`:'先选主练英雄，可再选1个副练英雄'}</span></div><div class="season-event-choices v14-special-actions"><button class="secondary-btn" id="v14SkipSpecial">今天不加练</button><button class="primary-btn" id="v14ApplySpecial" ${selected.length?'':'disabled'}>确认本次特训</button></div>`;
@@ -71,7 +81,8 @@
       });
     };
     const finish=(results=[])=>{
-      trainHistory().push({key:trainedKey(reason),year:careerState.seasonYear,reason,result:results[0]||null,results});opening=false;overlay.classList.add('hidden');renderSeason();
+      trainHistory().push({key:trainedKey(reason),year:careerState.seasonYear,reason,result:results[0]||null,results});opening=false;seasonState.v14SpecialTrainingPending=false;overlay.classList.add('hidden');renderSeason();
+      const resume=!!seasonState.v14ResumeWholeAfterSpecialTraining;seasonState.v14ResumeWholeAfterSpecialTraining=false;seasonState.v14SpecialTrainingDeferred=false;if(resume)window.__OWL_RUNTIME?.simulation?.resumeWhole?.(140);
       if(results.length){const body=`<div class="v16-result-list">${results.map((r,i)=>`<div><span>${i===0?'主练':'副练'} · ${r.name}</span><strong>${r.before.toFixed(1)} → ${r.after.toFixed(1)}</strong><em>+${r.delta.toFixed(2)}</em></div>`).join('')}</div><p>状态 -4 · 教练信任 +2。</p>`;window.__OWL_V16_MODAL?.result?.({icon:'🔥',kicker:'EXTRA TRAINING · 特训结果',title:'英雄专项完成',body});}
     };
     draw();overlay.classList.remove('hidden');return true;
@@ -80,12 +91,13 @@
   function maybeSpecialTraining(){
     const wcOverlay=document.getElementById('vwcOverlay');
     if(wcOverlay&&!wcOverlay.classList.contains('ui-hidden')&&!wcOverlay.classList.contains('hidden'))return;
-    if(opening||seasonState.simulating||seasonState.currentEvent||seasonState.eventDue||seasonState.stageBreakPending)return;
+    if(opening||seasonState.v14SpecialTrainingPending||seasonState.v14SpecialTrainingDeferred||seasonState.simulating||seasonState.currentEvent||(seasonState.eventDue&&!seasonState.v14ResumeWholeAfterSpecialTraining)||seasonState.stageBreakPending)return false;
     const wc=careerState.worldCup?.seasons?.[careerState.seasonYear];
-    if(wc?.result==='国家队落选'&&!used('miss-worldcup')){setTimeout(()=>openSpecialTraining('miss-worldcup','落选之后，训练室的灯还亮着','国家队名单没有你的名字。你没有去社媒写小作文，而是把空出来的国际赛训练窗口拿来补自己的英雄短板。',3.6),80);return}
-    const as=seasonState.v71AllStar;if(as&&as.year===careerState.seasonYear&&(!as.selected||as.participation==='decline')&&!seasonState.v71AllStarPending&&!used('miss-allstar')){setTimeout(()=>openSpecialTraining('miss-allstar',as.participation==='decline'?'主动退出全明星，那就把时间用在训练上':'全明星周末没你的票，那就自己加练',as.participation==='decline'?'你主动退出了全明星，训练室为你留了一晚。可以针对英雄短板加练，也可以选择休息。':'别人去参加全明星，你留下来继续训练。节目效果没有，英雄熟练度可以有。',3.3),80);return}
+    if(wc?.result==='国家队落选'&&!used('miss-worldcup')){setTimeout(()=>openSpecialTraining('miss-worldcup','落选之后，训练室的灯还亮着','国家队名单没有你的名字。你没有去社媒写小作文，而是把空出来的国际赛训练窗口拿来补自己的英雄短板。',3.6),80);return true}
+    const as=seasonState.v71AllStar;if(as&&as.year===careerState.seasonYear&&(!as.selected||as.participation==='decline')&&!seasonState.v71AllStarPending&&!used('miss-allstar')){setTimeout(()=>openSpecialTraining('miss-allstar',as.participation==='decline'?'主动退出全明星，那就把时间用在训练上':'全明星周末没你的票，那就自己加练',as.participation==='decline'?'你主动退出了全明星，训练室为你留了一晚。可以针对英雄短板加练，也可以选择休息。':'别人去参加全明星，你留下来继续训练。节目效果没有，英雄熟练度可以有。',3.3),80);return true}
     const rows=(careerState.v75StoryHistory||[]).filter(x=>Number(x.year)===Number(careerState.seasonYear)).slice(-4);
-    if(rows.length>=4&&rows.every(x=>Number(x.mapsPlayed||0)===0)&&!used('dnp-streak'))setTimeout(()=>openSpecialTraining('dnp-streak','板凳坐久了，就自己把门踹开','连续多场DNP后，教练允许你做一轮额外英雄专项。光坐板凳领工资确实很舒服，可惜对职业生涯没什么帮助。',3.0),80);
+    if(rows.length>=4&&rows.every(x=>Number(x.mapsPlayed||0)===0)&&!used('dnp-streak')){setTimeout(()=>openSpecialTraining('dnp-streak','板凳坐久了，就自己把门踹开','连续多场DNP后，教练允许你做一轮额外英雄专项。光坐板凳领工资确实很舒服，可惜对职业生涯没什么帮助。',3.0),80);return true}
+    return false;
   }
 
   // ---------------- UI wording / final polish ----------------
@@ -102,8 +114,13 @@
 
   // All-Star close is created dynamically. Capture the fact before the old listener removes the overlay,
   // then the next season render opens the special-training follow-up.
-  document.addEventListener('click',e=>{if(e.target?.closest?.('#v71CloseAllStar,#v34CloseAllStar'))setTimeout(()=>{opening=false;maybeSpecialTraining()},120)},true);
+  document.addEventListener('click',e=>{
+    const close=e.target?.closest?.('#v71CloseAllStar,#v34CloseAllStar');if(!close)return;
+    const as=seasonState.v71AllStar,needsTraining=as&&as.year===careerState.seasonYear&&(!as.selected||as.participation==='decline')&&!used('miss-allstar');
+    const deferred=needsTraining&&deferWholeForSpecialTraining();
+    setTimeout(()=>{opening=false;if(deferred)openDeferredSpecialTraining();else maybeSpecialTraining()},120);
+  },true);
 
   normalizeStoredTeamNames();cleanupDnpRivalPollution();
-  window.__OWL_V14={version:V14,teamZh,cleanupDnpRivalPollution,openSpecialTraining,maybeSpecialTraining,weakestHeroes,translateVisibleTeams,finalWording,polish};
+  window.__OWL_V14={version:V14,teamZh,cleanupDnpRivalPollution,openSpecialTraining,maybeSpecialTraining,weakestHeroes,translateVisibleTeams,finalWording,polish,deferWorldCupResume:rec=>{const deferred=rec?.result==='国家队落选'&&!used('miss-worldcup')&&deferWholeForSpecialTraining();if(deferred)setTimeout(openDeferredSpecialTraining,80);return deferred}};
 })();
