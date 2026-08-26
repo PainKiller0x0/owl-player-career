@@ -36,12 +36,8 @@ test('regression: 2023 Seoul Infernal keeps a visible offline logo after rebrand
     return { short: team?.short, displayShort: team?.displayShort, logo: team?.logo || '', src: image?.getAttribute('src') || '' };
   });
   expect(result).toMatchObject({ short: 'PHI', displayShort: 'INF' });
-  expect(result.logo).toMatch(/^data:image\/svg\+xml/);
-  expect(result.src).toMatch(/^data:image\/svg\+xml/);
-  const svg = result.src.includes(';base64,')
-    ? Buffer.from(result.src.split(',')[1], 'base64').toString('utf8')
-    : decodeURIComponent(result.src.split(',')[1]);
-  expect(svg).toContain('首尔烈火');
+  expect(result.logo).toMatch(/^data:image\/png;base64,iVBORw0KGgo/);
+  expect(result.src).toMatch(/^data:image\/png;base64,iVBORw0KGgo/);
   expectCleanRuntime(monitor);
 });
 
@@ -54,9 +50,28 @@ test('regression: Guangzhou Charge uses its own offline logo instead of the shor
     const image = holder.querySelector('img');
     return { src: image?.getAttribute('src') || '', fallback: holder.querySelector('.team-logo-fallback')?.textContent || '' };
   });
-  expect(result.src).toMatch(/^data:image\/svg\+xml;charset=UTF-8,/);
+  expect(result.src).toMatch(/^data:image\/png;base64,iVBORw0KGgo/);
   expect(result.src).not.toContain('%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2288%22');
   expect(result.fallback).toBe('GZC');
+  expectCleanRuntime(monitor);
+});
+
+test('regression: every real OWL team and historical rebrand uses an offline logo', async ({ page }) => {
+  const monitor = await freshApp(page);
+  const result = await page.evaluate(() => {
+    const teams = TEAMS.map(team => ({ short: team.short, displayShort: team.displayShort || '', name: team.name }));
+    teams.push({ short: 'PAR', displayShort: 'VEG', name: 'Vegas Eternal' });
+    teams.push({ short: 'PHI', displayShort: 'INF', name: 'Seoul Infernal' });
+    return teams.map(team => {
+      const holder = document.createElement('div');
+      holder.innerHTML = teamLogoMarkup(team);
+      return { ...team, src: holder.querySelector('img')?.getAttribute('src') || '' };
+    });
+  });
+  expect(result).toHaveLength(22);
+  for (const team of result) {
+    expect(team.src, `${team.short}/${team.displayShort}`).toMatch(/^data:image\/(?:svg\+xml|png);base64,/);
+  }
   expectCleanRuntime(monitor);
 });
 
