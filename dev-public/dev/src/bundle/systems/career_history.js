@@ -12,6 +12,15 @@
       '年度进步最快选手':64,'全明星正赛最有价值选手':62,'全明星首发':58,'全明星':55,'国家队成员':50,
       '新星赛最有价值选手':48,'社区之星':42,'最佳新秀阵容':40,'狙王':32,'全能王':30
     };
+    function careerTeamDisplay(value){
+      if(typeof value==='string')return value;
+      if(value&&typeof value==='object')return value.name||value.city||value.englishName||value.enName||value.short||'未知队伍';
+      return value==null?'未知队伍':String(value);
+    }
+    function normalizeCareerArchiveTeams(){
+      (careerState.careerArchive||[]).forEach(record=>{if(record&&record.team!=null)record.team=careerTeamDisplay(record.team);});
+      return careerState.careerArchive||[];
+    }
     function normalizeHonorName(name){
       if(name==='常规赛最有价值选手') return 'MVP';
       if(name==='总决赛最有价值选手') return '总决赛MVP';
@@ -71,7 +80,7 @@
       else renderCareerOverview();
     }
     function renderCareerOverview() {
-      const t=getCareerTotals(); const archive=careerState.careerArchive;
+      const t=getCareerTotals(); const archive=normalizeCareerArchiveTeams();
       const avgRating=t.ratingWeight?t.ratingSum/t.ratingWeight:0;
       const perMap=(value)=>t.maps?(value/t.maps).toFixed(1):'—';
       els.careerTabContent.innerHTML=`
@@ -81,16 +90,16 @@
         <section class="career-block"><h3>📈 生涯平均</h3><div class="career-total-grid">
           ${[['平均评分',avgRating?avgRating.toFixed(1):'未出场'],['每图击杀',perMap(t.eliminations)],['每图阵亡',perMap(t.deaths)],['每图助攻',perMap(t.assists)],['系列赛战绩',`${t.wins}-${t.losses}`],['最高OVR',careerState.peakOvr||getMyOvr()]].map(([l,v])=>`<div class="career-total-item"><strong>${v}</strong><span>${l}</span></div>`).join('')}
         </div></section>
-        <section class="career-block"><h3>📋 每赛季</h3><div class="career-season-list">${[...archive].reverse().map(r=>`<div class="career-season-row"><div class="year">${r.year}赛季</div><div><strong>${r.team}</strong><div class="meta">${r.age}岁 · ${r.role} · OVR ${r.ovr} · ${r.result}</div></div><div class="rating">${r.rating?`${r.rating.toFixed(1)}分`:'未出场'}</div></div>`).join('')||'<div class="summary-note-empty">还没有完整赛季记录。</div>'}</div></section>`;
+        <section class="career-block"><h3>📋 每赛季</h3><div class="career-season-list">${[...archive].reverse().map(r=>`<div class="career-season-row"><div class="year">${r.year}赛季</div><div><strong>${careerTeamDisplay(r.team)}</strong><div class="meta">${r.age}岁 · ${r.role} · OVR ${r.ovr} · ${r.result}</div></div><div class="rating">${r.rating?`${r.rating.toFixed(1)}分`:'未出场'}</div></div>`).join('')||'<div class="summary-note-empty">还没有完整赛季记录。</div>'}</div></section>`;
     }
     function renderHonorWall() {
-      const archive=[...careerState.careerArchive].reverse(); const counts=getHonorCounts();
+      const archive=[...normalizeCareerArchiveTeams()].reverse(); const counts=getHonorCounts();
       const total=Object.values(counts).reduce((a,b)=>a+b,0);
-      els.careerTabContent.innerHTML=`<section class="career-block"><h3>🏆 荣誉墙</h3>${archive.map(r=>`<div class="career-honor-season"><div class="career-honor-head"><strong>${r.year}赛季</strong><span>${r.team}</span></div><div class="honor-badges">${(r.honors||[]).length?sortHonorNames(r.honors||[]).map(h=>`<span class="honor-badge ${h.includes('冠军')||h.includes('MVP')?'gold':''}">${HONOR_ICONS[normalizeHonorName(h)]||HONOR_ICONS[h]||'🏅'} ${normalizeHonorName(h)}</span>`).join(''):'<span style="color:var(--muted)">本赛季没有个人或团队荣誉。</span>'}</div></div>`).join('')||'<div class="summary-note-empty">暂无生涯荣誉。</div>'}<div class="career-total-copy">生涯共获得 ${total} 项荣誉${Object.keys(counts).length?'：'+sortHonorEntries(counts).map(([k,v])=>`${v}×${k}`).join(' · '):'。'}</div></section>`;
+      els.careerTabContent.innerHTML=`<section class="career-block"><h3>🏆 荣誉墙</h3>${archive.map(r=>`<div class="career-honor-season"><div class="career-honor-head"><strong>${r.year}赛季</strong><span>${careerTeamDisplay(r.team)}</span></div><div class="honor-badges">${(r.honors||[]).length?sortHonorNames(r.honors||[]).map(h=>`<span class="honor-badge ${h.includes('冠军')||h.includes('MVP')?'gold':''}">${HONOR_ICONS[normalizeHonorName(h)]||HONOR_ICONS[h]||'🏅'} ${normalizeHonorName(h)}</span>`).join(''):'<span style="color:var(--muted)">本赛季没有个人或团队荣誉。</span>'}</div></div>`).join('')||'<div class="summary-note-empty">暂无生涯荣誉。</div>'}<div class="career-total-copy">生涯共获得 ${total} 项荣誉${Object.keys(counts).length?'：'+sortHonorEntries(counts).map(([k,v])=>`${v}×${k}`).join(' · '):'。'}</div></section>`;
     }
     function renderCareerOffseasonTab() {
-      const last=careerState.careerArchive[careerState.careerArchive.length-1];
-      els.careerTabContent.innerHTML=`<section class="career-offseason-card"><div style="font-size:48px">📖</div><h3>${last?.year||careerState.seasonYear} 赛季已经归档</h3><p>${last?`${last.team} · ${last.result} · 平均评分 ${last.rating.toFixed(1)}。`:''}接下来进入训练与合同阶段。</p><button class="primary-btn" id="enterOffseasonFromCareerBtn" style="min-width:250px;padding:15px 20px">进入休赛期 →</button></section>`;
+      const archive=normalizeCareerArchiveTeams(),last=archive[archive.length-1];
+      els.careerTabContent.innerHTML=`<section class="career-offseason-card"><div style="font-size:48px">📖</div><h3>${last?.year||careerState.seasonYear} 赛季已经归档</h3><p>${last?`${careerTeamDisplay(last.team)} · ${last.result} · 平均评分 ${last.rating.toFixed(1)}。`:''}接下来进入训练与合同阶段。</p><button class="primary-btn" id="enterOffseasonFromCareerBtn" style="min-width:250px;padding:15px 20px">进入休赛期 →</button></section>`;
       document.getElementById('enterOffseasonFromCareerBtn').addEventListener('click',enterOffseason);
     }
 
@@ -175,5 +184,4 @@
     }
 
     /* ---------------- 休赛期 / 转位 / 转会 V0.1 ---------------- */
-
 

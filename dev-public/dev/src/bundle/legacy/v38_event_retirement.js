@@ -21,7 +21,7 @@
 
     renderRolePlanning=function(wrap){
       const current=state.role,target=offseasonState.roleTarget;
-      const currentOvr=v36RoleOvr(current),targetOvr=v36RoleOvr(target),ratio=Math.round(targetOvr/Math.max(1,currentOvr)*100);
+      const currentOvr=v36RoleOvr(current),targetOvr=v36RoleOvr(target),effectiveTargetOvr=clamp(Math.round(targetOvr+(70-100)*.07),45,99),delta=effectiveTargetOvr-currentOvr;
       const comp=v38RoleCompetition(target,targetOvr);
       const competitors=comp.depth.slice(0,4).map(p=>`<span class="role-competitor">${v36FlagMarkup(p.name,false)}<b>${p.name}</b><em>OVR ${p.ovr}</em></span>`).join('');
       wrap.innerHTML=`
@@ -31,7 +31,7 @@
         <div class="role-shift-board">
           <div class="role-shift-card"><span>当前位置</span><strong>${current}</strong><em>职责总评 ${currentOvr}</em></div>
           <div class="role-shift-arrow">➜</div>
-          <div class="role-shift-card proposed"><span>建议转型</span><strong>${target}</strong><em>转位总评 ${targetOvr} · 当前职责的 ${ratio}%</em></div>
+          <div class="role-shift-card proposed"><span>建议转型</span><strong>${target}</strong><em>理论职责总评 ${targetOvr} · 初始适应 70%（有效约 ${effectiveTargetOvr}，${delta>=0?'+':''}${delta}）</em></div>
         </div>
         <div class="role-competition-card ${comp.key}">
           <div class="role-competition-head"><div><small>${careerState.team?.name||'当前队伍'} · ${target}</small><strong>${comp.label}</strong></div><span>${comp.depth.length?`同位置 ${comp.depth.length} 人`:'位置空缺'}</span></div>
@@ -45,6 +45,5 @@
         </div>`;
       wrap.querySelectorAll('[data-role-choice]').forEach(btn=>btn.addEventListener('click',()=>applyRoleDecision(btn.dataset.roleChoice)));
     };
-
 
 

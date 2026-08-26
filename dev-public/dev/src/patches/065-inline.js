@@ -25,7 +25,7 @@
     EXPANSION_TEAMS.forEach(meta=>{
       let team=TEAMS.find(t=>t.short===meta.short);
       if(!team){team={...meta};TEAMS.push(team);}
-      Object.assign(team,{city:meta.city,englishName:meta.englishName,conference:meta.conference,division:meta.division,expansion:true,country:meta.country,build:meta.build});
+      Object.assign(team,{name:meta.name,short:meta.short,displayShort:meta.short,city:meta.city,englishName:meta.englishName,conference:meta.conference,division:meta.division,color:meta.color,expansion:true,country:meta.country,build:meta.build});
       if(!Number.isFinite(Number(team.strength)))team.strength=meta.strength;
       team.active=y>=EXPANSION_YEAR;
       if(typeof v51OfflineLogoFor==='function')team.logo=v51OfflineLogoFor(team);

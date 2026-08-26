@@ -53,7 +53,8 @@
     };
     getMyOvr=function(){
       const attrs={};ATTRS.forEach(a=>{if(state.locked[a.key])attrs[a.key]=state.locked[a.key].value;});
-      return v35RoleCompositeOvr(attrs,state.role);
+      const raw=v35RoleCompositeOvr(attrs,state.role),adaptation=clamp(Number(careerState.roleAdaptation??100),0,100);
+      return clamp(Math.round(raw+(adaptation-100)*.07),45,99);
     };
     const _v35CreateCareerPlayerBase=createCareerPlayer;
     createCareerPlayer=function(){
@@ -311,6 +312,5 @@
     // 新角色重开时清理一次性特殊事件记录。
     const _v35ResetBuildOnlyBase=resetBuildOnly;
     resetBuildOnly=function(){_v35ResetBuildOnlyBase();delete careerState.specialEventsTriggered;delete seasonState.specialForcedEventId;};
-
 
 

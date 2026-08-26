@@ -499,7 +499,8 @@
     return careerState.v800Trade;
   }
   function tradeEligible(){
-    return Number(careerState.seasonYear)>=2024&&seasonState.active&&!careerState.retired&&Number(seasonState.played)>=8&&Number(seasonState.played)<37&&!tradeRoot().completed;
+    const secondCheckpoint=typeof v71SeasonFormat==='function'?v71SeasonFormat().lens.slice(0,2).reduce((sum,n)=>sum+Number(n||0),0):37;
+    return Number(careerState.seasonYear)>=2024&&seasonState.active&&!careerState.retired&&Number(seasonState.played)>=8&&Number(seasonState.played)<secondCheckpoint&&!tradeRoot().completed;
   }
   function tradeMarketScore(team){
     const pow=Number(careerLikeTeamPower(team)||team.strength||80);
@@ -649,7 +650,7 @@
   const _renderSeason=renderSeason;
   renderSeason=function(...args){
     const out=_renderSeason(...args);injectTradeButton();
-    if(Number(careerState.seasonYear)>=2025)addContextTip($('#v74HeroDevelopmentPanel')||$('#seasonScreen .season-track-card'),'hero-ban','<b>2025+：</b>地图 → 上场阵容 → Hero Ban / Plan B。');
+    if(typeof v71StrategicEra==='function'&&v71StrategicEra())addContextTip($('#v74HeroDevelopmentPanel')||$('#seasonScreen .season-track-card'),'hero-ban','<b>2025–2032：</b>地图 → 上场阵容 → Hero Ban / Plan B。');
     if(seasonState.stageBreakPending&&Number(careerState.seasonYear)>=2024){
       addContextTip($('#v768SeasonPrimaryAction')||$('#seasonScreen .season-track-card'),'major','<b>Major不是年度季后赛：</b>它是Stage阶段赛事；Major表现给联赛积分，年度季后赛最终按整个赛季的League Points决定。');
     }else{

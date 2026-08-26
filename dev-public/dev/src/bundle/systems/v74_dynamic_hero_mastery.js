@@ -345,10 +345,10 @@
   };
 
   function v741StageVisual(stageNo){
-    const [start,end]=v71StageBounds(stageNo),len=end-start,played=clamp((Number(seasonState.played)||0)-start,0,len),rec=stageRecord(stageNo),processed=(seasonState.stageProcessed||[]).includes(stageNo),active=v71StageNo()===stageNo&&seasonState.played<56;
+    const [start,end]=v71StageBounds(stageNo),len=end-start,played=clamp((Number(seasonState.played)||0)-start,0,len),rec=stageRecord(stageNo),processed=(seasonState.stageProcessed||[]).includes(stageNo),active=v71StageNo()===stageNo&&seasonState.played<v71SeasonFormat().total;
     const dots=Array.from({length:len},(_,j)=>{
       const i=start+j,r=seasonState.results[i],opp=seasonState.opponents?.[i];
-      return `<i class="season-dot ${r||''} ${i===seasonState.played&&seasonState.played<56?'current':''}" title="Stage ${stageNo} · 第${j+1}场${opp?' · '+opp.name:''}"></i>`;
+      return `<i class="season-dot ${r||''} ${i===seasonState.played&&seasonState.played<v71SeasonFormat().total?'current':''}" title="Stage ${stageNo} · 第${j+1}场${opp?' · '+opp.name:''}"></i>`;
     }).join('');
     return `<div class="stage-dot-group ${active?'active':''} ${processed?'done':''}" style="--stage-len:${len}"><div class="stage-dot-head"><b>STAGE ${stageNo}</b><span>${rec.wins}-${rec.losses} · ${played}/${len}</span><em>${processed?'已完成':active?'进行中':'待开始'}</em></div><div class="stage-dot-row">${dots}</div></div>`;
   }
@@ -749,7 +749,7 @@
     const top=Number(pool[0]?.value||0),elite=pool.filter(h=>h.value>=88).length,solid=pool.filter(h=>h.value>=78).length;
     const breadth=typeof v71HeroPoolBreadth==='function'?v71HeroPoolBreadth(player):solid;
     const third=Number(pool[Math.min(2,pool.length-1)]?.value||top),fragility=Math.max(0,top-third);
-    const banEra=year>=2025;
+    const banEra=year>=2025&&year<2033;
     let premium=(top-82)*.22+elite*.65+Math.min(8,breadth)*.28-fragility*.18;
     if(banEra)premium+=Math.min(10,solid)*.42+Math.max(0,4-fragility)*.30;
     else premium*=.55;
@@ -786,7 +786,7 @@
       const card=wrap?.querySelector(`[data-offer-id="${offer.id}"]`);if(!card||card.querySelector('.v75-offer-hero'))return;
       const h=offer.heroMarket;if(!h)return;
       const node=document.createElement('div');node.className='v75-offer-hero';
-      node.innerHTML=`<span>🎮 英雄池市场评价</span><strong>${h.label}</strong><small>${v71Year()+1>=2025?`抗Ban深度 ${h.breadth} · 精通以上 ${h.elite}`:`英雄池宽度 ${h.breadth} · 精通以上 ${h.elite}`} · 市场修正 ${h.premium>=0?'+':''}${h.premium}</small>`;
+      node.innerHTML=`<span>🎮 英雄池市场评价</span><strong>${h.label}</strong><small>${v71Year()+1>=2025&&v71Year()+1<2033?`抗Ban深度 ${h.breadth} · 精通以上 ${h.elite}`:`英雄池宽度 ${h.breadth} · 精通以上 ${h.elite}`} · 市场修正 ${h.premium>=0?'+':''}${h.premium}</small>`;
       card.appendChild(node);
     });
   };
@@ -798,7 +798,7 @@
     const host=document.getElementById('careerSquadCard');if(!host)return;
     host.querySelector('.v75-hero-market-card')?.remove();
     const h=v75HeroMarketProfile(),node=document.createElement('div');node.className='v75-hero-market-card';
-    node.innerHTML=`<div><span>🎮 HERO POOL · 市场画像</span><strong>${h.label}</strong><small>${v71Year()>=2025?'Hero Ban时代会直接影响首发与市场价值':'英雄熟练度已经影响地图适配与首发竞争'}</small></div><div class="v75-hero-market-stats"><b>${h.topHeroes.slice(0,4).map(x=>`${x.name} ${Math.round(x.value)}`).join(' · ')||'—'}</b><small>宽度 ${h.breadth} · 精通以上 ${h.elite} · 断层 ${h.fragility}</small></div>`;
+    node.innerHTML=`<div><span>🎮 HERO POOL · 市场画像</span><strong>${h.label}</strong><small>${v71StrategicEra()?'Hero Ban时代会直接影响首发与市场价值':'英雄熟练度已经影响地图适配与首发竞争'}</small></div><div class="v75-hero-market-stats"><b>${h.topHeroes.slice(0,4).map(x=>`${x.name} ${Math.round(x.value)}`).join(' · ')||'—'}</b><small>宽度 ${h.breadth} · 精通以上 ${h.elite} · 断层 ${h.fragility}</small></div>`;
     host.appendChild(node);
   };
 
@@ -907,7 +907,7 @@
   const _v75SetupMatchSeriesBase=setupMatch;
   setupMatch=function(...args){
     const out=_v75SetupMatchSeriesBase(...args);
-    if(v71Year()>=2025){
+    if(v71HasStrategicDraft()){
       matchState.v72LineupHistory=[];matchState.v72PlayerMaps=[];matchState.v72LastLineup=null;
       matchState.homeSquad=null;matchState.awaySquad=null;matchState.v72HomeSquadTeam=null;matchState.v72AwaySquadTeam=null;
     }
@@ -916,7 +916,7 @@
   function v75RunStrategicRegularMatch(source='quick'){
     const idx=Number(seasonState.played)||0,opponent=seasonState.opponents?.[idx];if(!opponent||idx>=seasonState.total)return null;
     if(typeof v74EnsureStageFocus==='function')v74EnsureStageFocus();
-    const venue=regularVenueAt(idx),strategic=v71Year()>=2025;
+    const venue=regularVenueAt(idx),strategic=v71HasStrategicDraft();
     V75_HEADLESS_MATCH=true;
     try{
       matchState.homeTeam=careerState.team;
@@ -958,7 +958,7 @@
   simulateSinglePlayoffSeries=function(){
     if(v71Year()<2024)return _v75QuickPlayoffBase();
     const bracketMatch=currentPlayoffMatch();if(!bracketMatch)return;
-    const opponent=currentPlayoffOpponent(),target=bracketMatch.target,strategic=v71Year()>=2025;
+    const opponent=currentPlayoffOpponent(),target=bracketMatch.target,strategic=v71HasStrategicDraft();
     const playerHigher=(teamSeed(careerState.team)||8)<(teamSeed(opponent)||8);
     V75_HEADLESS_MATCH=true;
     try{

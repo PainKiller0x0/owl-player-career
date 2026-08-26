@@ -72,7 +72,8 @@
 
   function v71Year(){return Number(careerState.seasonYear||2019);}
   function v71IsOwl2(){return v71Year()>=2024;}
-  function v71HasStrategicDraft(){return v71Year()>=2025 && matchState.context!=='allstar';}
+  function v71StrategicEra(){return v71Year()>=2025 && v71Year()<2033;}
+  function v71HasStrategicDraft(){return v71StrategicEra() && matchState.context!=='allstar';}
   function v71Conference(team){return (team?.division==='Atlantic'||team?.conference==='East')?'East':'West';}
   function v71ConferenceZh(teamOrKey){const k=typeof teamOrKey==='string'?teamOrKey:v71Conference(teamOrKey);return k==='East'?'东部':'西部';}
   function v71RoleGroup(role){return role==='坦克'?'tank':(/输出/.test(role)&&role!=='输出支援')?'damage':role==='长枪输出'||role==='弹道输出'?'damage':'support';}
@@ -85,8 +86,12 @@
     if(year>=2022)return maps.filter(m=>m.modeGroup!=='assault');
     return maps;
   }
-  function v71StageNo(){const p=seasonState.played||0;return p<19?1:p<37?2:3;}
-  function v71StageBounds(stage){return stage===1?[0,19]:stage===2?[19,37]:[37,56];}
+  function v71SeasonFormat(){
+    const format=window.__OWL_FUTURE_RULES_CONFIG?.seasonFormat;
+    return typeof format==='function'?format(v71Year()):{total:56,lens:[19,18,19],summary:'20 支队伍 · 同区4回合 / 跨区2回合'};
+  }
+  function v71StageNo(){const p=Number(seasonState.played||0),lens=v71SeasonFormat().lens;return p<lens[0]?1:p<lens[0]+lens[1]?2:3;}
+  function v71StageBounds(stage){const lens=v71SeasonFormat().lens,s=Number(stage);const start=s===1?0:s===2?lens[0]:lens[0]+lens[1];return[start,start+lens[Math.max(0,Math.min(2,s-1))]];}
   function v71StageLength(stage){const [a,b]=v71StageBounds(stage);return b-a;}
 
   // 2024改革世界保持20席：2023退出的成都席位在架空联盟改革后恢复为原franchise席位。
@@ -191,7 +196,8 @@
     }
     seasonState.opponents=pool.map(x=>x.opponent);
     seasonState.venues=pool.map(x=>x.venue);
-    seasonState.legs=pool.map((x,i)=>`Stage ${i<19?1:i<37?2:3} · ${x.tag}`);
+    const lens=v71SeasonFormat().lens,b1=lens[0],b2=b1+lens[1];
+    seasonState.legs=pool.map((x,i)=>`Stage ${i<b1?1:i<b2?2:3} · ${x.tag}`);
   }
 
   const _v71SetupSeasonBase=setupSeason;
@@ -199,7 +205,7 @@
     _v71SetupSeasonBase(isRestart);
     if(!v71IsOwl2())return;
     v71EnsureOwl2Teams();
-    seasonState.total=56;seasonState.results=Array(56).fill(null);seasonState.played=0;seasonState.wins=0;seasonState.losses=0;
+    const format=v71SeasonFormat();seasonState.total=format.total;seasonState.results=Array(format.total).fill(null);seasonState.played=0;seasonState.wins=0;seasonState.losses=0;
     seasonState.stageBreakPending=null;seasonState.stageProcessed=[];seasonState.stagePlayoffHistory=[];seasonState.stageTitles=[];seasonState.stageTables={};seasonState.finalStandingsCache=null;
     seasonState.majorBonusLP=0;seasonState.majorSlotOwner=careerState.nextMajor1ChampionConference||null;seasonState.v71LastMajorSummary=null;
     v71Build56Schedule();
@@ -240,7 +246,7 @@
   const _v71MarkStageBreakBase=markStageBreakIfNeeded;
   markStageBreakIfNeeded=function(){
     if(!v71IsOwl2())return _v71MarkStageBreakBase();
-    const boundary=seasonState.played===19?1:seasonState.played===37?2:seasonState.played===56?3:null;
+    const format=v71SeasonFormat(),b1=format.lens[0],b2=b1+format.lens[1],boundary=seasonState.played===b1?1:seasonState.played===b2?2:seasonState.played===format.total?3:null;
     if(boundary&&!seasonState.stageProcessed.includes(boundary)){seasonState.stageBreakPending=boundary;seasonState.simulating=false;if(seasonState.timer)clearTimeout(seasonState.timer);seasonState.timer=null;}
   };
 
@@ -295,14 +301,15 @@
   syntheticFinalStandings=function(){
     if(!v71IsOwl2())return _v71SyntheticBase();if(seasonState.finalStandingsCache)return seasonState.finalStandingsCache;
     const userLP=seasonState.wins+(seasonState.majorBonusLP||0),rows=TEAMS.filter(t=>t.active!==false).map(team=>{
-      if(team.name===careerState.team?.name)return{team,wins:seasonState.wins,losses:56-seasonState.wins,mapDiff:Math.round((seasonState.wins-seasonState.losses)*2.1),lp:userLP,isUser:true};
-      const rate=clamp(.5+(team.strength-80)*.018+stableSeasonNoise(team.name,v71Year(),4)*.01,.20,.80),wins=clamp(Math.round(56*rate),8,48),major=clamp(Math.round((team.strength-78)/6+stableSeasonNoise(team.name,88,2)),0,8);return{team,wins,losses:56-wins,mapDiff:(wins-28)*2+stableSeasonNoise(team.name,177,7),lp:wins+major,isUser:false};
+      const total=v71SeasonFormat().total;
+      if(team.name===careerState.team?.name)return{team,wins:seasonState.wins,losses:total-seasonState.wins,mapDiff:Math.round((seasonState.wins-seasonState.losses)*2.1),lp:userLP,isUser:true};
+      const rate=clamp(.5+(team.strength-80)*.018+stableSeasonNoise(team.name,v71Year(),4)*.01,.20,.80),wins=clamp(Math.round(total*rate),8,total-8),major=clamp(Math.round((team.strength-78)/6+stableSeasonNoise(team.name,88,2)),0,8);return{team,wins,losses:total-wins,mapDiff:(wins-total/2)*2+stableSeasonNoise(team.name,177,7),lp:wins+major,isUser:false};
     }).sort((a,b)=>b.lp-a.lp||b.wins-a.wins||b.mapDiff-a.mapDiff||b.team.strength-a.team.strength);
     rows.forEach((r,i)=>{r.rank=i+1;r.direct=i<8;});seasonState.finalStandingsCache=rows;return rows;
   };
   const _v71EstimateBase=estimateSeasonRank;
   estimateSeasonRank=function(){
-    if(!v71IsOwl2())return _v71EstimateBase();if(!seasonState.played)return careerState.rank||7;if(seasonState.played>=56)return syntheticFinalStandings().find(r=>r.isUser)?.rank||20;
+    if(!v71IsOwl2())return _v71EstimateBase();if(!seasonState.played)return careerState.rank||7;if(seasonState.played>=v71SeasonFormat().total)return syntheticFinalStandings().find(r=>r.isUser)?.rank||v71SeasonFormat().teams||20;
     const rate=seasonState.wins/Math.max(1,seasonState.played);return clamp(Math.round(20.5-rate*22),1,20);
   };
 
@@ -311,11 +318,11 @@
     _v71RenderSeasonBase();if(!v71IsOwl2()||!careerState.team)return;
     const stage=v71StageNo(),[a,b]=v71StageBounds(stage),stagePlayed=clamp(seasonState.played-a,0,b-a),slots=v71MajorSlots();
     const league=document.getElementById('seasonLeagueText');if(league)league.innerHTML=`OWL 2.0 · ${v71ConferenceZh(careerState.team)} · Stage ${stage}`;
-    const head=document.querySelector('.season-track-head h3+span');if(head)head.textContent='20 支队伍 · 56 场 · 同区4回合 / 跨区2回合 · 3个Stage';
+    const format=v71SeasonFormat(),head=document.querySelector('.season-track-head h3+span');if(head)head.textContent=`${format.summary} · 3个Stage`;
     const dots=document.getElementById('seasonDots');if(dots){
-      const lens=[19,18,19],starts=[0,19,37];dots.innerHTML=lens.map((len,si)=>`<div class="stage-dot-group"><b>STAGE ${si+1}</b><div class="stage-dot-row">${Array.from({length:len},(_,j)=>{const i=starts[si]+j,r=seasonState.results[i];return `<i class="season-dot ${r||''} ${i===seasonState.played&&seasonState.played<56?'current':''}" title="Stage ${si+1} · 第${j+1}场${seasonState.opponents[i]?' · '+seasonState.opponents[i].name:''}"></i>`}).join('')}</div></div>`).join('');
+      const lens=format.lens,starts=[0,lens[0],lens[0]+lens[1]];dots.innerHTML=lens.map((len,si)=>`<div class="stage-dot-group"><b>STAGE ${si+1}</b><div class="stage-dot-row">${Array.from({length:len},(_,j)=>{const i=starts[si]+j,r=seasonState.results[i];return `<i class="season-dot ${r||''} ${i===seasonState.played&&seasonState.played<format.total?'current':''}" title="Stage ${si+1} · 第${j+1}场${seasonState.opponents[i]?' · '+seasonState.opponents[i].name:''}"></i>`}).join('')}</div></div>`).join('');
     }
-    const progress=document.getElementById('seasonProgressCopy');if(progress&&seasonState.played<56)progress.innerHTML=`Stage ${stage} · <strong>${stagePlayed} / ${b-a}</strong> · 全赛季 ${seasonState.played} / 56 · Major加分 ${seasonState.majorBonusLP||0}`;
+    const progress=document.getElementById('seasonProgressCopy');if(progress&&seasonState.played<format.total)progress.innerHTML=`Stage ${stage} · <strong>${stagePlayed} / ${b-a}</strong> · 全赛季 ${seasonState.played} / ${format.total} · Major加分 ${seasonState.majorBonusLP||0}`;
     const area=document.getElementById('seasonCompleteArea');if(!area)return;
     if(seasonState.stageBreakPending){
       const s=seasonState.stageBreakPending,rec=stageRecord(s),rank=stageEstimatedRank(s),q=stageQualified(s),slotText=`东部${slots.East}席 / 西部${slots.West}席`;
@@ -323,8 +330,8 @@
       document.getElementById('resolveStageBreakBtn')?.addEventListener('click',()=>q?simulateStagePlayoff(s):skipStageBreak(s));
       ['playNextSeasonMatchBtn','fastSimSeasonBtn','fullSimSeasonBtn'].forEach(id=>{const n=document.getElementById(id);if(n)n.disabled=true;});return;
     }
-    if(seasonState.v71LastMajorSummary&&seasonState.played<56){const h=seasonState.v71LastMajorSummary;area.innerHTML=`<div class="stage-break-card v71-major-result"><div class="offseason-kicker">MAJOR ${h.stage} · FINAL</div><h3>🏆 ${h.champion}</h3><p>${v71ConferenceZh(h.championConference)}赢下Major，下一届国际赛名额变为 ${h.championConference==='East'?'东5西3':'东3西5'}。你的成绩：<strong>${h.result}</strong>${h.bonusLP?` · +${h.bonusLP} LP`:''}</p><button class="primary-btn" id="v71ContinueMajorBtn">继续赛季 →</button></div>`;document.getElementById('v71ContinueMajorBtn')?.addEventListener('click',()=>{seasonState.v71LastMajorSummary=null;renderSeason();});return;}
-    if(seasonState.played>=56){
+    if(seasonState.v71LastMajorSummary&&seasonState.played<format.total){const h=seasonState.v71LastMajorSummary;area.innerHTML=`<div class="stage-break-card v71-major-result"><div class="offseason-kicker">MAJOR ${h.stage} · FINAL</div><h3>🏆 ${h.champion}</h3><p>${v71ConferenceZh(h.championConference)}赢下Major，下一届国际赛名额变为 ${h.championConference==='East'?'东5西3':'东3西5'}。你的成绩：<strong>${h.result}</strong>${h.bonusLP?` · +${h.bonusLP} LP`:''}</p><button class="primary-btn" id="v71ContinueMajorBtn">继续赛季 →</button></div>`;document.getElementById('v71ContinueMajorBtn')?.addEventListener('click',()=>{seasonState.v71LastMajorSummary=null;renderSeason();});return;}
+    if(seasonState.played>=format.total){
       const rank=estimateSeasonRank(),awardLabel=seasonState.awardsViewed?'🏅 返回年度奖项':'🏅 揭晓年度奖项';
       area.innerHTML=`<div class="season-complete-banner"><strong>常规赛完成：${seasonState.wins} 胜 ${seasonState.losses} 负 · ${seasonState.wins+(seasonState.majorBonusLP||0)} LP · 全联盟第 ${rank}。</strong><br>${rank<=8?'进入年度八队双败季后赛。':'未进入全联盟前8，本赛季季后赛到此为止。'}<div style="margin-top:13px;display:flex;gap:10px;flex-wrap:wrap"><button class="secondary-btn" id="viewRegularAwardsBtn">${awardLabel}</button>${rank<=8?'<button class="primary-btn" id="enterPlayoffsBtn">🏆 进入季后赛</button>':''}<button class="secondary-btn" data-open-season-summary="1">📊 查看赛季结算</button></div></div>`;
       document.getElementById('viewRegularAwardsBtn')?.addEventListener('click',openRegularSeasonAwards);document.getElementById('enterPlayoffsBtn')?.addEventListener('click',()=>{careerState.postseasonSeed=rank;enterPlayoffs();});
@@ -347,7 +354,7 @@
 
   const _v71SetupMatchBase=setupMatch;
   setupMatch=function(forceOpponent,targetWins=3,options={}){
-    const strategic=v71Year()>=2025;
+    const strategic=v71HasStrategicDraft();
     _v71SetupMatchBase(forceOpponent,targetWins,{...options,mapSelectionEnabled:strategic?true:options.mapSelectionEnabled});
     const pool=v71MapPoolForMatch();matchState.availableMaps=[...pool];
     if(v71Year()>=2019&&!strategic&&!options.mapSelectionEnabled){matchState.mapSequence=shuffle([...pool]).slice(0,targetWins*2-1);}
@@ -473,7 +480,7 @@
   // 2025+季后赛描述同步，不再显示旧版“败者随便选剩余地图”的简化文案。
   const _v71OpenPlayoffBase=openNextPlayoffMatch;
   openNextPlayoffMatch=function(mode='quick'){
-    _v71OpenPlayoffBase(mode);if(mode==='detail'&&v71Year()>=2025&&matchState.context==='playoff'&&matchState.homeTeam){matchState.pregamePhase=currentMatchMap()?'roster':'map';matchState.usedModeGroups=[];matchState.banHistory={home:[],away:[]};matchState.lockedBanHeroes=[];matchState.currentBans=null;matchState.availableMaps=v71MapPoolForMatch();document.getElementById('matchDesc').textContent=(matchState.targetWins===4?'总决赛FT4。':'本轮FT3。')+' 2025竞技流程：选图 → 确认换人 → Hero Ban → 开图；模式池用尽后重置，具体地图不重复。';renderMatch();}
+    _v71OpenPlayoffBase(mode);if(mode==='detail'&&v71HasStrategicDraft()&&matchState.context==='playoff'&&matchState.homeTeam){matchState.pregamePhase=currentMatchMap()?'roster':'map';matchState.usedModeGroups=[];matchState.banHistory={home:[],away:[]};matchState.lockedBanHeroes=[];matchState.currentBans=null;matchState.availableMaps=v71MapPoolForMatch();document.getElementById('matchDesc').textContent=(matchState.targetWins===4?'总决赛FT4。':'本轮FT3。')+' 竞技流程：选图 → 确认换人 → Hero Ban → 开图；模式池用尽后重置，具体地图不重复。';renderMatch();}
   };
 
   // ---------- 2024+合同：1~4年 ----------
@@ -531,7 +538,7 @@
     // 2026+规则不再年年复读；玩家可通过常规赛顶部“规则说明”随时查看。
     if(!v71IsOwl2()||v71Year()!==2025||careerState.v13RuleIntroSeen2025)return;
     careerState.v13RuleIntroSeen2025=true;seasonState.v71IntroYear=2025;const overlay=document.getElementById('seasonEventOverlay'),holder=document.getElementById('seasonEventContent');if(!overlay||!holder)return;
-    const draft=v71Year()>=2025?'<li><strong>2025竞技升级：</strong>地图选择 → 阵容确认/换人 → 英雄禁用 → 开图。</li><li>闪点与攻防阵线共享地图模式组；模式池用尽后重置，具体地图整场不重复。</li>':'<li>2024暂不启用Hero Bans与Map Voting，比赛内规则保持传统版本。</li>';
+    const draft=v71StrategicEra()?'<li><strong>2025竞技升级：</strong>地图选择 → 阵容确认/换人 → 英雄禁用 → 开图。</li><li>闪点与攻防阵线共享地图模式组；模式池用尽后重置，具体地图整场不重复。</li>':'<li>当前年份不启用Hero Bans与Map Voting，比赛内规则保持传统版本。</li>';
     holder.innerHTML=`<div class="season-event-top"><span class="season-event-kicker">OWL ${v71Year()} · SEASON RULEBOOK</span><span class="season-event-round">赛季规则</span></div><h2 class="season-event-title">${v71Year()===2024?'OWL 2.0 正式启动':'OWL 2.0 · 竞技规则更新'}</h2><div class="season-event-copy"><ul><li>20队分东/西部；56场常规赛：同区4次、跨区2次。</li><li>Stage 1/2/3：19 / 18 / 19场，每阶段结束举办8队Major。</li><li>Major Champion Slot动态分配：基础4:4，上届冠军赛区下一届5:3。</li>${draft}</ul></div><div class="season-event-choices"><button class="season-event-choice" id="v71CloseIntro"><div><strong>开始赛季 →</strong></div></button></div>`;
     document.getElementById('v71CloseIntro')?.addEventListener('click',()=>overlay.classList.add('hidden'));overlay.classList.remove('hidden');
   }
@@ -695,7 +702,7 @@
   window.__OWL_V71_DIAGNOSTICS=()=>{
     const conf={East:TEAMS.filter(t=>v71Conference(t)==='East').length,West:TEAMS.filter(t=>v71Conference(t)==='West').length};
     const me=careerState.team||TEAMS[0],same=TEAMS.filter(t=>t.name!==me.name&&v71Conference(t)===v71Conference(me)).length,cross=TEAMS.filter(t=>v71Conference(t)!==v71Conference(me)).length;
-    return {version:'7.1',year:v71Year(),conferenceTeams:conf,expectedGames:same*4+cross*2,expectedHome:same*2+cross,stageLengths:[v71StageLength(1),v71StageLength(2),v71StageLength(3)],strategicDraft:v71Year()>=2025,heroCount:v71AvailableHeroes().length,mapCount:v71CompetitiveMaps().length};
+    return {version:'7.1',year:v71Year(),conferenceTeams:conf,expectedGames:same*4+cross*2,expectedHome:same*2+cross,stageLengths:[v71StageLength(1),v71StageLength(2),v71StageLength(3)],strategicDraft:v71StrategicEra(),heroCount:v71AvailableHeroes().length,mapCount:v71CompetitiveMaps().length};
   };
 
   // runtime CSS

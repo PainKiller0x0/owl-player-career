@@ -26,7 +26,7 @@
     const y=v13Year();
     if(y<=2023){const r=V13_HIST_RULES[y]||{summary:'对应年份OWL真实赛制',bullets:[]};return{historical:true,label:'史实规则 · 玩法化还原',title:`${y} OWL · 赛季规则`,summary:r.summary,bullets:r.bullets}}
     const bullets=['20队分东/西部；56场常规赛：同区4次、跨区2次。','Stage 1 / 2 / 3：19 / 18 / 19场，每阶段结束举办8队Major。','Major通过League Points影响年度季后赛；年度季后赛取全年积分前8。'];
-    if(y>=2025)bullets.push('2025起启用地图选择、阵容换人与 Hero Ban。');
+    if(y>=2025&&y<2033)bullets.push('2025–2032启用地图选择、阵容换人与 Hero Ban。');
     else bullets.push('2024暂不启用Hero Bans与Map Voting，比赛内规则保持传统版本。');
     return{historical:false,label:'架空延续赛制',title:`${y} OWL 2.0 · 赛季规则`,summary:'2024起进入 OWL 2.0 架空延续赛制。',bullets};
   }

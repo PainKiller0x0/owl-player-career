@@ -6,8 +6,9 @@
   /* V7.1 的这些函数都封装在模块内部，不能从外部直接调用。
      这里只依赖全局状态和全局的 simulateStagePlayoff / fastSeasonStep 等入口。 */
   function v767IsOwl2(){return Number(careerState.seasonYear||0)>=2024;}
-  function v767StageNo(){const p=Number(seasonState.played||0);return p<19?1:p<37?2:3;}
-  function v767StageTarget(stage){return stage===1?19:stage===2?37:56;}
+  function v767SeasonFormat(){const f=window.__OWL_FUTURE_RULES_CONFIG?.seasonFormat;return typeof f==='function'?f(Number(careerState.seasonYear||2019)):{total:56,lens:[19,18,19]};}
+  function v767StageNo(){const p=Number(seasonState.played||0),lens=v767SeasonFormat().lens;return p<lens[0]?1:p<lens[0]+lens[1]?2:3;}
+  function v767StageTarget(stage){const lens=v767SeasonFormat().lens;return stage===1?lens[0]:stage===2?lens[0]+lens[1]:v767SeasonFormat().total;}
   function v767ClearTimer(){if(seasonState.timer){clearTimeout(seasonState.timer);seasonState.timer=null;}}
   function v767ConfZh(conf){return conf==='East'?'东部':'西部';}
 
@@ -56,7 +57,7 @@
     if(!v767IsOwl2() || !seasonState.v767StageSimulating){
       return _v767FastSeasonStepBase();
     }
-    const target=Number(seasonState.v767StageTarget||56);
+    const target=Number(seasonState.v767StageTarget||v767SeasonFormat().total);
     if(seasonState.stageBreakPending || seasonState.v71LastMajorSummary || seasonState.played>=target){
       seasonState.simulating=false;
       seasonState.v767StageSimulating=false;
@@ -85,7 +86,7 @@
 
     /* Stage 2 Major之后，如果玩家再点“模拟本赛段”，先补全明星。
        用现成的Major“继续赛季”按钮触发现有V7.4.2状态机，避免调用模块私有函数。 */
-    if(seasonState.v71AllStarPending && Number(seasonState.played)===37){
+    if(seasonState.v71AllStarPending && Number(seasonState.played)===v767SeasonFormat().lens[0]+v767SeasonFormat().lens[1]){
       seasonState.simulating=false;
       seasonState.v767StageSimulating=false;
       v767ClearTimer();
@@ -105,7 +106,7 @@
       return _v767ToggleFastBase();
     }
 
-    if(Number(seasonState.played)>=56)return;
+    if(Number(seasonState.played)>=v767SeasonFormat().total)return;
 
     const stage=v767StageNo(),target=v767StageTarget(stage);
     if(!stage||Number(seasonState.played)>=target)return;
@@ -139,7 +140,7 @@
     const inlineHost=document.getElementById('v741SeasonInlineMilestone');
     let inline=inlineHost?.querySelector('.v71-major-result');
 
-    /* Stage 3 正好发生在56/56，旧render会先把“赛季结束卡”塞进inline。
+    /* Stage 3 正好发生在赛季末，旧render会先把“赛季结束卡”塞进inline。
        这里必须把它替换成Major 3结果卡，不能让赛季结算把Major结果吃掉。 */
     if(!inline && inlineHost){
       inlineHost.innerHTML='<div class="stage-break-card v71-major-result"></div>';
@@ -192,15 +193,15 @@
     v767RemoveLegacyStageCards();
     v767EnhanceMajorResult();
 
-    if(Number(seasonState.played)>=56){
+    if(Number(seasonState.played)>=v767SeasonFormat().total){
       document.querySelectorAll('#seasonScreen #v42ContinueStageBtn').forEach(n=>n.remove());
     }
 
     const fast=document.getElementById('fastSimSeasonBtn');
     if(fast && !seasonState.stageBreakPending && !seasonState.v71LastMajorSummary){
-      if(seasonState.v71AllStarPending && Number(seasonState.played)===37){
+      if(seasonState.v71AllStarPending && Number(seasonState.played)===v767SeasonFormat().lens[0]+v767SeasonFormat().lens[1]){
         fast.textContent='⭐ 进入全明星周末';
-      }else if(Number(seasonState.played)<56){
+      }else if(Number(seasonState.played)<v767SeasonFormat().total){
         const st=v767StageNo();
         fast.textContent=seasonState.simulating?'⏸ 停止模拟':`⏩ 模拟 Stage ${st}`;
       }
@@ -391,4 +392,3 @@
     `;document.head.appendChild(st);
   }
 })();
-

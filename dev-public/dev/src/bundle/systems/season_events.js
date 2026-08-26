@@ -129,7 +129,7 @@
         ]
       },
       {
-        id:'hero-ban-week', icon:'🚫', kicker:'FORMAT · 英雄禁用', title:'英雄禁用周抽中了你的招牌',
+        id:'hero-ban-week', icon:'🚫', kicker:'FORMAT · 英雄禁用', title:'英雄禁用周抽中了你的招牌', condition:()=>{const y=Number(careerState.seasonYear||0);return y>=2025&&y<2033;},
         text:'联盟阶段规则临时禁用了你的招牌英雄。对手教练显然很开心，你的英雄池则被迫接受突击检查。',
         choices:[
           { label:'启用冷门备用英雄', desc:'高风险地扩展英雄池。', effects:{poolAttr:1,nextMatchBonus:.8,condition:-6}, outcome:'训练赛一开始像事故现场，后来至少变成了有规划的施工现场。' },
@@ -666,5 +666,4 @@
       renderSeason();
       window.__OWL_RUNTIME?.simulation?.resumeAfterEvent?.({message:'事件处理完成，继续模拟剩余常规赛。',delay:450,wholeDelay:180});
     }
-
 

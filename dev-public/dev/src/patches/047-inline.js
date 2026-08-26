@@ -414,14 +414,14 @@
     const rec=vwcEnsureRecord();if(!rec||rec.completed)return rec;const st=rec.stageState;if(!st||st.done||st.index>=st.opponents.length)return rec;
     const opp=st.opponents[st.index],meta={year:rec.year,stage:st.stage,index:st.index,opponent:opp,country:rec.representingCountry,roundLabel:vwcKnockoutRoundLabel(st)||VWC_STAGE_LABEL[st.stage]||st.stage};
     document.getElementById('vwcOverlay')?.classList.add('ui-hidden');
-    setupMatch(false,3,{playerVenue:'neutral',mapSelectionEnabled:rec.year>=2025,firstMapPicker:'home'});
+    setupMatch(false,3,{playerVenue:'neutral',mapSelectionEnabled:typeof v71StrategicEra==='function'?v71StrategicEra():rec.year>=2025,firstMapPicker:'home'});
     matchState.context='worldcup';matchState.worldCupMeta=meta;
     matchState.homeTeam=vwcNationalTeam(rec.representingCountry,rec,true);matchState.awayTeam=vwcNationalTeam(opp,rec,false);
     matchState.homeRoster=vwcDetailedRoster(rec,rec.representingCountry,true);matchState.awayRoster=vwcDetailedRoster(rec,opp,false);
     matchState.logs=[{map:'赛前',side:'event',text:`${matchState.homeTeam.name} 对阵 ${matchState.awayTeam.name}。${meta.roundLabel}，双方提交首发5人。`}];
     document.getElementById('matchKicker').textContent=`Overwatch World Cup · ${meta.roundLabel}`;
     document.getElementById('matchTitle').textContent=`${vwcCountryName(rec.representingCountry)} vs ${vwcCountryName(opp)}`;
-    document.getElementById('matchDesc').textContent='世界杯详细比赛：按地图推进、处理关键团战；2025+沿用选图 / 阵容 / Ban / Plan 竞技层。默认入口仍为快速模拟。';
+    document.getElementById('matchDesc').textContent='世界杯详细比赛：按地图推进、处理关键团战；竞技时代沿用选图 / 阵容 / Ban / Plan 竞技层。默认入口仍为快速模拟。';
     document.getElementById('matchWeekText').textContent=`${rec.year} · 国家队`;
     renderMatch();showScreen('match');window.scrollTo({top:0,behavior:'auto'});return meta;
   }

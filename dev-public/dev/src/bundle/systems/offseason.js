@@ -279,13 +279,14 @@
     }
 
     function recordCompletedCareerSeason() {
+      normalizeCareerArchiveTeams();
       if(careerState.careerArchive.some(x=>x.year===careerState.seasonYear)) return;
       const avg=seasonState.userRatings.length?seasonState.userRatings.reduce((a,b)=>a+b,0)/seasonState.userRatings.length:0;
       const playoffRatings=playoffState.results.filter(x=>x.rating>0).map(x=>x.rating);
       const record={
         year:careerState.seasonYear,
         age:careerState.age,
-        team:careerState.team?.name||'未知队伍',
+        team:careerTeamDisplay(careerState.team),
         role:state.role,
         wins:seasonState.wins,
         losses:seasonState.losses,
@@ -330,7 +331,7 @@
       const achievementBase=playoffState.round==='champion'?.18:playoffState.round==='runnerup'?.12:getPlayoffResultLabel()==='季后赛季军'?.08:estimateSeasonRank()<=8?.04:0;
       const achievementBonus=achievementBase+playoffPerformanceBonus;
       const multiplier=clamp(1.34+ratingBonus+seasonBonus+achievementBonus,1.2,1.8);
-      const total=clamp(Math.round(base*multiplier),0,18);
+      const total=clamp(Math.max(3,Math.round(base*multiplier)),3,18);
       return {base,total,multiplier:Number(multiplier.toFixed(2)),avg,winRate,ratingBonus,seasonBonus,achievementBonus,playoffPerformanceBonus};
     }
 
@@ -524,8 +525,8 @@
     }
 
     function getRetirementSummaryData() {
-      const archive=careerState.careerArchive; const totals=getCareerTotals(); const honors=getHonorCounts();
-      const favorite=Object.entries(archive.reduce((m,r)=>(m[r.team]=(m[r.team]||0)+1,m),{})).sort((a,b)=>b[1]-a[1])[0]?.[0]||careerState.team?.name||'联盟';
+      const archive=normalizeCareerArchiveTeams(); const totals=getCareerTotals(); const honors=getHonorCounts();
+      const favorite=Object.entries(archive.reduce((m,r)=>(m[r.team]=(m[r.team]||0)+1,m),{})).sort((a,b)=>b[1]-a[1])[0]?.[0]||careerTeamDisplay(careerState.team)||'联盟';
       const championships=honors['总冠军']||0; const mvps=honors['MVP']||0; const fmvp=honors['总决赛MVP']||0; const allstars=honors['全明星']||0;
       const historyScore=Math.round((careerState.peakOvr||0)*1.1+championships*40+mvps*28+fmvp*24+allstars*6+archive.length*4);
       return {archive,totals,honors,favorite,championships,mvps,fmvp,allstars,historyScore};
@@ -534,7 +535,7 @@
     function openRetirementPressConference() {
       const d=getRetirementSummaryData();
       const memory=d.archive.length>2?d.archive[Math.max(0,d.archive.length-2)]:d.archive[0];
-      els.retirementPressContent.innerHTML=`<h2>退役发布会</h2><div class="retirement-press-body"><p>你讲起自己职业生涯里最难忘的一段经历。${memory?`那是 ${memory.year} 赛季，你代表 <strong>${memory.team}</strong> 以 ${memory.role} 身份完成了一个 ${memory.result} 的赛季。`:''}</p><p>你说，职业生涯并不只是冠军和评分。很多年后，你依然会和旧队友聊起训练室里的争执、决胜图前的沉默，以及那些明知道手在抖却仍然必须按下去的关键技能。</p><p><strong>生涯总结：</strong>${d.archive.length}个赛季，${d.totals.appearances}次出场，${d.totals.eliminations}次击杀，${d.championships}座冠军，${d.fmvp}次总决赛MVP，${d.mvps}次MVP，${d.allstars}次全明星。</p><p><strong>历史分：</strong>${d.historyScore} · ${d.historyScore>=300?'历史殿堂级别':d.historyScore>=220?'联盟传奇级别':d.historyScore>=150?'明星生涯级别':'职业生涯完整收官'}。</p><button class="primary-btn" id="closeRetirementPressBtn">继续查看最终履历</button></div>`;
+      els.retirementPressContent.innerHTML=`<h2>退役发布会</h2><div class="retirement-press-body"><p>你讲起自己职业生涯里最难忘的一段经历。${memory?`那是 ${memory.year} 赛季，你代表 <strong>${careerTeamDisplay(memory.team)}</strong> 以 ${memory.role} 身份完成了一个 ${memory.result} 的赛季。`:''}</p><p>你说，职业生涯并不只是冠军和评分。很多年后，你依然会和旧队友聊起训练室里的争执、决胜图前的沉默，以及那些明知道手在抖却仍然必须按下去的关键技能。</p><p><strong>生涯总结：</strong>${d.archive.length}个赛季，${d.totals.appearances}次出场，${d.totals.eliminations}次击杀，${d.championships}座冠军，${d.fmvp}次总决赛MVP，${d.mvps}次MVP，${d.allstars}次全明星。</p><p><strong>历史分：</strong>${d.historyScore} · ${d.historyScore>=300?'历史殿堂级别':d.historyScore>=220?'联盟传奇级别':d.historyScore>=150?'明星生涯级别':'职业生涯完整收官'}。</p><button class="primary-btn" id="closeRetirementPressBtn">继续查看最终履历</button></div>`;
       els.retirementPressOverlay.classList.remove('ui-hidden');
       document.getElementById('closeRetirementPressBtn').addEventListener('click',()=>els.retirementPressOverlay.classList.add('ui-hidden'));
     }
@@ -552,7 +553,7 @@
       const avgRating=ratings.length?ratings.reduce((sum,x)=>sum+Number(x.rating||0),0)/ratings.length:0;
       const wins=archive.reduce((sum,x)=>sum+(x.wins||0),0);
       const losses=archive.reduce((sum,x)=>sum+(x.losses||0),0);
-      const teams=[...new Set(archive.map(x=>x.team).filter(Boolean))];
+      const teams=[...new Set(archive.map(x=>careerTeamDisplay(x.team)).filter(Boolean))];
       const name=(state.playerName||'Rookie').trim()||'Rookie';
       els.retiredResumeTitle.textContent=`${name} 的完整职业生涯`;
       els.retiredResumeCopy.textContent=`${careerState.age}岁退役 · ${archive.length}个完整赛季 · 效力过 ${teams.length||1} 支队伍 · 最终职责 ${state.role}。`;
@@ -576,7 +577,7 @@
         return `<article class="retired-resume-season">
           <div class="retired-resume-season-head">
             <div class="retired-resume-year">${x.year}</div>
-            <div class="retired-resume-team"><strong>${x.team}</strong><span>${x.age}岁 · ${x.role} · OVR ${x.ovr||'—'} · 常规赛第${x.regularRank||'—'}名</span></div>
+            <div class="retired-resume-team"><strong>${careerTeamDisplay(x.team)}</strong><span>${x.age}岁 · ${x.role} · OVR ${x.ovr||'—'} · 常规赛第${x.regularRank||'—'}名</span></div>
             <div class="retired-resume-result">${x.result||'赛季结束'}</div>
           </div>
           <div class="retired-resume-season-stats">
@@ -608,7 +609,7 @@
       ].map(([label,value])=>`<div class="retirement-stat"><span>${label}</span><strong>${value}</strong></div>`).join('');
       document.getElementById('retirementHonorSummary').innerHTML=Object.keys(d.honors).length?sortHonorEntries(d.honors).map(([h,n])=>`<span class="honor-badge ${h.includes('冠军')||h.includes('MVP')?'gold':''}">${HONOR_ICONS[normalizeHonorName(h)]||HONOR_ICONS[h]||'🏅'} ${n}×${normalizeHonorName(h)}</span>`).join(''):'<span style="color:var(--muted)">没有大型荣誉记录。</span>';
       document.getElementById('retirementFinalAttrs').innerHTML=ATTRS.map(attr=>{const v=state.locked[attr.key]?.value||0;return `<div class="retirement-attr"><small>${attr.name}</small><strong>${v?`<span>${v}</span><em>${getRank(v).label}</em>`:'—'}</strong></div>`}).join('');
-      document.getElementById('retirementTimeline').innerHTML=archive.length?archive.map(x=>`<div class="career-timeline-row"><span>${x.age}岁</span><div><b>${x.year} · ${x.team}</b><div style="color:var(--muted);font-size:12px;margin-top:3px">${x.role} · OVR ${x.ovr} · 评分 ${x.rating?x.rating.toFixed(1):'—'}${(x.honors||[]).length?` · ${sortHonorNames(x.honors||[]).map(normalizeHonorName).join(' / ')}`:''}</div></div><strong>${x.result}</strong></div>`).join(''):'<div class="summary-note-empty">没有完整赛季记录。</div>';
+      document.getElementById('retirementTimeline').innerHTML=archive.length?archive.map(x=>`<div class="career-timeline-row"><span>${x.age}岁</span><div><b>${x.year} · ${careerTeamDisplay(x.team)}</b><div style="color:var(--muted);font-size:12px;margin-top:3px">${x.role} · OVR ${x.ovr} · 评分 ${x.rating?x.rating.toFixed(1):'—'}${(x.honors||[]).length?` · ${sortHonorNames(x.honors||[]).map(normalizeHonorName).join(' / ')}`:''}</div></div><strong>${x.result}</strong></div>`).join(''):'<div class="summary-note-empty">没有完整赛季记录。</div>';
     }
 
     function renderRolePlanning(wrap) {
@@ -731,8 +732,8 @@
         <p>比较合同、队内定位、体系适配和队伍实力。</p>
         <div class="offers-grid">
           ${offseasonState.offers.map(o=>`
-            <button class="offer-card ${o.renewal?'renewal':''} ${offseasonState.selectedOfferId===o.id?'selected':''}" data-offer-id="${o.id}">
-              <span class="offer-badge">${o.renewal?'续约报价':'转会邀请'}</span>
+            <button class="offer-card ${o.renewal?'renewal':''} ${o.team?.expansion?'expansion-offer':''} ${offseasonState.selectedOfferId===o.id?'selected':''}" data-offer-id="${o.id}">
+              <span class="offer-badge">${o.team?.expansion?'扩军新军':o.renewal?'续约报价':'转会邀请'}</span>
               <div class="offer-team"><div class="offer-logo" style="background:${o.team.color}">${o.team.short}</div><div><strong>${o.team.name}</strong><span>${o.note}</span></div></div>
               <div class="offer-terms">
                 <div class="offer-term"><small>合同年限</small><b>${o.years} 年</b></div>
@@ -825,4 +826,3 @@
     }
 
     /* ---------------- 比赛模拟 V0.2 · 赛季事件 V0.1 ---------------- */
-

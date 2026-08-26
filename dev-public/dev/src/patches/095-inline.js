@@ -51,6 +51,18 @@
     setTimeout(() => document.body.classList.remove('season-mvp-burst'), 1700);
   }
 
+  function celebrateMvpIfNeeded() {
+    if (Number(seasonState.played||0) < Number(seasonState.total||0)) return false;
+    const awards = ensureRegularSeasonAwards();
+    if (awards?.mvp?.userRank !== 1) return false;
+    careerState.owlMvpBurstYears = Array.isArray(careerState.owlMvpBurstYears) ? careerState.owlMvpBurstYears : [];
+    const year = Number(careerState.seasonYear || 0);
+    if (careerState.owlMvpBurstYears.includes(year)) return false;
+    careerState.owlMvpBurstYears.push(year);
+    setTimeout(playSeasonMvpBurst, 60);
+    return true;
+  }
+
   const baseRenderAwards = renderRegularSeasonAwards;
   renderRegularSeasonAwards = function (...args) {
     const out = baseRenderAwards.apply(this, args);
@@ -69,15 +81,14 @@
   const baseOpenAwards = openRegularSeasonAwards;
   openRegularSeasonAwards = function (...args) {
     const out = baseOpenAwards.apply(this, args);
-    const awards = ensureRegularSeasonAwards();
-    if (awards?.mvp?.userRank === 1) {
-      careerState.owlMvpBurstYears = Array.isArray(careerState.owlMvpBurstYears) ? careerState.owlMvpBurstYears : [];
-      const year = Number(careerState.seasonYear || 0);
-      if (!careerState.owlMvpBurstYears.includes(year)) {
-        careerState.owlMvpBurstYears.push(year);
-        setTimeout(playSeasonMvpBurst, 60);
-      }
-    }
+    celebrateMvpIfNeeded();
+    return out;
+  };
+
+  const baseRenderSeason = renderSeason;
+  renderSeason = function (...args) {
+    const out = baseRenderSeason.apply(this, args);
+    celebrateMvpIfNeeded();
     return out;
   };
 
@@ -126,5 +137,5 @@
     }
   }, true);
 
-  window.__OWL_ALPHA1_AWARD_FLOW = Object.freeze({ version: '095', mvpStreak, openRecoveredPlayoffs });
+  window.__OWL_ALPHA1_AWARD_FLOW = Object.freeze({ version: '095', mvpStreak, openRecoveredPlayoffs, celebrateMvpIfNeeded });
 })();

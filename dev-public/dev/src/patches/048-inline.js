@@ -135,7 +135,7 @@
     const potentialFactor=currentGrowthFactor(nextAge);
     const curveBonus=potentialPointBonus(p.type,Number(nextAge));
     out.potentialType=p.type;out.potentialLabel=profile.label;out.potentialFactor=Number(potentialFactor.toFixed(2));out.potentialBonus=curveBonus;out.destinyLevel=p.destinyLevel;
-    out.total=clampP(Math.round(Number(out.base||0)*Number(out.multiplier||1)*potentialFactor)+curveBonus,0,18);
+    out.total=clampP(Math.max(3,Math.round(Number(out.base||0)*Number(out.multiplier||1)*potentialFactor)+curveBonus),3,18);
     return out;
   };
 
