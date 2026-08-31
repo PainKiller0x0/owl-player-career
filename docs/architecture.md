@@ -54,6 +54,7 @@ window.__OWL_RUNTIME.simulation.clearTimer()
 - 英雄专项的实际增益由 `v74_dynamic_hero_mastery.js` 与 `050-inline.js` 的同一套运行时因素共同决定，包含位置适配、当前状态、英雄熟练度、年龄潜力；赛季中特训的“自动选择”只负责选择当前最弱的两个英雄，不改变原有确认和结算流程。
 - `097-inline.js` 是本轮的 Alpha1 最终适配层：隐藏训练/转位内部计算、压缩 Dennis Hawelka 未入选文案、限制 28/29 岁合同年限、添加职责之星轻量庆祝、老将事件（27 岁起且每季最多一个）和退役历史定位标签。它不改比赛结算，只在既有流程完成后做幂等 UI/兼容收口。
 - 退役历史定位使用现有历史分，不伪造额外历史数据库；标签按 GOAT、历史前三、前五、前十、前二十五、历史百大和未进入历史榜单分段。这样导入旧档也能得到稳定标签，且不会改变历史分本身。
+- 生产晋级由 `build-owl-game-prod.ps1` 负责：从 `dev-public/dev` 复制 Alpha1 源树到被忽略的 `public` 构建目录，移除 `096-qa-tools.js` 与 `31-qa-tools.css`，并把 `044-inline.js` 的开发版 10 槽恢复为生产版 3 槽。`wrangler.toml` 只负责根路由 `owl-game.painkiller.eu.org/*` 和 `owl-game` Worker；`wrangler.dev.toml` 继续负责 `/dev*` 与 `owl-game-dev`，两者不能混用。
 
 ## 3. 渲染协议
 
