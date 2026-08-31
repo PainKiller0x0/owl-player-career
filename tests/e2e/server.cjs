@@ -40,6 +40,11 @@ const server = http.createServer((req, res) => {
   }
 
   if (pathname === '/') pathname = '/dev/';
+
+  if (pathname === '/dev/__owl/analytics' || pathname === '/__owl/analytics') {
+    return send(res, req.method === 'POST' ? 204 : 405, '');
+  }
+
   const relative = pathname.replace(/^\/+/, '');
   let target = path.resolve(ROOT, relative);
 

@@ -14,7 +14,7 @@ The development page is now a split source tree rather than one bundled HTML fil
 Cloudflare serves dev-public as Worker Assets, so /dev/ maps to dev-public\dev\.
 
 GitHub / Cloudflare Workers Builds:
-- The development source is committed on the dev branch.
+- The development source is committed on the dev branch; the production branch is main.
 - Connect this repository to the existing owl-game-dev Worker under Settings > Builds.
 - Use the repository root as the root directory.
 - Use `npx wrangler deploy --config wrangler.dev.toml` as the deploy command.
@@ -26,7 +26,7 @@ URLs:
 
 Deployment behavior:
 - deploy-owl-game-dev.bat validates the complete dev-public\dev tree and deploys only the development Worker.
-- deploy-owl-game-prod.bat remains the production helper.
+- deploy-owl-game-prod.bat builds the production root from dev-public\dev, removes QA-only assets, restores the production three-slot save policy, and deploys the owl-game Worker.
 - deploy-owl-game.bat is retained for the old production-first workflow.
 
 First use only (choose either route):

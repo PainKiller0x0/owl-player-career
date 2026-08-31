@@ -7,14 +7,19 @@ echo.
 echo === Owl Game Cloudflare Deploy ===
 echo.
 
-if not exist "index.html" (
-  echo [ERROR] index.html is missing.
+if not exist "build-owl-game-prod.ps1" (
+  echo [ERROR] build-owl-game-prod.ps1 is missing.
   if not defined OWL_DEPLOY_NO_PAUSE pause
   exit /b 1
 )
 
-if not exist "public" mkdir "public"
-copy /Y "index.html" "public\index.html" >nul
+echo Building the Alpha1 production assets...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-owl-game-prod.ps1"
+if errorlevel 1 (
+  echo [ERROR] Production asset build failed.
+  if not defined OWL_DEPLOY_NO_PAUSE pause
+  exit /b 1
+)
 
 set "LEGACY_TOKEN_FILE=%~dp0.cloudflare-api-token"
 set "TOKEN_DIR=%APPDATA%\owl-game"
@@ -39,6 +44,9 @@ if defined CLOUDFLARE_API_TOKEN (
 )
 
 if not defined CLOUDFLARE_API_TOKEN (
+  call :validate_wrangler_auth
+  if not errorlevel 1 goto cloudflare_auth_ready
+  echo No saved Cloudflare API token or Wrangler login was found.
   echo First deployment needs a Cloudflare API token.
   echo A browser page will open now. Create a Custom Token with:
   echo   Account - Account Settings - Read
@@ -62,8 +70,9 @@ if not defined CLOUDFLARE_API_TOKEN (
   )
 )
 
+:cloudflare_auth_ready
 echo.
-echo Uploading the current index.html to owl-game...
+echo Uploading the Alpha1 production assets to owl-game...
 set "DEPLOY_LOG=%~dp0.deploy-last.log"
 call npx --yes wrangler@4.120.0 deploy --config "wrangler.toml" --keep-vars > "%DEPLOY_LOG%" 2>&1
 set "WRANGLER_EXIT=!ERRORLEVEL!"
@@ -88,3 +97,6 @@ exit /b 1
 powershell -NoProfile -Command "$t=$env:CLOUDFLARE_API_TOKEN; if ($t -match '^[A-Za-z0-9_-]{32,}$') { exit 0 } else { exit 1 }"
 exit /b %ERRORLEVEL%
 
+:validate_wrangler_auth
+call npx --yes wrangler@4.120.0 whoami >nul 2>&1
+exit /b %ERRORLEVEL%
