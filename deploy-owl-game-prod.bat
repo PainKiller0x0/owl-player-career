@@ -100,4 +100,3 @@ exit /b %ERRORLEVEL%
 :validate_wrangler_auth
 call npx --yes wrangler@4.120.0 whoami >nul 2>&1
 exit /b %ERRORLEVEL%
-

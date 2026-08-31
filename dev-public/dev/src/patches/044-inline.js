@@ -144,6 +144,9 @@
     for(let i=1;i<=SLOT_COUNT;i++)removeStored(backupKey(i));
     removeStored(RECOVERY_KEY);removeStored(RECOVERY_SLOT_KEY);
   }
+  function cancelPendingAutosave(){
+    if(autosaveTimer!==null){clearTimeout(autosaveTimer);autosaveTimer=null}
+  }
   function writeSlot(n,payload,reason='auto'){
     n=Number(n);
     const explicitWrite=['manual','import','new-career'].includes(reason);
@@ -186,11 +189,11 @@
     // 先在触发点抓快照，再延迟写盘。否则玩家从赛季页切回封面后，
     // 上一个页面排队中的 autosave 会把 screen 错写成 cover，导致“继续生涯”看似无效。
     const payload=captureSave(reason);if(!payload)return;
-    clearTimeout(autosaveTimer);
+    cancelPendingAutosave();
     const slot=getCurrentSlot();
-    autosaveTimer=setTimeout(()=>writeSlot(slot,payload,'auto'),delay);
+    autosaveTimer=setTimeout(()=>{autosaveTimer=null;writeSlot(slot,payload,'auto')},delay);
   }
-  function saveNow(reason='manual'){const p=captureSave(reason);if(!p)return false;const ok=writeSlot(getCurrentSlot(),p,reason);if(ok&&reason!=='auto')toast(`✓ 已保存到槽位 ${getCurrentSlot()}`);return ok}
+  function saveNow(reason='manual'){cancelPendingAutosave();const p=captureSave(reason);if(!p)return false;const ok=writeSlot(getCurrentSlot(),p,reason);if(ok&&reason!=='auto')toast(`✓ 已保存到槽位 ${getCurrentSlot()}`);return ok}
   function isOwlSaveStorageKey(key){
     const k=String(key||'');
     if(!/^owl(?:_|-)/i.test(k))return false;
@@ -209,7 +212,7 @@
     }catch(_){return[]}
   }
   function deleteSlot(n){
-    n=Number(n);clearTimeout(autosaveTimer);autosaveTimer=null;deletedSlots.add(n);
+    n=Number(n);cancelPendingAutosave();deletedSlots.add(n);
     localStorage.removeItem(slotKey(n));localStorage.removeItem(backupKey(n));
     // recovery 是按槽位共用的一份紧急恢复点；删对应槽位时必须一起删，否则存档会“复活”。
     const recoverySlot=Number(localStorage.getItem(RECOVERY_SLOT_KEY)||0);
@@ -278,7 +281,7 @@
     showScreen(screen||'season');
   }
   function restorePayload(raw,slot=null){
-    const p=migrateSave(raw);restoring=true;let ok=false;
+    const p=migrateSave(raw);cancelPendingAutosave();restoring=true;let ok=false;
     try{
       if(seasonState.timer){clearTimeout(seasonState.timer);seasonState.timer=null}
       window.__OWL_V800_WORLD_IO?.import?.(p.fantasyWorld||{selection:{mode:p.careerState?.simulationMode||'fantasy',startYear:p.careerState?.startYear||2019}});

@@ -35,3 +35,20 @@ test('persistence: current payload remains compact and strips rebuildable caches
   expect(result.hasCaches).toBe(false);
   expectCleanRuntime(monitor);
 });
+
+test('persistence: manual save wins over a pending stale autosave', async ({ page }) => {
+  const monitor = await freshApp(page);
+  await createCareer(page, { year: 2023, playerName: 'E2E_SAVE_RACE', age: 19 });
+  const result = await page.evaluate(async () => {
+    await new Promise(resolve => setTimeout(resolve, 320));
+    seasonState.played = 1;
+    showScreen('season');
+    seasonState.played = 2;
+    const ok = window.__OWL_PUBLIC_BETA.saveNow('manual');
+    await new Promise(resolve => setTimeout(resolve, 280));
+    const payload = JSON.parse(localStorage.getItem('owl_player_path_public_save_1'));
+    return { ok, played: payload?.seasonState?.played, reason: payload?.reason };
+  });
+  expect(result).toEqual({ ok: true, played: 2, reason: 'manual' });
+  expectCleanRuntime(monitor);
+});

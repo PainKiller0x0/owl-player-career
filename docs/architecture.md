@@ -1,6 +1,6 @@
 # OWL 选手之路：运行时架构
 
-更新时间：2026-08-27
+更新时间：2026-08-31
 
 ## 1. 范围与现状
 
@@ -17,6 +17,7 @@
 | Shared Runtime | `src/modules/094-shared.runtime.js` | 渲染 hook、版本元信息、模拟生命周期、事件恢复 | 比赛胜负、阶段资格、奖项数值 |
 | Feature Patch | `src/patches/090-inline.js`、`091-inline.js`、`092-inline.js`、`094-inline.js`、`097-inline.js` | 单一 UI 修正、旧档兼容或功能后处理 | 复制一套比赛/结算数值流程 |
 | Persistence / Modal | `src/patches/044-inline.js`、`094-inline.js` | 存档主档/可重建副本、恢复降级、游戏内确认框 | 直接调用浏览器原生 `alert / confirm / prompt` |
+| Observability | `src/analytics.js`、`src/modules/095-analytics.telemetry.js` | 匿名游戏事件、生产/开发数据集隔离 | 记录存档内容、角色或队伍信息 |
 
 ### Shared Runtime 接口
 
@@ -128,6 +129,10 @@ fastSeasonStep
 
 `resumeAfterEvent()` 优先处理 `resumeWholeAfterEvent`，否则处理 `resumeFastAfterEvent`。因此同一个事件弹窗可以服务普通快速模拟和整季模拟，不再由多个关闭包装器分别重启。
 
+### Analytics Engine telemetry
+
+Web Analytics 继续使用同一个 `painkiller.eu.org` 站点，通过详情页的 `Path` 维度区分 `/` 与 `/dev/`。自定义游戏事件则由 Worker 的 `/__owl/analytics` 与 `/dev/__owl/analytics` 接收，分别写入 `owl_game_events` 与 `owl_game_dev_events`。当前只记录 `game_open`、`career_created`、`career_resumed`，并以本地生成的匿名访客 ID作为去重索引；`career_created` 只有在新角色真正进入第一年常规赛后才发送，失败的读档不会计入。
+
 ## 5. 状态所有权
 
 | 状态 | 写入方 | 读取/协作者 |
@@ -166,3 +171,4 @@ fastSeasonStep
 8. PC P0（1280×720～1920×1080）与 P1（2560×1440、3440×1440）必须检查首页高度、核心区最大宽度、弹窗边界和超宽屏拉伸；低高度窗口的主要操作不能被推出视口。
 9. 存档压缩回归必须确认：旧完整 JSON 可导入、`saveFormat` 为 `compact-v1`、可重建榜单缓存不落盘、队伍短代号可恢复为运行时对象，且导出仍为可读 JSON。
 10. Alpha1 Batch 4 的 Playwright 回归覆盖赛制切换、世界杯名单迁移、年龄增益、自动特训、UI 信息级别、合同年限、退役历史定位和职责之星庆祝；当前 `npm run test:e2e` 结果为 61/61。
+11. 统计回归必须确认开发页请求 `/dev/__owl/analytics`，成功创建生涯后出现 `career_created`，成功读档后出现 `career_resumed`，且请求体不包含存档或角色详情。
