@@ -328,6 +328,11 @@ test('regression: expansion teams have names, distinct marks, correct Stage prog
   const result = await page.evaluate(() => {
     careerState.seasonYear = 2035;
     careerState.v13RuleIntroSeen2025 = true;
+    // This regression targets expansion data and standings. Mark the separate
+    // 2035 onboarding nodes as handled so their delayed modal cannot cover the
+    // standings chip while the assertions run.
+    careerState.v34ExpansionDraft = { year: 2035, resolved: true };
+    careerState.v34RuleIntroSeen = { 2035: true };
     v50ApplySeasonWorld(2035);
     seasonState.active = false;
     setupSeason(false);
