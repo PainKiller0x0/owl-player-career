@@ -2,6 +2,7 @@
 .deploy-last.log
 .wrangler/
 .deploy-dev-last.log
+.deploy-alpha-last.log
 /public/
 /dev/
 /index.html

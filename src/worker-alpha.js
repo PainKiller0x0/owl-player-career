@@ -40,7 +40,10 @@ export default {
         return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store, max-age=0', 'X-Robots-Tag': 'noindex, nofollow' } });
       }
     }
-    const response = await env.ASSETS.fetch(request);
+    const assetRequest = url.pathname === '/alpha/'
+      ? new Request(new URL('/alpha/index.html', request.url), request)
+      : request;
+    const response = await env.ASSETS.fetch(assetRequest);
     return new Response(response.body, { status: response.status, statusText: response.statusText, headers: headersFor(response) });
   }
 };
