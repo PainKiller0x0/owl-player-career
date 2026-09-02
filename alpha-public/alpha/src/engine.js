@@ -634,7 +634,7 @@
     return clamp(delta, -5, 5);
   }
 
-  function acknowledgeBlockReport(state) {
+  function acknowledgeBlockReport(state, options) {
     if (state.pending.type !== 'block_report' || !state.blockContext || !state.blockContext.report) throw new Error('当前没有比赛区块结算');
     var context = state.blockContext;
     if (context.acknowledged) return state;
@@ -653,7 +653,7 @@
       return state;
     }
     applyBlockFeedback(state);
-    scheduleNextNode(state);
+    if (!(options && options.noSchedule)) scheduleNextNode(state);
     return state;
   }
 

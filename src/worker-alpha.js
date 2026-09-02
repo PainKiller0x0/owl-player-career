@@ -3,7 +3,16 @@ const ALLOWED_EVENTS = new Set([
   'alpha_demo_start',
   'alpha_season_complete',
   'alpha_auto_complete',
-  'alpha_batch_complete'
+  'alpha_batch_complete',
+  'alpha_v3_open',
+  'alpha_v3_stage_start',
+  'alpha_v3_choice',
+  'alpha_v3_match_montage_skip',
+  'alpha_v3_details_open',
+  'alpha_v3_round_complete',
+  'alpha_v3_stage_complete',
+  'alpha_v3_replay_same_seed',
+  'alpha_v3_new_seed'
 ]);
 
 function headersFor(source) {
@@ -16,9 +25,9 @@ function headersFor(source) {
 async function writeAnalytics(env, body) {
   if (!env.OWL_ANALYTICS || !ALLOWED_EVENTS.has(body.event)) return;
   await env.OWL_ANALYTICS.writeDataPoint({
-    indexes: [body.event],
+    indexes: [String(body.event), String(body.scenarioId || 'unknown'), String(body.choiceId || 'unknown'), String(body.route || 'unknown')],
     blobs: [String(body.visitor || 'anonymous'), String(body.device || 'unknown'), String(body.viewport || 'unknown'), String(body.mode || 'manual')],
-    doubles: [Number(body.durationMs) || 0]
+    doubles: [Number(body.durationMs) || 0, Number(body.round) || 0]
   });
 }
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>OWL 选手之路 · 单赛季育成验证 Demo Alpha V2</title>
+  <title>OWL 选手之路 · Alpha V3 Stage Demo</title>
   <link rel="stylesheet" href="src/styles.css">
   <link rel="stylesheet" href="src/responsive.css">
 </head>
@@ -13,77 +13,125 @@
   <div class="ambient ambient-b"></div>
   <header class="topbar">
     <div>
-      <p class="eyebrow">OWL ALPHA LAB · SEASON RAISING</p>
-      <h1>选手之路 · 单赛季育成验证</h1>
+      <p class="eyebrow">OWL ALPHA LAB · GAMEPLAY SLICE</p>
+      <h1>选手之路 · Stage 1</h1>
     </div>
-      <span class="build-badge">Alpha V2 · 反馈闭环 Demo</span>
+    <span class="build-badge">Alpha V3 · 核心循环验证</span>
   </header>
 
   <main id="app" class="shell">
     <section id="homeScreen" class="panel hero-panel">
       <div class="hero-copy">
-        <p class="eyebrow">FROM ROOKIE TO LEGEND</p>
-        <h2>一季，<span>22 次</span>选择。</h2>
-        <p>这是用于验证“有限回合育成”是否适合 OWL 职业生涯的隔离原型。它不读取正式版存档，所有随机结果都可由种子复现。</p>
+        <p class="eyebrow">FROM ROTATION TO STARTER</p>
+        <h2>这一回合，<span>争首发。</span></h2>
+        <p>你是18岁的新秀 Rookie，刚加入一支中游队。Stage 1 只有四个关键回合，选择会进入比赛，也会改变教练如何使用你。</p>
+        <div class="promise-row">
+          <span>4 次关键抉择</span><span>18 场比赛</span><span>1 个职业结果</span>
+        </div>
       </div>
       <div class="setup-card">
-        <h3>开始验证一季</h3>
-        <label>玩家预设<select id="playerPreset"><option value="rookie">天才新秀 · 18岁 / OVR 76</option><option value="star">巅峰明星 · 23岁 / OVR 87</option><option value="veteran">老将核心 · 27岁 / OVR 86</option></select></label>
-        <label>队伍档位<select id="teamPreset"><option value="contender">争冠队</option><option value="mid" selected>中游队</option><option value="rebuild">重建队</option></select></label>
-        <label>赛季计划<select id="plan"><option value="balanced">均衡成长</option><option value="mechanics">机械巅峰</option><option value="meta">版本英雄</option><option value="team">团队核心</option><option value="veteran">老将管理</option></select></label>
-        <label>固定种子<input id="seed" type="number" value="20260902" min="1" step="1"></label>
-        <button id="startSeasonButton" class="button primary">开始新赛季 →</button>
-        <button id="continueSeasonButton" class="button secondary hidden">继续未完成 Demo</button>
-        <button id="clearDataButton" class="button text-button">清除 Alpha Demo 数据</button>
+        <p class="eyebrow">FIXED SCENARIO · P0</p>
+        <h2>Stage 1 · 争取首发</h2>
+        <p class="muted">18岁天才新秀 · 中游队 · 初始身份：轮换</p>
+        <div class="fixed-goal"><span>本 Stage 目标</span><strong>把轮换机会变成稳定首发</strong></div>
+        <label>赛程种子<input id="seed" type="number" value="20260902" min="1" step="1"></label>
+        <button id="startStageButton" class="button primary">开始 Stage 1 →</button>
+        <button id="continueStageButton" class="button secondary hidden">继续未完成 Stage</button>
+        <button id="clearDataButton" class="button text-button">清除 V3 Demo 数据</button>
         <p id="storageStatus" class="muted small"></p>
       </div>
     </section>
 
     <section id="seasonScreen" class="hidden">
       <div class="season-heading panel">
-        <div><p class="eyebrow">SEASON RAISING · <span id="seasonYear"></span></p><h2 id="seasonTitle">单赛季育成</h2><p id="nodeLabel" class="muted"></p></div>
-        <div class="heading-actions"><button id="saveButton" class="button secondary">保存</button><button id="exportSeasonButton" class="button secondary">导出</button><button id="autoSeasonButton" class="button secondary">自动完成</button><button id="backHomeButton" class="button secondary">返回首页</button></div>
+        <div>
+          <p class="eyebrow">STAGE 1 · <span id="stageRound">1 / 4</span></p>
+          <h2 id="stageTitle">Stage 1 · 争取首发</h2>
+          <p class="muted">当前目标：<span id="stageGoal">从轮换选手争取稳定首发</span></p>
+        </div>
+        <div class="heading-actions">
+          <button id="saveButton" class="button secondary">保存</button>
+          <button id="exportStageButton" class="button secondary">导出</button>
+          <button id="backHomeButton" class="button secondary">返回首页</button>
+        </div>
       </div>
-      <div class="season-grid">
-        <aside class="panel stats-panel">
-          <div class="score-block"><span>当前 OVR</span><strong id="playerOvr">—</strong><small id="playerMeta">—</small></div>
-          <div class="resource-row"><span>体力</span><strong id="energy">—</strong></div><div class="bar"><i id="energyBar"></i></div>
-          <div class="resource-row"><span>状态 / 压力</span><strong id="formStress">—</strong></div>
-          <div class="stat-list" id="attributeList"></div>
-          <div class="mini-summary"><span>战绩</span><strong id="record">0 - 0</strong></div>
-          <div class="mini-summary"><span>队内地位</span><strong id="roleStatus">—</strong></div>
-          <div class="mini-summary"><span>生涯声望</span><strong id="careerReputation">—</strong></div>
-          <div class="mini-summary"><span>本季场均 / 出场</span><strong id="seasonUsage">—</strong></div>
-          <div class="support-list" id="supportList"></div>
+
+      <div class="season-v3-grid">
+        <aside class="panel status-panel">
+          <div class="identity-card">
+            <span>当前身份</span>
+            <strong id="stageRole">轮换</strong>
+            <small>Rookie · 18岁 · 弹道输出</small>
+          </div>
+          <div class="status-grid">
+            <div><span>Stage 战绩</span><strong id="stageRecord">0 - 0</strong></div>
+            <div><span>个人评分</span><strong id="ratingValue">—</strong></div>
+            <div><span>教练地位</span><strong id="roleStatusValue">50</strong></div>
+            <div><span>身体状态</span><strong id="condition" class="pill normal">状态正常</strong></div>
+          </div>
+          <div class="resource-block">
+            <div class="resource-line"><span>体力</span><b id="energyValue">100</b></div>
+            <div class="bar"><i id="energyBar"></i></div>
+            <div class="resource-line"><span>压力</span><b id="stressValue">10</b></div>
+            <div class="bar stress-bar"><i id="stressBar"></i></div>
+          </div>
+          <div class="goal-card">
+            <span>本 Stage 目标</span>
+            <strong>争取稳定首发</strong>
+            <small>收官战前，教练会根据你的表现决定下一步身份。</small>
+          </div>
+          <div class="prep-block">
+            <div class="section-title"><h3>备战成果</h3><span>会在比赛中生效</span></div>
+            <div id="prepTags" class="prep-tags"></div>
+          </div>
         </aside>
+
         <section class="panel flow-panel">
-          <div class="timeline-wrap"><div class="section-title"><h3>赛季时间线</h3><span id="nodeCount">1 / 22</span></div><div id="timeline" class="timeline"></div></div>
-          <div id="actionArea"></div>
-          <div id="actionResultArea" class="hidden"></div>
-          <div id="matchPlanArea" class="hidden"></div>
-          <div id="blockReportArea" class="hidden"></div>
-          <div id="eventArea" class="hidden"></div>
-          <div id="reportArea" class="hidden"></div>
-          <div id="playoffArea" class="hidden"></div>
-          <div id="careerHandoffArea" class="hidden"></div>
-          <div id="summaryArea" class="hidden"></div>
-          <div class="log-box"><div class="section-title"><h3>最近记录</h3><span>同一套 engine</span></div><div id="logList"></div></div>
+          <div class="stage-schedule">
+            <div class="section-title"><h3>Stage 日程</h3><span id="scheduleHint">四个关键回合</span></div>
+            <div id="stageSchedule" class="schedule-list"></div>
+          </div>
+          <div id="stageIntroArea"></div>
+          <div id="decisionArea" class="hidden"></div>
+          <div id="montageArea" class="hidden"></div>
+          <div id="roundSummaryArea" class="hidden"></div>
+          <div id="finaleDecisionArea" class="hidden"></div>
+          <div id="stageResultArea" class="hidden"></div>
+          <div id="detailsDrawer" class="hidden"></div>
+          <div class="log-box"><div class="section-title"><h3>最近发生</h3><span>选择会留下痕迹</span></div><div id="logList"></div></div>
         </section>
       </div>
     </section>
 
     <section id="batchScreen" class="panel batch-panel hidden">
-      <div class="section-title"><div><p class="eyebrow">BATCH LAB · QA ONLY</p><h2>批量模拟实验室</h2></div><button id="closeBatchButton" class="button secondary">返回赛季</button></div>
-      <p class="muted">批量模拟在 Web Worker 中运行，使用与手动模式相同的规则。结果只用于校准，不会修改当前赛季。</p>
-      <div class="batch-controls"><label>样本数<input id="batchCount" type="number" min="1" max="1000000" value="10000"></label><label>玩家<select id="batchPlayer"><option value="rookie">天才新秀</option><option value="star">巅峰明星</option><option value="veteran">老将核心</option></select></label><label>队伍<select id="batchTeam"><option value="contender">争冠队</option><option value="mid" selected>中游队</option><option value="rebuild">重建队</option></select></label><button id="runBatchButton" class="button primary">运行一组</button><button id="runMatrixButton" class="button secondary">跑 45 组矩阵</button><button id="runLongButton" class="button secondary">跑 12 年长期抽样</button></div>
+      <div class="section-title"><div><p class="eyebrow">BATCH LAB · QA ONLY</p><h2>幕后数值实验室</h2></div><button id="closeBatchButton" class="button secondary">返回</button></div>
+      <p class="muted">这里保留 V2 Engine 的批量验证能力，不属于默认玩家流程。</p>
+      <div class="batch-controls">
+        <label>样本数<input id="batchCount" type="number" min="1" max="1000000" value="10000"></label>
+        <label>玩家<select id="batchPlayer"><option value="rookie">天才新秀</option><option value="star">巅峰明星</option><option value="veteran">老将核心</option></select></label>
+        <label>队伍<select id="batchTeam"><option value="contender">争冠队</option><option value="mid" selected>中游队</option><option value="rebuild">重建队</option></select></label>
+        <button id="runBatchButton" class="button primary">运行一组</button>
+        <button id="runMatrixButton" class="button secondary">跑45组矩阵</button>
+        <button id="runLongButton" class="button secondary">跑长期抽样</button>
+      </div>
       <div class="batch-progress"><div class="bar"><i id="batchProgressBar"></i></div><span id="batchProgressText">等待运行</span></div>
       <pre id="batchOutput" class="result-output">尚未运行批量模拟。</pre>
       <button id="exportBatchButton" class="button secondary hidden">导出批量结果 JSON</button>
     </section>
   </main>
 
-  <footer class="footer"><span>隔离存储 · 可播种 RNG · 不读取正式存档</span><button id="openBatchButton" class="button text-button">打开批量实验室</button></footer>
+  <footer class="footer"><span>V3 隔离存储 · 比赛结果可复现 · 不读取正式存档</span><button id="openBatchButton" class="button text-button">打开 QA 实验室</button></footer>
 
-  <script src="src/random.js"></script><script src="src/constants.js"></script><script src="src/impact.js"></script><script src="src/career.js"></script><script src="src/engine.js"></script><script src="src/events.js"></script><script src="src/auto.js"></script><script src="src/storage.js"></script><script src="src/telemetry.js"></script><script src="src/ui.js"></script><script src="src/app.js"></script>
+  <script src="src/random.js"></script>
+  <script src="src/constants.js"></script>
+  <script src="src/impact.js"></script>
+  <script src="src/career.js"></script>
+  <script src="src/engine.js"></script>
+  <script src="src/scenario-v3.js"></script>
+  <script src="src/engine-v3.js"></script>
+  <script src="src/storage-v3.js"></script>
+  <script src="src/telemetry.js"></script>
+  <script src="src/ui-v3.js"></script>
+  <script src="src/app-v3.js"></script>
 </body>
 </html>
