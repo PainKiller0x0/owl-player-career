@@ -1,0 +1,27 @@
+{
+  "generatedFromSeed": 20260902,
+  "samples": 100000,
+  "initialTeamDistribution": {
+    "contender": {
+      "samples": 33334,
+      "avgChampionships": 0.8255,
+      "avgMvps": 0.3455,
+      "sevenPlusChampionshipsRate": 0
+    },
+    "mid": {
+      "samples": 33333,
+      "avgChampionships": 0.6782,
+      "avgMvps": 0.3263,
+      "sevenPlusChampionshipsRate": 0
+    },
+    "rebuild": {
+      "samples": 33333,
+      "avgChampionships": 0.5746,
+      "avgMvps": 0.3178,
+      "sevenPlusChampionshipsRate": 0
+    }
+  },
+  "avgChampionships": 0.6927,
+  "avgMvps": 0.3299,
+  "sevenPlusChampionshipsRate": 0
+}

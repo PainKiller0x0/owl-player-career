@@ -1,0 +1,27 @@
+name: OWL Alpha QA
+
+on:
+  push:
+    branches: [alpha]
+  pull_request:
+    branches: [alpha]
+
+jobs:
+  alpha-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node --check src/worker-alpha.js
+      - run: node --check alpha-public/alpha/src/random.js
+      - run: node --check alpha-public/alpha/src/constants.js
+      - run: node --check alpha-public/alpha/src/engine.js
+      - run: node --check alpha-public/alpha/src/auto.js
+      - run: node --test tests/alpha/alpha-engine.test.js
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config=playwright.alpha.config.cjs
+      - run: npx --yes wrangler@4.120.0 deploy --dry-run --config wrangler.alpha.toml

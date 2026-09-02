@@ -1,0 +1,17 @@
+name = "owl-game-alpha"
+main = "src/worker-alpha.js"
+compatibility_date = "2026-08-08"
+account_id = "70d5f584114b9d0bd8d2fabdb9f941ed"
+
+[[analytics_engine_datasets]]
+binding = "OWL_ANALYTICS"
+dataset = "owl_game_alpha_events"
+
+[[routes]]
+pattern = "owl-game.painkiller.eu.org/alpha*"
+zone_name = "painkiller.eu.org"
+
+[assets]
+directory = "./alpha-public"
+binding = "ASSETS"
+run_worker_first = true

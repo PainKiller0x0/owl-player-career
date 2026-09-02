@@ -1,0 +1,28 @@
+@media (max-width: 850px) {
+  .hero-panel { grid-template-columns: 1fr; }
+  .season-grid { grid-template-columns: 1fr; }
+  .stats-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .score-block, .support-list { grid-column: 1 / -1; }
+  .action-grid { grid-template-columns: repeat(2, 1fr); }
+  .batch-controls { grid-template-columns: 1fr 1fr; }
+  .batch-controls .button { width: 100%; }
+}
+
+@media (max-width: 520px) {
+  .topbar { align-items: flex-start; gap: 12px; flex-direction: column; }
+  .topbar, .shell, .footer { width: calc(100% - 20px); }
+  .build-badge { font-size: .7rem; }
+  .hero-panel, .stats-panel, .flow-panel, .batch-panel { padding: 15px; border-radius: 18px; }
+  .hero-copy h2 { font-size: 3.2rem; }
+  .season-heading { padding: 15px; align-items: flex-start; gap: 10px; flex-direction: column; }
+  .heading-actions { width: 100%; }
+  .heading-actions .button { flex: 1; }
+  .stats-panel { grid-template-columns: 1fr 1fr; }
+  .action-grid, .choice-grid, .result-grid { grid-template-columns: 1fr; }
+  .action-card { min-height: 105px; }
+  .timeline { gap: 3px; }
+  .timeline-dot { height: 9px; }
+  .footer { align-items: flex-start; gap: 5px; flex-direction: column; }
+  .batch-controls { grid-template-columns: 1fr; }
+  .score-block strong { font-size: 2.8rem; }
+}

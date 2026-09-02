@@ -9,7 +9,9 @@
     "test:e2e:core": "playwright test --grep-invert @visual",
     "test:e2e:visual": "playwright test visual.spec.js",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:alpha": "node --test tests/alpha/alpha-engine.test.js",
+    "test:alpha:e2e": "playwright test --config=playwright.alpha.config.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1"
