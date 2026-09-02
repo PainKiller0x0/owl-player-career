@@ -625,7 +625,7 @@
 
   function roleDeltaForReport(state, report, context) {
     if (!report.appearances) return 0;
-    var expectedRating = 7.5 + (state.resources.roleStatus - 50) * 0.005;
+    var expectedRating = 6.6 + (state.resources.roleStatus - 50) * 0.005;
     var performanceGap = report.averageRating - expectedRating;
     var delta = performanceGap >= 0.50 ? 3 : (performanceGap >= 0.20 ? 1 : (performanceGap <= -0.50 ? -3 : (performanceGap <= -0.20 ? -1 : 0)));
     if (report.wins > report.losses) delta += 1;

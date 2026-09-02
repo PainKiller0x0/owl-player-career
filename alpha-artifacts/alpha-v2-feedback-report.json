@@ -25,7 +25,7 @@
       "averageWinImpactPP": 1.08,
       "averagePersonalContributionPP": 3.75,
       "roleBefore": 56,
-      "projectedRoleChange": -3,
+      "projectedRoleChange": 1,
       "appearances": 3,
       "games": 4
     },
@@ -52,7 +52,7 @@
       "averageWinImpactPP": 3.6,
       "averagePersonalContributionPP": 2.768,
       "roleBefore": 56,
-      "projectedRoleChange": -3,
+      "projectedRoleChange": 0,
       "appearances": 3,
       "games": 4
     },
@@ -79,7 +79,7 @@
       "averageWinImpactPP": 6,
       "averagePersonalContributionPP": 2.82,
       "roleBefore": 56,
-      "projectedRoleChange": -3,
+      "projectedRoleChange": 0,
       "appearances": 3,
       "games": 4
     },
@@ -106,7 +106,7 @@
       "averageWinImpactPP": 7.2,
       "averagePersonalContributionPP": 2.797,
       "roleBefore": 56,
-      "projectedRoleChange": -3,
+      "projectedRoleChange": 0,
       "appearances": 3,
       "games": 4
     },
@@ -134,7 +134,7 @@
       "averageWinImpactPP": 0,
       "averagePersonalContributionPP": 3.75,
       "roleBefore": 56,
-      "projectedRoleChange": -3,
+      "projectedRoleChange": 1,
       "appearances": 3,
       "games": 4
     },
@@ -162,7 +162,7 @@
       "averageWinImpactPP": 0,
       "averagePersonalContributionPP": 3.75,
       "roleBefore": 56,
-      "projectedRoleChange": -3,
+      "projectedRoleChange": 0,
       "appearances": 3,
       "games": 4
     }
@@ -173,33 +173,33 @@
       "teamPreset": "contender",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 1.989,
-      "championshipRate": 0.095,
-      "playoffRate": 0.843,
+      "avgOvrGrowth": 1.991,
+      "championshipRate": 0.112,
+      "playoffRate": 0.859,
       "mvpRate": 0,
-      "fmvpRate": 0,
-      "positiveContributionLossRate": 0.088,
+      "fmvpRate": 0.001,
+      "positiveContributionLossRate": 0.078,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -20.327,
-      "avgCoachTrustChange": 32.841,
-      "avgReputationChange": -0.378,
+      "avgRoleChange": 11.12,
+      "avgCoachTrustChange": 33.188,
+      "avgReputationChange": 1.098,
       "roleDistribution": {
-        "substitute": 919,
-        "rotation": 81,
-        "starter": 0,
+        "substitute": 0,
+        "rotation": 349,
+        "starter": 651,
         "core": 0
       },
       "gradeDistribution": {
         "S": 0,
         "A": 0,
-        "B": 0,
-        "C": 874,
-        "D": 126
+        "B": 552,
+        "C": 446,
+        "D": 2
       },
       "tagDistribution": {
         "体系枢纽": 1000,
-        "版本专家": 368,
-        "赛季冠军": 63
+        "版本专家": 371,
+        "赛季冠军": 78
       },
       "actionImpact": {
         "mechanics": {
@@ -209,34 +209,34 @@
           "avgPersonalContributionPP": 0
         },
         "heroPool": {
-          "samples": 1367,
-          "avgWinImpactPP": 3.55261887344553,
-          "avgRating": 6.712187271397213,
-          "avgPersonalContributionPP": 2.110709583028534
+          "samples": 1371,
+          "avgWinImpactPP": 3.554237782640439,
+          "avgRating": 6.726214442013121,
+          "avgPersonalContributionPP": 2.4337673231218124
         },
         "gameSense": {
-          "samples": 3639,
-          "avgWinImpactPP": 6.003564165979646,
-          "avgRating": 6.621761472932126,
-          "avgPersonalContributionPP": 1.9583598516075917
+          "samples": 3635,
+          "avgWinImpactPP": 6.010445667125155,
+          "avgRating": 6.642830811554329,
+          "avgPersonalContributionPP": 2.194904126547466
         },
         "teamwork": {
-          "samples": 3064,
-          "avgWinImpactPP": 7.116049608355298,
-          "avgRating": 6.55992167101828,
-          "avgPersonalContributionPP": 1.9860483028720626
+          "samples": 3052,
+          "avgWinImpactPP": 7.129572083879629,
+          "avgRating": 6.574030144167745,
+          "avgPersonalContributionPP": 2.3713641874180826
         },
         "mental": {
-          "samples": 3352,
-          "avgWinImpactPP": 1.0714862768496496,
-          "avgRating": 6.454358591885445,
-          "avgPersonalContributionPP": 3.1768952863961704
+          "samples": 3366,
+          "avgWinImpactPP": 1.5594031491384381,
+          "avgRating": 6.4996732026144,
+          "avgPersonalContributionPP": 4.007120320855614
         },
         "rest": {
-          "samples": 578,
-          "avgWinImpactPP": 0.2675579584775086,
-          "avgRating": 6.561003460207612,
-          "avgPersonalContributionPP": 1.8451384083044986
+          "samples": 576,
+          "avgWinImpactPP": 1.0342048611111148,
+          "avgRating": 6.652812500000003,
+          "avgPersonalContributionPP": 3.9267751736111176
         }
       }
     },
@@ -245,33 +245,33 @@
       "teamPreset": "mid",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 1.986,
-      "championshipRate": 0.038,
-      "playoffRate": 0.482,
+      "avgOvrGrowth": 1.987,
+      "championshipRate": 0.043,
+      "playoffRate": 0.51,
       "mvpRate": 0,
-      "fmvpRate": 0,
-      "positiveContributionLossRate": 0.401,
+      "fmvpRate": 0.001,
+      "positiveContributionLossRate": 0.381,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -22.567,
-      "avgCoachTrustChange": 28.472,
-      "avgReputationChange": -1.338,
+      "avgRoleChange": 7.854,
+      "avgCoachTrustChange": 28.839,
+      "avgReputationChange": 0.649,
       "roleDistribution": {
-        "substitute": 969,
-        "rotation": 31,
-        "starter": 0,
+        "substitute": 0,
+        "rotation": 595,
+        "starter": 405,
         "core": 0
       },
       "gradeDistribution": {
         "S": 0,
         "A": 0,
-        "B": 0,
-        "C": 554,
-        "D": 446
+        "B": 335,
+        "C": 658,
+        "D": 7
       },
       "tagDistribution": {
-        "版本专家": 394,
         "体系枢纽": 1000,
-        "赛季冠军": 23
+        "版本专家": 396,
+        "赛季冠军": 31
       },
       "actionImpact": {
         "mechanics": {
@@ -281,34 +281,34 @@
           "avgPersonalContributionPP": 0
         },
         "heroPool": {
-          "samples": 1393,
-          "avgWinImpactPP": 3.5379109834889064,
-          "avgRating": 6.6189806173725705,
-          "avgPersonalContributionPP": 1.9613872936109127
+          "samples": 1395,
+          "avgWinImpactPP": 3.5607455197132967,
+          "avgRating": 6.6792688172042975,
+          "avgPersonalContributionPP": 2.270386021505378
         },
         "gameSense": {
-          "samples": 3578,
-          "avgWinImpactPP": 5.976129122414742,
-          "avgRating": 6.565670765790956,
-          "avgPersonalContributionPP": 1.8472596422582477
+          "samples": 3581,
+          "avgWinImpactPP": 5.979176207763181,
+          "avgRating": 6.590349064507135,
+          "avgPersonalContributionPP": 2.059866238480877
         },
         "teamwork": {
-          "samples": 3073,
-          "avgWinImpactPP": 7.164712007810167,
-          "avgRating": 6.477822974292203,
-          "avgPersonalContributionPP": 1.8837683045883504
+          "samples": 3052,
+          "avgWinImpactPP": 7.163938401048716,
+          "avgRating": 6.5214285714285625,
+          "avgPersonalContributionPP": 2.2094783748361673
         },
         "mental": {
-          "samples": 3326,
-          "avgWinImpactPP": 1.043462116656652,
-          "avgRating": 6.40708959711364,
-          "avgPersonalContributionPP": 2.9883268190017938
+          "samples": 3349,
+          "avgWinImpactPP": 1.45166990146312,
+          "avgRating": 6.454269931322778,
+          "avgPersonalContributionPP": 3.745832636607936
         },
         "rest": {
-          "samples": 630,
-          "avgWinImpactPP": 0.2203920634920635,
-          "avgRating": 6.4963174603174565,
-          "avgPersonalContributionPP": 1.644643650793651
+          "samples": 623,
+          "avgWinImpactPP": 0.8761348314606762,
+          "avgRating": 6.5827447833065875,
+          "avgPersonalContributionPP": 3.594175762439814
         }
       }
     },
@@ -317,33 +317,33 @@
       "teamPreset": "rebuild",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 1.986,
-      "championshipRate": 0.01,
-      "playoffRate": 0.19,
+      "avgOvrGrowth": 1.985,
+      "championshipRate": 0.011,
+      "playoffRate": 0.222,
       "mvpRate": 0,
       "fmvpRate": 0,
-      "positiveContributionLossRate": 0.723,
+      "positiveContributionLossRate": 0.689,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -24.385,
-      "avgCoachTrustChange": 24.837,
-      "avgReputationChange": -2.181,
+      "avgRoleChange": 5.23,
+      "avgCoachTrustChange": 25.26,
+      "avgReputationChange": 0.216,
       "roleDistribution": {
-        "substitute": 994,
-        "rotation": 6,
-        "starter": 0,
+        "substitute": 0,
+        "rotation": 788,
+        "starter": 212,
         "core": 0
       },
       "gradeDistribution": {
         "S": 0,
         "A": 0,
-        "B": 0,
-        "C": 273,
-        "D": 727
+        "B": 126,
+        "C": 862,
+        "D": 12
       },
       "tagDistribution": {
         "体系枢纽": 1000,
-        "版本专家": 417,
-        "赛季冠军": 7
+        "版本专家": 409,
+        "赛季冠军": 9
       },
       "actionImpact": {
         "mechanics": {
@@ -353,34 +353,34 @@
           "avgPersonalContributionPP": 0
         },
         "heroPool": {
-          "samples": 1414,
-          "avgWinImpactPP": 3.5090664780764143,
-          "avgRating": 6.6074115983027,
-          "avgPersonalContributionPP": 1.9543009193776555
+          "samples": 1408,
+          "avgWinImpactPP": 3.5256960227273084,
+          "avgRating": 6.636981534090916,
+          "avgPersonalContributionPP": 2.1986207386363703
         },
         "gameSense": {
-          "samples": 3536,
-          "avgWinImpactPP": 5.974496606334835,
-          "avgRating": 6.543085407239819,
-          "avgPersonalContributionPP": 1.8327343042986504
+          "samples": 3533,
+          "avgWinImpactPP": 5.980707613925837,
+          "avgRating": 6.567710161335973,
+          "avgPersonalContributionPP": 2.0542776677045116
         },
         "teamwork": {
-          "samples": 3088,
-          "avgWinImpactPP": 7.113575129533909,
-          "avgRating": 6.4492810880829055,
-          "avgPersonalContributionPP": 1.849078529792743
+          "samples": 3075,
+          "avgWinImpactPP": 7.1062569105693365,
+          "avgRating": 6.486783739837396,
+          "avgPersonalContributionPP": 2.1453723577235735
         },
         "mental": {
-          "samples": 3299,
-          "avgWinImpactPP": 1.0056979387693268,
-          "avgRating": 6.3636920278872395,
-          "avgPersonalContributionPP": 2.9399011821764027
+          "samples": 3324,
+          "avgWinImpactPP": 1.3488367930204577,
+          "avgRating": 6.420610709987966,
+          "avgPersonalContributionPP": 3.575038507821892
         },
         "rest": {
-          "samples": 663,
-          "avgWinImpactPP": 0.2031885369532427,
-          "avgRating": 6.4169683257918635,
-          "avgPersonalContributionPP": 1.5189539969834098
+          "samples": 660,
+          "avgWinImpactPP": 0.8117356060606069,
+          "avgRating": 6.575818181818174,
+          "avgPersonalContributionPP": 3.39188484848485
         }
       }
     },
@@ -390,33 +390,34 @@
       "plan": "balanced",
       "samples": 1000,
       "avgOvrGrowth": 1.004,
-      "championshipRate": 0.164,
-      "playoffRate": 0.956,
-      "mvpRate": 0.068,
-      "fmvpRate": 0.063,
-      "positiveContributionLossRate": 0.016,
+      "championshipRate": 0.194,
+      "playoffRate": 0.974,
+      "mvpRate": 0.304,
+      "fmvpRate": 0.087,
+      "positiveContributionLossRate": 0.01,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -4.006,
-      "avgCoachTrustChange": 33.717,
-      "avgReputationChange": 1.582,
+      "avgRoleChange": 32.634,
+      "avgCoachTrustChange": 34.536,
+      "avgReputationChange": 2.923,
       "roleDistribution": {
-        "substitute": 17,
-        "rotation": 981,
-        "starter": 2,
-        "core": 0
+        "substitute": 0,
+        "rotation": 0,
+        "starter": 268,
+        "core": 732
       },
       "gradeDistribution": {
         "S": 0,
-        "A": 6,
-        "B": 776,
-        "C": 218,
+        "A": 349,
+        "B": 589,
+        "C": 62,
         "D": 0
       },
       "tagDistribution": {
         "体系枢纽": 1000,
-        "版本专家": 66,
-        "赛季冠军": 155,
-        "常规赛 MVP": 54
+        "赛季冠军": 177,
+        "战术核心": 343,
+        "版本专家": 57,
+        "常规赛 MVP": 217
       },
       "actionImpact": {
         "mechanics": {
@@ -426,10 +427,10 @@
           "avgPersonalContributionPP": 0
         },
         "heroPool": {
-          "samples": 1049,
-          "avgWinImpactPP": 3.6221353670162286,
-          "avgRating": 7.285872259294579,
-          "avgPersonalContributionPP": 3.535805529075306
+          "samples": 1046,
+          "avgWinImpactPP": 3.6503824091778405,
+          "avgRating": 7.31997131931166,
+          "avgPersonalContributionPP": 5.489655831739942
         },
         "gameSense": {
           "samples": 0,
@@ -438,22 +439,22 @@
           "avgPersonalContributionPP": 0
         },
         "teamwork": {
-          "samples": 5137,
-          "avgWinImpactPP": 6.981479462721604,
-          "avgRating": 7.005053533190588,
-          "avgPersonalContributionPP": 3.4184198948802944
+          "samples": 5154,
+          "avgWinImpactPP": 6.992010477299328,
+          "avgRating": 7.004458672875426,
+          "avgPersonalContributionPP": 4.513527648428414
         },
         "mental": {
-          "samples": 5014,
-          "avgWinImpactPP": 0.270040686078979,
-          "avgRating": 7.152467092142031,
-          "avgPersonalContributionPP": 3.786732648583961
+          "samples": 5003,
+          "avgWinImpactPP": 1.1926859884069476,
+          "avgRating": 7.167929242454519,
+          "avgPersonalContributionPP": 6.355800419748114
         },
         "rest": {
-          "samples": 800,
-          "avgWinImpactPP": 0.19277562500000012,
-          "avgRating": 7.062762500000003,
-          "avgPersonalContributionPP": 3.7321181249999995
+          "samples": 797,
+          "avgWinImpactPP": 0.8948306148055212,
+          "avgRating": 7.0875282308657495,
+          "avgPersonalContributionPP": 6.6662609786700004
         }
       }
     },
@@ -462,34 +463,35 @@
       "teamPreset": "mid",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 1.003,
-      "championshipRate": 0.084,
-      "playoffRate": 0.712,
-      "mvpRate": 0.015,
-      "fmvpRate": 0.035,
-      "positiveContributionLossRate": 0.179,
+      "avgOvrGrowth": 1.007,
+      "championshipRate": 0.104,
+      "playoffRate": 0.8,
+      "mvpRate": 0.121,
+      "fmvpRate": 0.043,
+      "positiveContributionLossRate": 0.123,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -7.38,
-      "avgCoachTrustChange": 29.504,
-      "avgReputationChange": 1.162,
+      "avgRoleChange": 29.167,
+      "avgCoachTrustChange": 30.64,
+      "avgReputationChange": 2.062,
       "roleDistribution": {
-        "substitute": 68,
-        "rotation": 932,
-        "starter": 0,
-        "core": 0
+        "substitute": 0,
+        "rotation": 0,
+        "starter": 522,
+        "core": 478
       },
       "gradeDistribution": {
         "S": 0,
-        "A": 1,
-        "B": 580,
-        "C": 418,
-        "D": 1
+        "A": 154,
+        "B": 646,
+        "C": 200,
+        "D": 0
       },
       "tagDistribution": {
         "体系枢纽": 1000,
-        "赛季冠军": 79,
-        "版本专家": 62,
-        "常规赛 MVP": 14
+        "战术核心": 309,
+        "版本专家": 55,
+        "常规赛 MVP": 101,
+        "赛季冠军": 98
       },
       "actionImpact": {
         "mechanics": {
@@ -499,10 +501,10 @@
           "avgPersonalContributionPP": 0
         },
         "heroPool": {
-          "samples": 1050,
-          "avgWinImpactPP": 3.6299333333333528,
-          "avgRating": 7.246352380952383,
-          "avgPersonalContributionPP": 3.55610666666666
+          "samples": 1040,
+          "avgWinImpactPP": 3.63010576923079,
+          "avgRating": 7.265644230769238,
+          "avgPersonalContributionPP": 5.472326923076913
         },
         "gameSense": {
           "samples": 0,
@@ -511,22 +513,22 @@
           "avgPersonalContributionPP": 0
         },
         "teamwork": {
-          "samples": 5135,
-          "avgWinImpactPP": 6.988973709834629,
-          "avgRating": 6.955822784810127,
-          "avgPersonalContributionPP": 3.4166802336903634
+          "samples": 5153,
+          "avgWinImpactPP": 6.99652241412784,
+          "avgRating": 6.969231515621953,
+          "avgPersonalContributionPP": 4.490115175625854
         },
         "mental": {
-          "samples": 5034,
-          "avgWinImpactPP": 0.27411462058005553,
-          "avgRating": 7.108897497020247,
-          "avgPersonalContributionPP": 3.784994537147394
+          "samples": 5016,
+          "avgWinImpactPP": 1.0768189792663465,
+          "avgRating": 7.127789074960149,
+          "avgPersonalContributionPP": 6.151569876395502
         },
         "rest": {
-          "samples": 781,
-          "avgWinImpactPP": 0.1918418693982073,
-          "avgRating": 7.030896286811776,
-          "avgPersonalContributionPP": 3.6789359795134424
+          "samples": 791,
+          "avgWinImpactPP": 0.7758533501896325,
+          "avgRating": 7.048925410872311,
+          "avgPersonalContributionPP": 6.537433628318576
         }
       }
     },
@@ -536,33 +538,34 @@
       "plan": "balanced",
       "samples": 1000,
       "avgOvrGrowth": 1.005,
-      "championshipRate": 0.036,
-      "playoffRate": 0.393,
-      "mvpRate": 0.001,
-      "fmvpRate": 0.015,
-      "positiveContributionLossRate": 0.503,
+      "championshipRate": 0.042,
+      "playoffRate": 0.49,
+      "mvpRate": 0.037,
+      "fmvpRate": 0.017,
+      "positiveContributionLossRate": 0.404,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -10.242,
-      "avgCoachTrustChange": 25.682,
-      "avgReputationChange": 0.596,
+      "avgRoleChange": 26.452,
+      "avgCoachTrustChange": 26.822,
+      "avgReputationChange": 1.142,
       "roleDistribution": {
-        "substitute": 158,
-        "rotation": 842,
-        "starter": 0,
-        "core": 0
+        "substitute": 0,
+        "rotation": 0,
+        "starter": 718,
+        "core": 282
       },
       "gradeDistribution": {
         "S": 0,
-        "A": 0,
-        "B": 301,
-        "C": 697,
-        "D": 2
+        "A": 54,
+        "B": 436,
+        "C": 510,
+        "D": 0
       },
       "tagDistribution": {
         "体系枢纽": 1000,
-        "版本专家": 64,
-        "赛季冠军": 32,
-        "常规赛 MVP": 1
+        "赛季冠军": 40,
+        "战术核心": 221,
+        "常规赛 MVP": 33,
+        "版本专家": 56
       },
       "actionImpact": {
         "mechanics": {
@@ -572,10 +575,10 @@
           "avgPersonalContributionPP": 0
         },
         "heroPool": {
-          "samples": 1045,
-          "avgWinImpactPP": 3.630296650717721,
-          "avgRating": 7.216478468899529,
-          "avgPersonalContributionPP": 3.523459330143535
+          "samples": 1042,
+          "avgWinImpactPP": 3.623896353167004,
+          "avgRating": 7.234827255278315,
+          "avgPersonalContributionPP": 5.429679462571978
         },
         "gameSense": {
           "samples": 0,
@@ -584,22 +587,22 @@
           "avgPersonalContributionPP": 0
         },
         "teamwork": {
-          "samples": 5135,
-          "avgWinImpactPP": 6.9876144109057,
-          "avgRating": 6.9317390457643615,
-          "avgPersonalContributionPP": 3.4041425511197727
+          "samples": 5161,
+          "avgWinImpactPP": 6.989211393141008,
+          "avgRating": 6.939645417554731,
+          "avgPersonalContributionPP": 4.451467738810316
         },
         "mental": {
-          "samples": 5020,
-          "avgWinImpactPP": 0.27055268924302733,
-          "avgRating": 7.077661354581696,
-          "avgPersonalContributionPP": 3.747748804780878
+          "samples": 5000,
+          "avgWinImpactPP": 0.9803693999999983,
+          "avgRating": 7.096914000000019,
+          "avgPersonalContributionPP": 5.9697047999999775
         },
         "rest": {
-          "samples": 800,
-          "avgWinImpactPP": 0.18338562500000005,
-          "avgRating": 6.988774999999997,
-          "avgPersonalContributionPP": 3.6478899999999985
+          "samples": 797,
+          "avgWinImpactPP": 0.7219949811794216,
+          "avgRating": 7.006386449184443,
+          "avgPersonalContributionPP": 6.438953575909659
         }
       }
     },
@@ -608,47 +611,48 @@
       "teamPreset": "contender",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 0.943,
-      "championshipRate": 0.141,
-      "playoffRate": 0.944,
-      "mvpRate": 0.026,
-      "fmvpRate": 0.013,
-      "positiveContributionLossRate": 0.029,
+      "avgOvrGrowth": 0.948,
+      "championshipRate": 0.169,
+      "playoffRate": 0.969,
+      "mvpRate": 0.129,
+      "fmvpRate": 0.02,
+      "positiveContributionLossRate": 0.021,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -8.271,
-      "avgCoachTrustChange": 39.026,
-      "avgReputationChange": 1.181,
+      "avgRoleChange": 27.616,
+      "avgCoachTrustChange": 39.4,
+      "avgReputationChange": 2.184,
       "roleDistribution": {
-        "substitute": 88,
-        "rotation": 911,
-        "starter": 1,
-        "core": 0
+        "substitute": 0,
+        "rotation": 1,
+        "starter": 632,
+        "core": 367
       },
       "gradeDistribution": {
         "S": 0,
-        "A": 0,
-        "B": 592,
-        "C": 407,
-        "D": 1
+        "A": 130,
+        "B": 767,
+        "C": 103,
+        "D": 0
       },
       "tagDistribution": {
         "版本专家": 1000,
-        "赛季冠军": 115,
-        "生涯管理者": 207,
-        "常规赛 MVP": 16
+        "常规赛 MVP": 71,
+        "赛季冠军": 132,
+        "生涯管理者": 206,
+        "战术核心": 153
       },
       "actionImpact": {
         "mechanics": {
-          "samples": 5430,
-          "avgWinImpactPP": 1.5695689686924188,
-          "avgRating": 7.101559852670361,
-          "avgPersonalContributionPP": 3.3505923572743943
+          "samples": 5404,
+          "avgWinImpactPP": 2.1833000555143616,
+          "avgRating": 7.118515914137667,
+          "avgPersonalContributionPP": 4.405075037009612
         },
         "heroPool": {
-          "samples": 4972,
-          "avgWinImpactPP": 3.4867538213999216,
-          "avgRating": 6.904161303298482,
-          "avgPersonalContributionPP": 2.0235695897023493
+          "samples": 4974,
+          "avgWinImpactPP": 3.4971391234419755,
+          "avgRating": 6.911389223964622,
+          "avgPersonalContributionPP": 2.376949738640942
         },
         "gameSense": {
           "samples": 0,
@@ -663,16 +667,16 @@
           "avgPersonalContributionPP": 0
         },
         "mental": {
-          "samples": 573,
-          "avgWinImpactPP": 0.6738272251308911,
-          "avgRating": 7.099458987783597,
-          "avgPersonalContributionPP": 3.6974162303664926
+          "samples": 594,
+          "avgWinImpactPP": 2.1175084175084256,
+          "avgRating": 7.094814814814816,
+          "avgPersonalContributionPP": 6.310656565656563
         },
         "rest": {
-          "samples": 1025,
-          "avgWinImpactPP": 0.8038839024390297,
-          "avgRating": 6.833131707317077,
-          "avgPersonalContributionPP": 2.8261365853658567
+          "samples": 1028,
+          "avgWinImpactPP": 1.244007782101183,
+          "avgRating": 6.841196498054483,
+          "avgPersonalContributionPP": 4.041926070038922
         }
       }
     },
@@ -681,47 +685,48 @@
       "teamPreset": "mid",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 0.939,
+      "avgOvrGrowth": 0.934,
       "championshipRate": 0.078,
-      "playoffRate": 0.733,
-      "mvpRate": 0.006,
-      "fmvpRate": 0.012,
-      "positiveContributionLossRate": 0.168,
+      "playoffRate": 0.746,
+      "mvpRate": 0.03,
+      "fmvpRate": 0.009,
+      "positiveContributionLossRate": 0.153,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -11.407,
-      "avgCoachTrustChange": 34.632,
-      "avgReputationChange": 0.733,
+      "avgRoleChange": 24.286,
+      "avgCoachTrustChange": 35.203,
+      "avgReputationChange": 1.594,
       "roleDistribution": {
-        "substitute": 221,
-        "rotation": 779,
-        "starter": 0,
-        "core": 0
+        "substitute": 0,
+        "rotation": 3,
+        "starter": 840,
+        "core": 157
       },
       "gradeDistribution": {
         "S": 0,
-        "A": 0,
-        "B": 371,
-        "C": 626,
-        "D": 3
+        "A": 34,
+        "B": 712,
+        "C": 254,
+        "D": 0
       },
       "tagDistribution": {
         "版本专家": 1000,
-        "生涯管理者": 167,
-        "赛季冠军": 65,
-        "常规赛 MVP": 4
+        "生涯管理者": 193,
+        "常规赛 MVP": 15,
+        "战术核心": 87,
+        "赛季冠军": 60
       },
       "actionImpact": {
         "mechanics": {
-          "samples": 5446,
-          "avgWinImpactPP": 1.5931715938303073,
-          "avgRating": 7.066193536540592,
-          "avgPersonalContributionPP": 3.3180572897539484
+          "samples": 5425,
+          "avgWinImpactPP": 2.1398593548386473,
+          "avgRating": 7.07993732718893,
+          "avgPersonalContributionPP": 4.232432811059893
         },
         "heroPool": {
-          "samples": 5040,
-          "avgWinImpactPP": 3.498799603174663,
-          "avgRating": 6.857244047619066,
-          "avgPersonalContributionPP": 1.975372023809536
+          "samples": 5006,
+          "avgWinImpactPP": 3.4991829804235617,
+          "avgRating": 6.867325209748302,
+          "avgPersonalContributionPP": 2.314186775868969
         },
         "gameSense": {
           "samples": 0,
@@ -736,16 +741,16 @@
           "avgPersonalContributionPP": 0
         },
         "mental": {
-          "samples": 474,
-          "avgWinImpactPP": 0.7058786919831217,
-          "avgRating": 7.015253164556963,
-          "avgPersonalContributionPP": 3.5763006329113938
+          "samples": 528,
+          "avgWinImpactPP": 2.119734848484851,
+          "avgRating": 7.058390151515151,
+          "avgPersonalContributionPP": 6.163806818181814
         },
         "rest": {
-          "samples": 1040,
-          "avgWinImpactPP": 0.8029971153846215,
-          "avgRating": 6.785798076923074,
-          "avgPersonalContributionPP": 2.705528846153845
+          "samples": 1041,
+          "avgWinImpactPP": 1.2436119116234532,
+          "avgRating": 6.805341018251679,
+          "avgPersonalContributionPP": 3.839419788664755
         }
       }
     },
@@ -754,47 +759,48 @@
       "teamPreset": "rebuild",
       "plan": "balanced",
       "samples": 1000,
-      "avgOvrGrowth": 0.934,
-      "championshipRate": 0.024,
-      "playoffRate": 0.405,
-      "mvpRate": 0.002,
-      "fmvpRate": 0.003,
-      "positiveContributionLossRate": 0.5,
+      "avgOvrGrowth": 0.94,
+      "championshipRate": 0.04,
+      "playoffRate": 0.428,
+      "mvpRate": 0.01,
+      "fmvpRate": 0.004,
+      "positiveContributionLossRate": 0.465,
       "negativeContributionWinRate": 0,
-      "avgRoleChange": -14.135,
-      "avgCoachTrustChange": 31.01,
-      "avgReputationChange": 0.322,
+      "avgRoleChange": 21.655,
+      "avgCoachTrustChange": 31.272,
+      "avgReputationChange": 0.889,
       "roleDistribution": {
-        "substitute": 392,
-        "rotation": 608,
-        "starter": 0,
-        "core": 0
+        "substitute": 0,
+        "rotation": 16,
+        "starter": 906,
+        "core": 78
       },
       "gradeDistribution": {
         "S": 0,
-        "A": 0,
-        "B": 185,
-        "C": 799,
-        "D": 16
+        "A": 11,
+        "B": 417,
+        "C": 572,
+        "D": 0
       },
       "tagDistribution": {
         "版本专家": 1000,
-        "生涯管理者": 176,
-        "赛季冠军": 20,
-        "常规赛 MVP": 2
+        "生涯管理者": 185,
+        "战术核心": 47,
+        "赛季冠军": 30,
+        "常规赛 MVP": 5
       },
       "actionImpact": {
         "mechanics": {
-          "samples": 5461,
-          "avgWinImpactPP": 1.572451474088962,
-          "avgRating": 7.022001464933159,
-          "avgPersonalContributionPP": 3.2459720747115863
+          "samples": 5448,
+          "avgWinImpactPP": 2.1014208883993466,
+          "avgRating": 7.044598017621136,
+          "avgPersonalContributionPP": 4.135880139500727
         },
         "heroPool": {
-          "samples": 5020,
-          "avgWinImpactPP": 3.491603585657432,
-          "avgRating": 6.824332669322708,
-          "avgPersonalContributionPP": 1.9273425298804958
+          "samples": 5002,
+          "avgWinImpactPP": 3.5041483406638037,
+          "avgRating": 6.838940423830461,
+          "avgPersonalContributionPP": 2.26537594962016
         },
         "gameSense": {
           "samples": 0,
@@ -809,16 +815,16 @@
           "avgPersonalContributionPP": 0
         },
         "mental": {
-          "samples": 461,
-          "avgWinImpactPP": 0.5991344902386119,
-          "avgRating": 7.008698481561819,
-          "avgPersonalContributionPP": 3.3241735357917555
+          "samples": 494,
+          "avgWinImpactPP": 2.1528947368421085,
+          "avgRating": 7.014433198380565,
+          "avgPersonalContributionPP": 6.054109311740885
         },
         "rest": {
-          "samples": 1058,
-          "avgWinImpactPP": 0.8032707939508555,
-          "avgRating": 6.766200378071828,
-          "avgPersonalContributionPP": 2.550920604914937
+          "samples": 1056,
+          "avgWinImpactPP": 1.2361931818181942,
+          "avgRating": 6.78430871212121,
+          "avgPersonalContributionPP": 3.7311510416666684
         }
       }
     }
@@ -829,25 +835,25 @@
     "byTeam": {
       "contender": {
         "samples": 334,
-        "avgChampionships": 1.2395209580838322,
-        "avgMvps": 0.46407185628742514,
+        "avgChampionships": 1.401197604790419,
+        "avgMvps": 2.002994011976048,
         "sevenPlusChampionshipsRate": 0
       },
       "mid": {
         "samples": 333,
-        "avgChampionships": 1.0360360360360361,
-        "avgMvps": 0.3993993993993994,
+        "avgChampionships": 1.3183183183183182,
+        "avgMvps": 1.8258258258258258,
         "sevenPlusChampionshipsRate": 0
       },
       "rebuild": {
         "samples": 333,
-        "avgChampionships": 0.948948948948949,
-        "avgMvps": 0.43543543543543545,
+        "avgChampionships": 1.117117117117117,
+        "avgMvps": 1.7897897897897899,
         "sevenPlusChampionshipsRate": 0
       }
     },
-    "avgChampionships": 1.075,
-    "avgMvps": 0.433,
+    "avgChampionships": 1.279,
+    "avgMvps": 1.873,
     "sevenPlusChampionshipsRate": 0
   },
   "notes": [
