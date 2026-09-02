@@ -4,6 +4,7 @@
   .stats-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
   .score-block, .support-list { grid-column: 1 / -1; }
   .action-grid { grid-template-columns: repeat(2, 1fr); }
+  .plan-grid { grid-template-columns: repeat(2, 1fr); }
   .batch-controls { grid-template-columns: 1fr 1fr; }
   .batch-controls .button { width: 100%; }
 }
@@ -18,7 +19,7 @@
   .heading-actions { width: 100%; }
   .heading-actions .button { flex: 1; }
   .stats-panel { grid-template-columns: 1fr 1fr; }
-  .action-grid, .choice-grid, .result-grid { grid-template-columns: 1fr; }
+  .action-grid, .choice-grid, .result-grid, .plan-grid, .impact-summary, .career-grid { grid-template-columns: 1fr; }
   .action-card { min-height: 105px; }
   .timeline { gap: 3px; }
   .timeline-dot { height: 9px; }
@@ -26,3 +27,9 @@
   .batch-controls { grid-template-columns: 1fr; }
   .score-block strong { font-size: 2.8rem; }
 }
+
+.action-card .effect-preview { color: var(--green); font-weight: 650; }
+.result-details { padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; background: #192331; }
+.result-details p { margin: 4px 0; font-size: .8rem; }
+.impact-ledger b.impact-positive { color: var(--green); }
+.impact-ledger b.impact-negative { color: var(--red); }

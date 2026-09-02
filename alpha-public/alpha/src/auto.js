@@ -36,9 +36,13 @@
     while (state.pending.type !== 'summary' && steps < max) {
       steps += 1;
       if (state.pending.type === 'action') E.applyAction(state, chooseAction(state));
+      else if (state.pending.type === 'action_result') E.continueActionResult(state);
+      else if (state.pending.type === 'match_plan') E.chooseMatchPlan(state, state.resources.coachTrust >= 60 ? 'highRisk' : (state.resources.coachTrust >= 40 ? 'focus' : 'stable'));
+      else if (state.pending.type === 'block_report') E.acknowledgeBlockReport(state);
       else if (state.pending.type === 'event') E.resolveEvent(state, chooseEvent(state));
       else if (state.pending.type === 'report') E.continueReport(state);
       else if (state.pending.type === 'playoff') E.resolvePlayoff(state);
+      else if (state.pending.type === 'career_handoff') E.acknowledgeCareerHandoff(state);
       else break;
     }
     if (state.pending.type !== 'summary') throw new Error('自动模式未能在限制步数内完成');

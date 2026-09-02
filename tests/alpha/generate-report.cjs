@@ -3,6 +3,8 @@ const path = require('path');
 
 require('../../alpha-public/alpha/src/random.js');
 require('../../alpha-public/alpha/src/constants.js');
+require('../../alpha-public/alpha/src/impact.js');
+require('../../alpha-public/alpha/src/career.js');
 require('../../alpha-public/alpha/src/engine.js');
 require('../../alpha-public/alpha/src/auto.js');
 

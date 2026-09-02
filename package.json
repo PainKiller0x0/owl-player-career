@@ -11,7 +11,8 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
     "test:alpha": "node --test tests/alpha/alpha-engine.test.js",
-    "test:alpha:e2e": "playwright test --config=playwright.alpha.config.cjs"
+    "test:alpha:e2e": "playwright test --config=playwright.alpha.config.cjs",
+    "report:alpha:v2": "node tests/alpha/generate-v2-report.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1"

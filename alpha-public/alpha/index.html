@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>OWL 选手之路 · 单赛季育成验证 Demo</title>
+  <title>OWL 选手之路 · 单赛季育成验证 Demo Alpha V2</title>
   <link rel="stylesheet" href="src/styles.css">
   <link rel="stylesheet" href="src/responsive.css">
 </head>
@@ -16,7 +16,7 @@
       <p class="eyebrow">OWL ALPHA LAB · SEASON RAISING</p>
       <h1>选手之路 · 单赛季育成验证</h1>
     </div>
-    <span class="build-badge">Alpha v0.1 · 独立 Demo</span>
+      <span class="build-badge">Alpha V2 · 反馈闭环 Demo</span>
   </header>
 
   <main id="app" class="shell">
@@ -52,14 +52,20 @@
           <div class="stat-list" id="attributeList"></div>
           <div class="mini-summary"><span>战绩</span><strong id="record">0 - 0</strong></div>
           <div class="mini-summary"><span>队内地位</span><strong id="roleStatus">—</strong></div>
+          <div class="mini-summary"><span>生涯声望</span><strong id="careerReputation">—</strong></div>
+          <div class="mini-summary"><span>本季场均 / 出场</span><strong id="seasonUsage">—</strong></div>
           <div class="support-list" id="supportList"></div>
         </aside>
         <section class="panel flow-panel">
           <div class="timeline-wrap"><div class="section-title"><h3>赛季时间线</h3><span id="nodeCount">1 / 22</span></div><div id="timeline" class="timeline"></div></div>
           <div id="actionArea"></div>
+          <div id="actionResultArea" class="hidden"></div>
+          <div id="matchPlanArea" class="hidden"></div>
+          <div id="blockReportArea" class="hidden"></div>
           <div id="eventArea" class="hidden"></div>
           <div id="reportArea" class="hidden"></div>
           <div id="playoffArea" class="hidden"></div>
+          <div id="careerHandoffArea" class="hidden"></div>
           <div id="summaryArea" class="hidden"></div>
           <div class="log-box"><div class="section-title"><h3>最近记录</h3><span>同一套 engine</span></div><div id="logList"></div></div>
         </section>
@@ -78,6 +84,6 @@
 
   <footer class="footer"><span>隔离存储 · 可播种 RNG · 不读取正式存档</span><button id="openBatchButton" class="button text-button">打开批量实验室</button></footer>
 
-  <script src="src/random.js"></script><script src="src/constants.js"></script><script src="src/engine.js"></script><script src="src/events.js"></script><script src="src/auto.js"></script><script src="src/storage.js"></script><script src="src/telemetry.js"></script><script src="src/ui.js"></script><script src="src/app.js"></script>
+  <script src="src/random.js"></script><script src="src/constants.js"></script><script src="src/impact.js"></script><script src="src/career.js"></script><script src="src/engine.js"></script><script src="src/events.js"></script><script src="src/auto.js"></script><script src="src/storage.js"></script><script src="src/telemetry.js"></script><script src="src/ui.js"></script><script src="src/app.js"></script>
 </body>
 </html>

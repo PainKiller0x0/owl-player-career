@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  var PREFIX = 'owl_alpha_season_demo_v1:';
+  var PREFIX = 'owl_alpha_season_demo_v2:';
   var memoryState = null;
 
   function storage() {
@@ -57,8 +57,13 @@
     memoryState = null;
   }
 
+  function hasLegacy() {
+    var store = storage();
+    return !!(store && Object.keys(store).some(function (key) { return key.indexOf('owl_alpha_season_demo_v1:') === 0; }));
+  }
+
   function exportState(state) {
-    return JSON.stringify({ saveVersion: 'alpha-v1', exportedAt: new Date().toISOString(), state: state }, null, 2);
+    return JSON.stringify({ saveVersion: 'alpha-v2', exportedAt: new Date().toISOString(), state: state }, null, 2);
   }
 
   function importState(text) {
@@ -68,5 +73,5 @@
     return state;
   }
 
-  root.OWL_ALPHA_STORAGE = { PREFIX: PREFIX, save: save, load: load, clear: clear, exportState: exportState, importState: importState };
+  root.OWL_ALPHA_STORAGE = { PREFIX: PREFIX, save: save, load: load, clear: clear, hasLegacy: hasLegacy, exportState: exportState, importState: importState };
 })(typeof globalThis === 'undefined' ? this : globalThis);

@@ -2,6 +2,8 @@
   'use strict';
 
   var C = root.OWL_ALPHA_CONSTANTS;
+  var I = root.OWL_ALPHA_IMPACT;
+  var K = root.OWL_ALPHA_CAREER;
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
@@ -180,6 +182,10 @@
       player: { age: player.age, ovr: player.ovr, potential: player.potential, attributes: copy(player.attributes), progress: { mechanics: 0, heroPool: 0, gameSense: 0, teamwork: 0, mental: 0 } },
       resources: { energy: 100, form: 0, stress: 10, coachTrust: 50, roleStatus: 50 },
       relationships: relationshipSeed(),
+      relationNotices: {},
+      mentorBoosts: {},
+      career: K.initial(player.id),
+      careerImpact: null,
       stage: 1,
       stageMetaRoll: noise({ rngState: seed >>> 0 || 1 }, -6, 6),
       matchCursor: 0,
@@ -193,12 +199,19 @@
       eventsSeen: [],
       awards: { mvpRanking: [], roleStarRanking: [], fmvp: null },
       playoff: { qualified: false, status: 'pending', results: [] },
+      actionResult: null,
+      temporaryEffect: null,
+      blockContext: null,
+      blockReports: [],
+      lastLeagueRank: null,
       event: null,
       pending: { type: 'action' },
       completed: false,
       log: []
     };
     createTeams(state, team);
+    state.nemesisTeamId = state.teams[1] ? state.teams[1].id : null;
+    state.careerImpact = state.career;
     state.log.push('赛季开始：' + player.name + '，加入' + team.name + '。');
     return state;
   }
@@ -219,12 +232,19 @@
       return;
     }
     if (state.node >= 19 && state.node <= 21) {
-      state.pending = { type: 'playoff' };
+      var hasRoundResult = state.playoff.results.some(function (result) { return result.node === state.node; });
+      if (state.playoff.qualified && state.playoff.status !== 'eliminated' && !hasRoundResult) state.pending = { type: 'match_plan', kind: 'playoff', stage: 4, block: state.node - 19 };
+      else state.pending = { type: 'playoff' };
       return;
     }
     if (state.node >= 22) {
-      state.pending = { type: 'summary' };
-      state.completed = true;
+      if (state.career && state.career.handoffApplied) {
+        state.pending = { type: 'summary' };
+        state.completed = true;
+      } else {
+        state.pending = { type: 'career_handoff' };
+        state.completed = false;
+      }
       return;
     }
     if (state.node === 9 || state.node === 14) {
@@ -282,11 +302,37 @@
     }
   }
 
+  function actionBlock(actionNode) {
+    if (actionNode >= 4 && actionNode <= 7) return { stage: 1, block: actionNode - 4 };
+    if (actionNode >= 9 && actionNode <= 12) return { stage: 2, block: actionNode - 9 };
+    if (actionNode >= 14 && actionNode <= 17) return { stage: 3, block: actionNode - 14 };
+    return null;
+  }
+
+  function isKeyBlock(block) {
+    return block && block.block === 3;
+  }
+
+  function scheduleNextNode(state) {
+    if ([2, 8, 13, 18].indexOf(state.node) < 0 && next(state) < 0.16) {
+      state.event = randomEvent(state);
+      state.pending = { type: 'event', random: true };
+    } else {
+      setPending(state);
+    }
+  }
+
   function applyAction(state, actionId) {
     if (state.pending.type !== 'action') throw new Error('当前节点不接受训练行动');
     var action = C.ACTIONS.find(function (item) { return item.id === actionId; });
     if (!action) throw new Error('未知行动：' + actionId);
 
+    var actionNode = state.node;
+    var energyBefore = state.resources.energy;
+    var stressBefore = state.resources.stress;
+    var formBefore = state.resources.form;
+    var relationshipBefore = copy(state.relationships);
+    var attributesBefore = copy(state.player.attributes);
     var result = { action: action.id, name: action.name, failed: false, progress: 0, target: action.target };
     if (action.id === 'rest') {
       state.resources.energy = clamp(state.resources.energy + action.energy, 0, 100);
@@ -297,6 +343,11 @@
       var failed = next(state) < risk;
       var support = Object.keys(state.relationships).filter(function (key) { return state.relationships[key] >= 75; }).length >= 2 ? 1.35 : (Object.keys(state.relationships).some(function (key) { return state.relationships[key] >= 75; }) ? 1.25 : 1);
       var factor = Math.min(1.8, ageFactor(state.player.age, action.target) * potentialFactor(state) * stateFactor(state) * diminishing(state.player.attributes[action.target]) * support);
+      if ((action.id === 'gameSense' || action.id === 'mental') && state.relationships.mentor >= 75 && !state.mentorBoosts[state.stage]) {
+        factor = Math.min(1.8, factor * 1.25);
+        state.mentorBoosts[state.stage] = true;
+        result.mentorBoost = true;
+      }
       var amount = Math.max(1, Math.round(action.base * factor));
       if (failed) {
         amount = Math.max(1, Math.round(amount * 0.25));
@@ -313,20 +364,171 @@
       result.progress = amount;
       result.risk = round(risk * 100, 1);
     }
+    result.temporaryEffect = I.actionEffect(action.id, result.failed);
+    result.block = actionBlock(actionNode);
+    result.resourceChanges = { energy: round(state.resources.energy - energyBefore, 1), stress: round(state.resources.stress - stressBefore, 1), form: round(state.resources.form - formBefore, 1) };
+    result.relationshipChanges = Object.keys(state.relationships).filter(function (key) { return state.relationships[key] !== relationshipBefore[key]; }).map(function (key) { return { key: key, delta: state.relationships[key] - relationshipBefore[key] }; });
+    result.attributeChanges = Object.keys(state.player.attributes).filter(function (key) { return state.player.attributes[key] !== attributesBefore[key]; }).map(function (key) { return { key: key, delta: state.player.attributes[key] - attributesBefore[key] }; });
     state.player.ovr = playerOvr(state.player.attributes);
     state.decisions.push(result);
     state.log.push(action.name + (result.failed ? '训练失误，收益降低。' : '完成。'));
-    state.node += 1;
-    if ([4, 5, 6, 7].indexOf(state.node - 1) >= 0) simulateBlock(state, 1, state.node - 5);
-    if ([9, 10, 11, 12].indexOf(state.node - 1) >= 0) simulateBlock(state, 2, state.node - 10);
-    if ([14, 15, 16, 17].indexOf(state.node - 1) >= 0) simulateBlock(state, 3, state.node - 15);
-    if ([2, 8, 13, 18].indexOf(state.node) < 0 && next(state) < 0.16) {
-      state.event = randomEvent(state);
-      state.pending = { type: 'event', random: true };
-    } else {
-      setPending(state);
-    }
+    state.node = actionNode + 1;
+    state.actionResult = result;
+    state.pending = { type: 'action_result', actionId: result.action, block: result.block };
     return result;
+  }
+
+  function baselineTeamPower(state) {
+    var team = C.TEAM_PRESETS[state.teamPreset];
+    var rosterPower = (team.teamBase * 4 + 70) / 5;
+    var metaFit = clamp(70 + state.stageMetaRoll, 60, 95);
+    var decisionValue = 50 + 50 * 0.25 + 70 * 0.25;
+    return rosterPower * 0.50 + metaFit * 0.20 + team.coachPower * 0.15 + team.synergy * 0.10 + decisionValue * 0.05;
+  }
+
+  function buildImpactLedger(state, opponent, appeared, effect, plan) {
+    var attributes = state.player.attributes;
+    var role = I.roleProfile(state.resources.roleStatus);
+    var relation = I.relationEffects(state, state.blockContext && state.blockContext.actionId);
+    var nemesisActive = state.relationships.nemesis >= 60 && opponent.id === state.nemesisTeamId;
+    var effectMultiplier = plan.effectMultiplier || 1;
+    var baseProbability = logistic(baselineTeamPower(state) - opponentPower(opponent)) * 100;
+    var playerAbilityRawPP = appeared ? clamp((playerMatchPower(state) - 70) * 0.22, -6, 6) : 0;
+    var actionRawPP = appeared ? effect.personalWinPP * effectMultiplier : 0;
+    var personalCap = Math.min(8, role.personalCap);
+    var metaPP = clamp((attributes.heroPool - 70) * 0.10 + effect.metaPP * effectMultiplier, -8, 8);
+    var synergyPP = clamp((attributes.teamwork - 70) * 0.10 + relation.synergyPP + effect.synergyPP * effectMultiplier, -8, 8);
+    var planDecisionPP = (plan.winPP || 0) * (state.resources.coachTrust >= 80 && plan.id === 'focus' ? 1.2 : 1);
+    var decisionPP = clamp((attributes.gameSense - 70) * 0.10 + (state.resources.coachTrust - 50) * 0.04 + relation.decisionPP + effect.decisionPP * effectMultiplier + planDecisionPP, -8, 8);
+    var baseStateRawPP = appeared ? state.resources.form - Math.max(0, state.resources.stress - 30) * 0.03 : 0;
+    var stateRawPP = appeared ? clamp(baseStateRawPP + effect.statePP * effectMultiplier, -8, 8) : 0;
+    var personalRawTotal = playerAbilityRawPP + stateRawPP + actionRawPP;
+    var personalTotal = clamp(personalRawTotal, -personalCap, personalCap);
+    var personalScale = personalRawTotal ? personalTotal / personalRawTotal : 1;
+    var playerAbilityPP = round(playerAbilityRawPP * personalScale, 2);
+    var statePP = round(stateRawPP * personalScale, 2);
+    var actionPP = round(personalTotal - playerAbilityPP - statePP, 2);
+    if (!actionRawPP && actionPP < 0) {
+      statePP = round(personalTotal - playerAbilityPP, 2);
+      actionPP = 0;
+    }
+    var variancePP = noise(state, -4, 4) * (plan.ratingNoiseMultiplier || 1);
+    var displayBase = round(baseProbability, 2);
+    var displayPlayer = round(playerAbilityPP, 2);
+    var displayMeta = round(metaPP, 2);
+    var displaySynergy = round(synergyPP, 2);
+    var displayDecision = round(decisionPP, 2);
+    var displayAction = round(actionPP, 2);
+    var displayState = round(statePP, 2);
+    var displayVariance = round(variancePP, 2);
+    var finalSum = round(displayBase + displayPlayer + displayMeta + displaySynergy + displayDecision + displayAction + displayState + displayVariance, 2);
+    var finalProbability = clamp(finalSum, 15, 85);
+    var probabilityBoundPP = round(finalProbability - finalSum, 2);
+    var counterfactualRawTotal = playerAbilityRawPP + baseStateRawPP;
+    var counterfactualTotal = clamp(counterfactualRawTotal, -personalCap, personalCap);
+    var counterfactualScale = counterfactualRawTotal ? counterfactualTotal / counterfactualRawTotal : 1;
+    var counterfactualPlayer = round(playerAbilityRawPP * counterfactualScale, 2);
+    var counterfactualState = round(counterfactualTotal - counterfactualPlayer, 2);
+    var counterfactualProbability = clamp(round(displayBase + counterfactualPlayer + round((attributes.heroPool - 70) * 0.10, 2) + round((attributes.teamwork - 70) * 0.10 + relation.synergyPP - effect.synergyPP * effectMultiplier, 2) + round((attributes.gameSense - 70) * 0.10 + (state.resources.coachTrust - 50) * 0.04 + relation.decisionPP + planDecisionPP - effect.decisionPP * effectMultiplier, 2) + counterfactualState + displayVariance, 2), 15, 85);
+    return {
+      baseProbability: displayBase,
+      playerAbilityPP: displayPlayer,
+      metaPP: displayMeta,
+      synergyPP: displaySynergy,
+      decisionPP: displayDecision,
+      actionPP: displayAction,
+      statePP: displayState,
+      variancePP: displayVariance,
+      probabilityBoundPP: probabilityBoundPP,
+      effectMultiplier: effectMultiplier,
+      finalProbability: finalProbability,
+      counterfactualProbability: counterfactualProbability,
+      trainingImpactPP: round(finalProbability - counterfactualProbability, 2),
+      personalContributionPP: round(displayPlayer + displayState + displayAction, 2),
+      appeared: appeared,
+      reasons: [
+        '基础队伍强度',
+        appeared ? '你的出场贡献' : '本场未出场，个人贡献为 0',
+        effect.label,
+        plan.name,
+        nemesisActive ? '宿敌对位阈值' : (relation.thresholds.length ? relation.thresholds[0] : '关系暂无额外加成')
+      ],
+      thresholdReasons: relation.thresholds.concat(nemesisActive ? ['宿敌对位阈值'] : []),
+      nemesisActive: nemesisActive
+    };
+  }
+
+  function blockReport(state, stage, block, matches, key, plan) {
+    var appearances = matches.filter(function (match) { return match.appeared; }).length;
+    var wins = matches.filter(function (match) { return match.won; }).length;
+    var playerMatches = matches.filter(function (match) { return match.appeared; });
+    var averageRating = playerMatches.reduce(function (sum, match) { return sum + match.rating; }, 0) / Math.max(1, playerMatches.length);
+    var averageProbability = matches.reduce(function (sum, match) { return sum + match.probability; }, 0) / Math.max(1, matches.length);
+    var impact = matches.reduce(function (sum, match) {
+      var ledger = match.impactLedger || {};
+      ['playerAbilityPP', 'metaPP', 'synergyPP', 'decisionPP', 'actionPP', 'statePP', 'trainingImpactPP'].forEach(function (key) { sum[key] += ledger[key] || 0; });
+      return sum;
+    }, { playerAbilityPP: 0, metaPP: 0, synergyPP: 0, decisionPP: 0, actionPP: 0, statePP: 0, trainingImpactPP: 0 });
+    Object.keys(impact).forEach(function (key) { impact[key] = round(impact[key] / Math.max(1, matches.length), 2); });
+    var leagueRank = estimateLeagueRank(state);
+    var previousRank = state.lastLeagueRank;
+    state.lastLeagueRank = leagueRank;
+    return {
+      stage: stage,
+      block: block + 1,
+      key: !!key,
+      games: matches.length,
+      wins: wins,
+      losses: matches.length - wins,
+      appearances: appearances,
+      ratingCount: playerMatches.length,
+      averageRating: round(averageRating, 2),
+      score: round(averageRating * 10, 1),
+      averageProbability: round(averageProbability * 100, 1),
+      playerContributionPP: round(impact.playerAbilityPP + impact.statePP + impact.actionPP, 2),
+      trainingImpactPP: impact.trainingImpactPP,
+      metaPP: impact.metaPP,
+      synergyPP: impact.synergyPP,
+      decisionPP: impact.decisionPP,
+      actionPP: impact.actionPP,
+      statePP: impact.statePP,
+      leagueRank: leagueRank,
+      leagueRankChange: previousRank == null ? 0 : previousRank - leagueRank,
+      plan: plan.name,
+      roleBefore: state.resources.roleStatus,
+      roleAfter: state.resources.roleStatus,
+      coachFeedback: wins > matches.length - wins ? '教练认为你的执行开始兑现训练方向。' : '教练要求下一节点提高稳定性，再决定是否扩大你的职责。',
+      supportFeedback: '主要搭档和竞争关系会在确认后更新。',
+      teamFeedback: wins > matches.length - wins ? '队伍认可本区块的执行，确认后会更新你的队内地位。' : '队伍对本区块仍有疑问，确认后会反映到你的队内地位。',
+      matches: copy(matches)
+    };
+  }
+
+  function estimateLeagueRank(state) {
+    var played = state.wins + state.losses;
+    var playerProjected = played ? state.wins / played * 56 : 28;
+    var projections = state.teams.filter(function (team) { return !team.isPlayer; }).map(function (team) {
+      return 56 * logistic(opponentPower(team) - 82);
+    });
+    return 1 + projections.filter(function (wins) { return wins > playerProjected; }).length;
+  }
+
+  function beginBlock(state, block, planId) {
+    var plan = I.matchPlan(planId || 'focus');
+    var effect = state.actionResult ? state.actionResult.temporaryEffect : I.actionEffect('rest', false);
+    state.temporaryEffect = copy(effect);
+    state.blockContext = {
+      kind: 'regular', stage: block.stage, block: block.block, games: C.STAGE_BLOCKS[block.stage][block.block],
+      actionId: state.actionResult && state.actionResult.action, trainingResult: copy(state.actionResult), temporaryEffect: copy(effect),
+      matchPlan: plan, beforeSnapshot: { wins: state.wins, losses: state.losses, attributes: copy(state.player.attributes), energy: state.resources.energy, form: state.resources.form, stress: state.resources.stress, coachTrust: state.resources.coachTrust, roleStatus: state.resources.roleStatus, relationships: copy(state.relationships), teamBasePower: baselineTeamPower(state) },
+      impactLedger: [], matches: [], report: null, acknowledged: false, key: isKeyBlock(block)
+    };
+    simulateBlock(state, block.stage, block.block);
+    state.blockContext.report.actionId = state.blockContext.actionId || 'rest';
+    state.blockContext.report.projectedRoleChange = roleDeltaForReport(state, state.blockContext.report, state.blockContext);
+    state.blockContext.report.projectedRoleAfter = clamp(state.resources.roleStatus + state.blockContext.report.projectedRoleChange, 0, 100);
+    state.blockContext.report.projectedRelationTriggers = I.relationEffects(state, state.blockContext.actionId).thresholds;
+    state.pending = { type: 'block_report', stage: block.stage, block: block.block, key: isKeyBlock(block) };
   }
 
   function simulateBlock(state, stage, block) {
@@ -336,22 +538,123 @@
       stageRecord = { stage: stage, games: 0, wins: 0, losses: 0 };
       state.stageRecords.push(stageRecord);
     }
+    var context = state.blockContext;
+    var effect = context && context.temporaryEffect ? context.temporaryEffect : I.actionEffect('rest', false);
+    var plan = context && context.matchPlan ? context.matchPlan : I.matchPlan('focus');
+    var matches = [];
     for (var i = 0; i < count; i += 1) {
       var opponents = state.teams.filter(function (team) { return !team.isPlayer; });
       var opponent = opponents[state.matchCursor % opponents.length];
       state.matchCursor += 1;
-      var playerPower = playerMatchPower(state);
-      var delta = playerTeamPower(state) - opponentPower(opponent) + noise(state, -4, 4);
-      var probability = logistic(delta);
-      var won = next(state) < probability;
-      var rating = clamp(6.5 + (playerPower - opponent.rolePower) * 0.05 + (won ? 0.35 : -0.15) + noise(state, -0.40, 0.40), 5, 10);
-      var match = { stage: stage, block: block + 1, opponent: opponent.name, won: won, probability: round(probability, 3), rating: round(rating, 2) };
+      var role = I.roleProfile(state.resources.roleStatus);
+      var appearanceChance = clamp(role.appearance + (effect.roleChanceDelta || 0) * 0.01 + (plan.roleDelta || 0) * 0.01, 0.25, 1);
+      var appeared = next(state) < appearanceChance;
+      var ledger = buildImpactLedger(state, opponent, appeared, effect, plan);
+      var won = next(state) < ledger.finalProbability / 100;
+      var ratingNoise = noise(state, -0.40, 0.40) * (plan.ratingNoiseMultiplier || 1) * (effect.ratingNoiseMultiplier || 1);
+      var rating = appeared ? clamp(6.5 + (playerMatchPower(state) - opponent.rolePower) * 0.05 + (won ? 0.35 : -0.15) + ratingNoise + effect.ratingDelta * (plan.effectMultiplier || 1) + (ledger.nemesisActive ? 0.20 : 0), 5, 10) : clamp(5.9 + noise(state, -0.25, 0.25), 5, 8);
+      var match = { stage: stage, block: block + 1, opponent: opponent.name, appeared: appeared, appearanceChance: round(appearanceChance, 2), won: won, probability: round(ledger.finalProbability / 100, 3), rating: round(rating, 2), impactLedger: ledger };
       state.matches.push(match);
+      matches.push(match);
+      if (context) context.impactLedger.push(ledger);
+      if (context && ledger.nemesisActive) context.nemesisEncounter = true;
       stageRecord.games += 1;
       if (won) { state.wins += 1; stageRecord.wins += 1; } else { state.losses += 1; stageRecord.losses += 1; }
     }
+    if (context) {
+      context.matches = copy(matches);
+      context.report = blockReport(state, stage, block, matches, context.key, plan);
+    }
+    if (context && context.nemesisEncounter) state.resources.stress = clamp(state.resources.stress + 8, 0, 100);
     state.resources.energy = clamp(state.resources.energy + 6, 0, 100);
     state.resources.stress = clamp(state.resources.stress + (state.wins > state.losses ? 1 : 3), 0, 100);
+  }
+
+  function continueActionResult(state) {
+    if (state.pending.type !== 'action_result' || !state.actionResult) throw new Error('当前没有训练结果');
+    var result = state.actionResult;
+    if (result.block) {
+      if (isKeyBlock(result.block)) state.pending = { type: 'match_plan', kind: 'regular', stage: result.block.stage, block: result.block.block };
+      else beginBlock(state, result.block, 'focus');
+    } else {
+      state.actionResult = null;
+      scheduleNextNode(state);
+    }
+    return result;
+  }
+
+  function chooseMatchPlan(state, planId) {
+    if (state.pending.type !== 'match_plan') throw new Error('当前没有可选择的比赛方案');
+    var available = I.availablePlans(state.resources.coachTrust);
+    var selected = available.find(function (plan) { return plan.id === planId || (planId === 'balanced' && plan.id === 'focus'); });
+    if (!selected) throw new Error('当前教练信任度暂不能使用这个比赛方案');
+    if (state.pending.kind === 'playoff') simulatePlayoffRound(state, selected.id);
+    else beginBlock(state, { stage: state.pending.stage, block: state.pending.block }, selected.id);
+    return selected;
+  }
+
+  function applyBlockFeedback(state) {
+    var context = state.blockContext;
+    var report = context.report;
+    var profile = I.roleProfile(state.resources.roleStatus);
+    var roleBefore = state.resources.roleStatus;
+    var delta = roleDeltaForReport(state, report, context);
+    state.resources.roleStatus = clamp(state.resources.roleStatus + delta, 0, 100);
+    state.resources.coachTrust = clamp(state.resources.coachTrust + (report.wins >= report.losses ? 2 : -1) + (state.relationships.coach >= 60 ? 1 : 0), 0, 100);
+    report.roleBefore = roleBefore;
+    report.roleAfter = state.resources.roleStatus;
+    report.roleChange = state.resources.roleStatus - roleBefore;
+    var relationEffects = I.relationEffects(state, context.actionId);
+    report.relationTriggers = relationEffects.thresholds.filter(function (label) {
+      if (state.relationNotices[label]) return false;
+      state.relationNotices[label] = true;
+      return true;
+    });
+    report.teamFeedback = report.wins > report.losses ? '队伍认可本区块的执行，下一节点会更愿意让你承担责任。' : '队伍会保留疑问，下一节点需要用更稳定的表现换回信任。';
+    report.coachFeedback = state.resources.coachTrust >= 60 ? '教练信任已达到可承担更大职责的区间。' : '教练会继续观察你的稳定性和比赛阅读。';
+    report.supportFeedback = report.relationTriggers.length ? '支援关系产生了实际效果：' + report.relationTriggers.join('、') + '。' : '本区块没有新的关系阈值触发。';
+    report.roleLabelBefore = profile.label;
+    report.roleLabelAfter = I.roleProfile(state.resources.roleStatus).label;
+    state.blockReports.push(copy(report));
+    state.log.push('Stage ' + context.stage + ' 区块完成：' + report.wins + ' 胜 ' + report.losses + ' 负，队内地位 ' + roleBefore + ' → ' + state.resources.roleStatus + '。');
+    context.report = report;
+    context.acknowledged = true;
+    state.temporaryEffect = null;
+    state.actionResult = null;
+  }
+
+  function roleDeltaForReport(state, report, context) {
+    if (!report.appearances) return 0;
+    var expectedRating = 7.5 + (state.resources.roleStatus - 50) * 0.005;
+    var performanceGap = report.averageRating - expectedRating;
+    var delta = performanceGap >= 0.50 ? 3 : (performanceGap >= 0.20 ? 1 : (performanceGap <= -0.50 ? -3 : (performanceGap <= -0.20 ? -1 : 0)));
+    if (report.wins > report.losses) delta += 1;
+    if (context.matchPlan.id === 'highRisk' && report.wins < report.losses) delta -= 1;
+    if (state.relationships.rival >= 60 && report.averageRating >= 8) delta += 1;
+    return clamp(delta, -5, 5);
+  }
+
+  function acknowledgeBlockReport(state) {
+    if (state.pending.type !== 'block_report' || !state.blockContext || !state.blockContext.report) throw new Error('当前没有比赛区块结算');
+    var context = state.blockContext;
+    if (context.acknowledged) return state;
+    if (context.kind === 'playoff') {
+      var result = context.playoffResult;
+      state.playoff.results.push(result);
+      if (!result.won) state.playoff.status = 'eliminated';
+      if (result.won && state.node === 21) {
+        state.playoff.status = 'champion';
+        state.awards.fmvp = context.matches[0].rating >= 7.6 ? { name: '你', team: '你的队伍' } : { name: result.opponent + '代表', team: result.opponent };
+      }
+      context.report.teamFeedback = result.won ? '季后赛执行成功，队伍继续相信你的临场价值。' : '季后赛止步，队伍会把问题带入下一赛季评估。';
+      context.acknowledged = true;
+      state.node += 1;
+      setPending(state);
+      return state;
+    }
+    applyBlockFeedback(state);
+    scheduleNextNode(state);
+    return state;
   }
 
   function resolveEvent(state, choiceId) {
@@ -427,6 +730,28 @@
     setPending(state);
   }
 
+  function simulatePlayoffRound(state, planId) {
+    var roundNames = { 19: '八强', 20: '四强', 21: '决赛' };
+    var playerRow = state.standings.find(function (row) { return row.isPlayer; });
+    var opponentRow = state.standings.find(function (row) { return !row.isPlayer && row.rank !== playerRow.rank && row.rank <= 8; });
+    var opponent = state.teams.find(function (team) { return team.id === opponentRow.teamId; });
+    var plan = I.matchPlan(planId || 'focus');
+    state.blockContext = {
+      kind: 'playoff', stage: 4, block: state.node - 19, games: 1, actionId: 'playoff', trainingResult: null,
+      temporaryEffect: I.actionEffect('rest', false), matchPlan: plan, beforeSnapshot: { round: roundNames[state.node], attributes: copy(state.player.attributes), energy: state.resources.energy, form: state.resources.form, stress: state.resources.stress, coachTrust: state.resources.coachTrust, roleStatus: state.resources.roleStatus, relationships: copy(state.relationships), teamBasePower: baselineTeamPower(state) },
+      impactLedger: [], matches: [], report: null, acknowledged: false, key: true
+    };
+    var ledger = buildImpactLedger(state, opponent, true, state.blockContext.temporaryEffect, plan);
+    var won = next(state) < ledger.finalProbability / 100;
+    var rating = clamp(6.8 + (playerMatchPower(state) - opponent.rolePower) * 0.05 + (won ? 0.45 : -0.25) + noise(state, -0.3, 0.3) + (plan.id === 'highRisk' ? 0.15 : 0) + state.blockContext.temporaryEffect.ratingDelta * (plan.effectMultiplier || 1), 5, 10);
+    var match = { stage: 4, block: state.node - 18, opponent: opponent.name, appeared: true, appearanceChance: 1, won: won, probability: round(ledger.finalProbability / 100, 3), rating: round(rating, 2), impactLedger: ledger };
+    state.blockContext.impactLedger.push(ledger);
+    state.blockContext.matches = [match];
+    state.blockContext.report = blockReport(state, 4, state.node - 19, [match], true, plan);
+    state.blockContext.playoffResult = { node: state.node, round: roundNames[state.node], status: won ? '晋级' : '出局', won: won, opponent: opponent.name, probability: match.probability, rating: match.rating };
+    state.pending = { type: 'block_report', kind: 'playoff', stage: 4, block: state.node - 19, key: true };
+  }
+
   function resolvePlayoff(state) {
     if (state.pending.type !== 'playoff') throw new Error('当前没有季后赛节点');
     var roundNames = { 19: '八强', 20: '四强', 21: '决赛' };
@@ -441,7 +766,7 @@
       var opponent = state.teams.find(function (team) { return team.id === opponentRow.teamId; });
       var probability = logistic(playerTeamPower(state) - opponentPower(opponent) + noise(state, -4, 4));
       var won = next(state) < probability;
-      state.playoff.results.push({ round: roundNames[state.node], status: won ? '晋级' : '出局', opponent: opponent.name, probability: round(probability, 3) });
+      state.playoff.results.push({ node: state.node, round: roundNames[state.node], status: won ? '晋级' : '出局', opponent: opponent.name, probability: round(probability, 3) });
       if (!won) state.playoff.status = 'eliminated';
       if (won && state.node === 21) {
         state.playoff.status = 'champion';
@@ -450,6 +775,16 @@
     }
     state.node += 1;
     setPending(state);
+  }
+
+  function acknowledgeCareerHandoff(state) {
+    if (state.pending.type === 'summary') return state;
+    if (state.pending.type !== 'career_handoff') throw new Error('当前没有生涯交接结算');
+    K.apply(state);
+    state.log.push('生涯交接：本赛季评级 ' + state.career.seasonGrade + '，生涯声望 ' + state.career.reputation + '。');
+    state.pending = { type: 'summary' };
+    state.completed = true;
+    return state;
   }
 
   function completeSummary(state) {
@@ -473,6 +808,9 @@
       mvp: state.awards.mvp,
       roleStar: state.awards.roleStar,
       fmvp: state.awards.fmvp,
+      career: copy(state.career),
+      careerImpact: copy(state.careerImpact || state.career),
+      blockReports: copy(state.blockReports),
       attributes: copy(state.player.attributes),
       decisions: state.decisions.length
     };
@@ -480,11 +818,22 @@
 
   function startNextSeason(state, tier) {
     var nextAge = state.player.age + 1;
-    var nextState = makeState({ seed: state.seed + nextAge * 997, playerPreset: nextAge <= 20 ? 'rookie' : (nextAge <= 25 ? 'star' : 'veteran'), teamPreset: tier || state.teamPreset, plan: state.plan, year: state.year + 1, mode: state.mode });
+    var nextTeamPreset = tier || state.teamPreset;
+    var changedTeam = nextTeamPreset !== state.teamPreset;
+    var nextState = makeState({ seed: state.seed + nextAge * 997, playerPreset: nextAge <= 20 ? 'rookie' : (nextAge <= 25 ? 'star' : 'veteran'), teamPreset: nextTeamPreset, plan: state.plan, year: state.year + 1, mode: state.mode });
     nextState.player.age = nextAge;
     nextState.player.attributes = copy(state.player.attributes);
     nextState.player.potential = state.player.potential;
     nextState.player.ovr = playerOvr(nextState.player.attributes);
+    nextState.career = K.nextSeason(state.career);
+    nextState.career.reputation = state.career.reputation;
+    nextState.career.history = copy(state.career.history || []);
+    nextState.careerImpact = nextState.career;
+    nextState.resources.coachTrust = changedTeam ? 50 : clamp(Math.round(state.resources.coachTrust * 0.60), 0, 100);
+    nextState.resources.roleStatus = changedTeam ? 50 : clamp(Math.round(state.resources.roleStatus * 0.75 + 12.5), 0, 100);
+    Object.keys(nextState.relationships).forEach(function (key) {
+      if (!changedTeam || key === 'mentor' || key === 'nemesis') nextState.relationships[key] = clamp(Math.round(state.relationships[key] * 0.50), 0, 100);
+    });
     return nextState;
   }
 
@@ -500,9 +849,13 @@
     makeState: makeState,
     setPending: setPending,
     applyAction: applyAction,
+    continueActionResult: continueActionResult,
+    chooseMatchPlan: chooseMatchPlan,
+    acknowledgeBlockReport: acknowledgeBlockReport,
     resolveEvent: resolveEvent,
     continueReport: continueReport,
     resolvePlayoff: resolvePlayoff,
+    acknowledgeCareerHandoff: acknowledgeCareerHandoff,
     completeSummary: completeSummary,
     seasonReport: seasonReport,
     startNextSeason: startNextSeason,

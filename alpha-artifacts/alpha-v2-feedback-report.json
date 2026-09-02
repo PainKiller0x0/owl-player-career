@@ -1,0 +1,858 @@
+{
+  "version": "alpha-v2",
+  "generatedFromSeed": 20260902,
+  "sensitivity": [
+    {
+      "action": "mechanics",
+      "temporaryEffect": {
+        "ledgerCategory": "personal",
+        "label": "操作稳定",
+        "ratingDelta": 0.3,
+        "personalWinPP": 2,
+        "roleChanceDelta": 2,
+        "tags": [
+          "操作稳定"
+        ],
+        "sourceAction": "mechanics",
+        "teamWinPP": 0,
+        "remainingBlocks": 1,
+        "metaPP": 0,
+        "synergyPP": 0,
+        "decisionPP": 0,
+        "statePP": 0
+      },
+      "averageRating": 6.85,
+      "averageWinImpactPP": 1.08,
+      "averagePersonalContributionPP": 3.75,
+      "roleBefore": 56,
+      "projectedRoleChange": -3,
+      "appearances": 3,
+      "games": 4
+    },
+    {
+      "action": "heroPool",
+      "temporaryEffect": {
+        "ledgerCategory": "meta",
+        "label": "版本适应",
+        "ratingDelta": 0.15,
+        "metaPP": 3,
+        "roleChanceDelta": 1,
+        "tags": [
+          "版本适应"
+        ],
+        "sourceAction": "heroPool",
+        "teamWinPP": 0,
+        "remainingBlocks": 1,
+        "personalWinPP": 0,
+        "synergyPP": 0,
+        "decisionPP": 0,
+        "statePP": 0
+      },
+      "averageRating": 6.67,
+      "averageWinImpactPP": 3.6,
+      "averagePersonalContributionPP": 2.768,
+      "roleBefore": 56,
+      "projectedRoleChange": -3,
+      "appearances": 3,
+      "games": 4
+    },
+    {
+      "action": "gameSense",
+      "temporaryEffect": {
+        "ledgerCategory": "decision",
+        "label": "比赛阅读",
+        "ratingDelta": 0.2,
+        "decisionPP": 2.5,
+        "roleChanceDelta": 2,
+        "tags": [
+          "比赛阅读"
+        ],
+        "sourceAction": "gameSense",
+        "teamWinPP": 0,
+        "remainingBlocks": 1,
+        "personalWinPP": 0,
+        "metaPP": 0,
+        "synergyPP": 0,
+        "statePP": 0
+      },
+      "averageRating": 6.73,
+      "averageWinImpactPP": 6,
+      "averagePersonalContributionPP": 2.82,
+      "roleBefore": 56,
+      "projectedRoleChange": -3,
+      "appearances": 3,
+      "games": 4
+    },
+    {
+      "action": "teamwork",
+      "temporaryEffect": {
+        "ledgerCategory": "synergy",
+        "label": "团队默契",
+        "ratingDelta": 0.1,
+        "synergyPP": 3,
+        "roleChanceDelta": 1,
+        "tags": [
+          "团队默契"
+        ],
+        "sourceAction": "teamwork",
+        "teamWinPP": 0,
+        "remainingBlocks": 1,
+        "personalWinPP": 0,
+        "metaPP": 0,
+        "decisionPP": 0,
+        "statePP": 0
+      },
+      "averageRating": 6.6,
+      "averageWinImpactPP": 7.2,
+      "averagePersonalContributionPP": 2.797,
+      "roleBefore": 56,
+      "projectedRoleChange": -3,
+      "appearances": 3,
+      "games": 4
+    },
+    {
+      "action": "mental",
+      "temporaryEffect": {
+        "ledgerCategory": "state",
+        "label": "心态稳定",
+        "ratingDelta": 0.05,
+        "personalWinPP": 1,
+        "statePP": 1,
+        "ratingNoiseMultiplier": 0.55,
+        "tags": [
+          "心态稳定"
+        ],
+        "sourceAction": "mental",
+        "teamWinPP": 0,
+        "remainingBlocks": 1,
+        "metaPP": 0,
+        "synergyPP": 0,
+        "decisionPP": 0,
+        "roleChanceDelta": 0
+      },
+      "averageRating": 6.98,
+      "averageWinImpactPP": 0,
+      "averagePersonalContributionPP": 3.75,
+      "roleBefore": 56,
+      "projectedRoleChange": -3,
+      "appearances": 3,
+      "games": 4
+    },
+    {
+      "action": "rest",
+      "temporaryEffect": {
+        "ledgerCategory": "state",
+        "label": "恢复状态",
+        "ratingDelta": 0,
+        "statePP": 1,
+        "ratingNoiseMultiplier": 0.55,
+        "tags": [
+          "恢复状态"
+        ],
+        "sourceAction": "rest",
+        "teamWinPP": 0,
+        "remainingBlocks": 1,
+        "personalWinPP": 0,
+        "metaPP": 0,
+        "synergyPP": 0,
+        "decisionPP": 0,
+        "roleChanceDelta": 0
+      },
+      "averageRating": 6.64,
+      "averageWinImpactPP": 0,
+      "averagePersonalContributionPP": 3.75,
+      "roleBefore": 56,
+      "projectedRoleChange": -3,
+      "appearances": 3,
+      "games": 4
+    }
+  ],
+  "groups": [
+    {
+      "playerPreset": "rookie",
+      "teamPreset": "contender",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 1.989,
+      "championshipRate": 0.095,
+      "playoffRate": 0.843,
+      "mvpRate": 0,
+      "fmvpRate": 0,
+      "positiveContributionLossRate": 0.088,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -20.327,
+      "avgCoachTrustChange": 32.841,
+      "avgReputationChange": -0.378,
+      "roleDistribution": {
+        "substitute": 919,
+        "rotation": 81,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 0,
+        "C": 874,
+        "D": 126
+      },
+      "tagDistribution": {
+        "体系枢纽": 1000,
+        "版本专家": 368,
+        "赛季冠军": 63
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "heroPool": {
+          "samples": 1367,
+          "avgWinImpactPP": 3.55261887344553,
+          "avgRating": 6.712187271397213,
+          "avgPersonalContributionPP": 2.110709583028534
+        },
+        "gameSense": {
+          "samples": 3639,
+          "avgWinImpactPP": 6.003564165979646,
+          "avgRating": 6.621761472932126,
+          "avgPersonalContributionPP": 1.9583598516075917
+        },
+        "teamwork": {
+          "samples": 3064,
+          "avgWinImpactPP": 7.116049608355298,
+          "avgRating": 6.55992167101828,
+          "avgPersonalContributionPP": 1.9860483028720626
+        },
+        "mental": {
+          "samples": 3352,
+          "avgWinImpactPP": 1.0714862768496496,
+          "avgRating": 6.454358591885445,
+          "avgPersonalContributionPP": 3.1768952863961704
+        },
+        "rest": {
+          "samples": 578,
+          "avgWinImpactPP": 0.2675579584775086,
+          "avgRating": 6.561003460207612,
+          "avgPersonalContributionPP": 1.8451384083044986
+        }
+      }
+    },
+    {
+      "playerPreset": "rookie",
+      "teamPreset": "mid",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 1.986,
+      "championshipRate": 0.038,
+      "playoffRate": 0.482,
+      "mvpRate": 0,
+      "fmvpRate": 0,
+      "positiveContributionLossRate": 0.401,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -22.567,
+      "avgCoachTrustChange": 28.472,
+      "avgReputationChange": -1.338,
+      "roleDistribution": {
+        "substitute": 969,
+        "rotation": 31,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 0,
+        "C": 554,
+        "D": 446
+      },
+      "tagDistribution": {
+        "版本专家": 394,
+        "体系枢纽": 1000,
+        "赛季冠军": 23
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "heroPool": {
+          "samples": 1393,
+          "avgWinImpactPP": 3.5379109834889064,
+          "avgRating": 6.6189806173725705,
+          "avgPersonalContributionPP": 1.9613872936109127
+        },
+        "gameSense": {
+          "samples": 3578,
+          "avgWinImpactPP": 5.976129122414742,
+          "avgRating": 6.565670765790956,
+          "avgPersonalContributionPP": 1.8472596422582477
+        },
+        "teamwork": {
+          "samples": 3073,
+          "avgWinImpactPP": 7.164712007810167,
+          "avgRating": 6.477822974292203,
+          "avgPersonalContributionPP": 1.8837683045883504
+        },
+        "mental": {
+          "samples": 3326,
+          "avgWinImpactPP": 1.043462116656652,
+          "avgRating": 6.40708959711364,
+          "avgPersonalContributionPP": 2.9883268190017938
+        },
+        "rest": {
+          "samples": 630,
+          "avgWinImpactPP": 0.2203920634920635,
+          "avgRating": 6.4963174603174565,
+          "avgPersonalContributionPP": 1.644643650793651
+        }
+      }
+    },
+    {
+      "playerPreset": "rookie",
+      "teamPreset": "rebuild",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 1.986,
+      "championshipRate": 0.01,
+      "playoffRate": 0.19,
+      "mvpRate": 0,
+      "fmvpRate": 0,
+      "positiveContributionLossRate": 0.723,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -24.385,
+      "avgCoachTrustChange": 24.837,
+      "avgReputationChange": -2.181,
+      "roleDistribution": {
+        "substitute": 994,
+        "rotation": 6,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 0,
+        "C": 273,
+        "D": 727
+      },
+      "tagDistribution": {
+        "体系枢纽": 1000,
+        "版本专家": 417,
+        "赛季冠军": 7
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "heroPool": {
+          "samples": 1414,
+          "avgWinImpactPP": 3.5090664780764143,
+          "avgRating": 6.6074115983027,
+          "avgPersonalContributionPP": 1.9543009193776555
+        },
+        "gameSense": {
+          "samples": 3536,
+          "avgWinImpactPP": 5.974496606334835,
+          "avgRating": 6.543085407239819,
+          "avgPersonalContributionPP": 1.8327343042986504
+        },
+        "teamwork": {
+          "samples": 3088,
+          "avgWinImpactPP": 7.113575129533909,
+          "avgRating": 6.4492810880829055,
+          "avgPersonalContributionPP": 1.849078529792743
+        },
+        "mental": {
+          "samples": 3299,
+          "avgWinImpactPP": 1.0056979387693268,
+          "avgRating": 6.3636920278872395,
+          "avgPersonalContributionPP": 2.9399011821764027
+        },
+        "rest": {
+          "samples": 663,
+          "avgWinImpactPP": 0.2031885369532427,
+          "avgRating": 6.4169683257918635,
+          "avgPersonalContributionPP": 1.5189539969834098
+        }
+      }
+    },
+    {
+      "playerPreset": "star",
+      "teamPreset": "contender",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 1.004,
+      "championshipRate": 0.164,
+      "playoffRate": 0.956,
+      "mvpRate": 0.068,
+      "fmvpRate": 0.063,
+      "positiveContributionLossRate": 0.016,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -4.006,
+      "avgCoachTrustChange": 33.717,
+      "avgReputationChange": 1.582,
+      "roleDistribution": {
+        "substitute": 17,
+        "rotation": 981,
+        "starter": 2,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 6,
+        "B": 776,
+        "C": 218,
+        "D": 0
+      },
+      "tagDistribution": {
+        "体系枢纽": 1000,
+        "版本专家": 66,
+        "赛季冠军": 155,
+        "常规赛 MVP": 54
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "heroPool": {
+          "samples": 1049,
+          "avgWinImpactPP": 3.6221353670162286,
+          "avgRating": 7.285872259294579,
+          "avgPersonalContributionPP": 3.535805529075306
+        },
+        "gameSense": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "teamwork": {
+          "samples": 5137,
+          "avgWinImpactPP": 6.981479462721604,
+          "avgRating": 7.005053533190588,
+          "avgPersonalContributionPP": 3.4184198948802944
+        },
+        "mental": {
+          "samples": 5014,
+          "avgWinImpactPP": 0.270040686078979,
+          "avgRating": 7.152467092142031,
+          "avgPersonalContributionPP": 3.786732648583961
+        },
+        "rest": {
+          "samples": 800,
+          "avgWinImpactPP": 0.19277562500000012,
+          "avgRating": 7.062762500000003,
+          "avgPersonalContributionPP": 3.7321181249999995
+        }
+      }
+    },
+    {
+      "playerPreset": "star",
+      "teamPreset": "mid",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 1.003,
+      "championshipRate": 0.084,
+      "playoffRate": 0.712,
+      "mvpRate": 0.015,
+      "fmvpRate": 0.035,
+      "positiveContributionLossRate": 0.179,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -7.38,
+      "avgCoachTrustChange": 29.504,
+      "avgReputationChange": 1.162,
+      "roleDistribution": {
+        "substitute": 68,
+        "rotation": 932,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 1,
+        "B": 580,
+        "C": 418,
+        "D": 1
+      },
+      "tagDistribution": {
+        "体系枢纽": 1000,
+        "赛季冠军": 79,
+        "版本专家": 62,
+        "常规赛 MVP": 14
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "heroPool": {
+          "samples": 1050,
+          "avgWinImpactPP": 3.6299333333333528,
+          "avgRating": 7.246352380952383,
+          "avgPersonalContributionPP": 3.55610666666666
+        },
+        "gameSense": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "teamwork": {
+          "samples": 5135,
+          "avgWinImpactPP": 6.988973709834629,
+          "avgRating": 6.955822784810127,
+          "avgPersonalContributionPP": 3.4166802336903634
+        },
+        "mental": {
+          "samples": 5034,
+          "avgWinImpactPP": 0.27411462058005553,
+          "avgRating": 7.108897497020247,
+          "avgPersonalContributionPP": 3.784994537147394
+        },
+        "rest": {
+          "samples": 781,
+          "avgWinImpactPP": 0.1918418693982073,
+          "avgRating": 7.030896286811776,
+          "avgPersonalContributionPP": 3.6789359795134424
+        }
+      }
+    },
+    {
+      "playerPreset": "star",
+      "teamPreset": "rebuild",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 1.005,
+      "championshipRate": 0.036,
+      "playoffRate": 0.393,
+      "mvpRate": 0.001,
+      "fmvpRate": 0.015,
+      "positiveContributionLossRate": 0.503,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -10.242,
+      "avgCoachTrustChange": 25.682,
+      "avgReputationChange": 0.596,
+      "roleDistribution": {
+        "substitute": 158,
+        "rotation": 842,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 301,
+        "C": 697,
+        "D": 2
+      },
+      "tagDistribution": {
+        "体系枢纽": 1000,
+        "版本专家": 64,
+        "赛季冠军": 32,
+        "常规赛 MVP": 1
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "heroPool": {
+          "samples": 1045,
+          "avgWinImpactPP": 3.630296650717721,
+          "avgRating": 7.216478468899529,
+          "avgPersonalContributionPP": 3.523459330143535
+        },
+        "gameSense": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "teamwork": {
+          "samples": 5135,
+          "avgWinImpactPP": 6.9876144109057,
+          "avgRating": 6.9317390457643615,
+          "avgPersonalContributionPP": 3.4041425511197727
+        },
+        "mental": {
+          "samples": 5020,
+          "avgWinImpactPP": 0.27055268924302733,
+          "avgRating": 7.077661354581696,
+          "avgPersonalContributionPP": 3.747748804780878
+        },
+        "rest": {
+          "samples": 800,
+          "avgWinImpactPP": 0.18338562500000005,
+          "avgRating": 6.988774999999997,
+          "avgPersonalContributionPP": 3.6478899999999985
+        }
+      }
+    },
+    {
+      "playerPreset": "veteran",
+      "teamPreset": "contender",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 0.943,
+      "championshipRate": 0.141,
+      "playoffRate": 0.944,
+      "mvpRate": 0.026,
+      "fmvpRate": 0.013,
+      "positiveContributionLossRate": 0.029,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -8.271,
+      "avgCoachTrustChange": 39.026,
+      "avgReputationChange": 1.181,
+      "roleDistribution": {
+        "substitute": 88,
+        "rotation": 911,
+        "starter": 1,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 592,
+        "C": 407,
+        "D": 1
+      },
+      "tagDistribution": {
+        "版本专家": 1000,
+        "赛季冠军": 115,
+        "生涯管理者": 207,
+        "常规赛 MVP": 16
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 5430,
+          "avgWinImpactPP": 1.5695689686924188,
+          "avgRating": 7.101559852670361,
+          "avgPersonalContributionPP": 3.3505923572743943
+        },
+        "heroPool": {
+          "samples": 4972,
+          "avgWinImpactPP": 3.4867538213999216,
+          "avgRating": 6.904161303298482,
+          "avgPersonalContributionPP": 2.0235695897023493
+        },
+        "gameSense": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "teamwork": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "mental": {
+          "samples": 573,
+          "avgWinImpactPP": 0.6738272251308911,
+          "avgRating": 7.099458987783597,
+          "avgPersonalContributionPP": 3.6974162303664926
+        },
+        "rest": {
+          "samples": 1025,
+          "avgWinImpactPP": 0.8038839024390297,
+          "avgRating": 6.833131707317077,
+          "avgPersonalContributionPP": 2.8261365853658567
+        }
+      }
+    },
+    {
+      "playerPreset": "veteran",
+      "teamPreset": "mid",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 0.939,
+      "championshipRate": 0.078,
+      "playoffRate": 0.733,
+      "mvpRate": 0.006,
+      "fmvpRate": 0.012,
+      "positiveContributionLossRate": 0.168,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -11.407,
+      "avgCoachTrustChange": 34.632,
+      "avgReputationChange": 0.733,
+      "roleDistribution": {
+        "substitute": 221,
+        "rotation": 779,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 371,
+        "C": 626,
+        "D": 3
+      },
+      "tagDistribution": {
+        "版本专家": 1000,
+        "生涯管理者": 167,
+        "赛季冠军": 65,
+        "常规赛 MVP": 4
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 5446,
+          "avgWinImpactPP": 1.5931715938303073,
+          "avgRating": 7.066193536540592,
+          "avgPersonalContributionPP": 3.3180572897539484
+        },
+        "heroPool": {
+          "samples": 5040,
+          "avgWinImpactPP": 3.498799603174663,
+          "avgRating": 6.857244047619066,
+          "avgPersonalContributionPP": 1.975372023809536
+        },
+        "gameSense": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "teamwork": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "mental": {
+          "samples": 474,
+          "avgWinImpactPP": 0.7058786919831217,
+          "avgRating": 7.015253164556963,
+          "avgPersonalContributionPP": 3.5763006329113938
+        },
+        "rest": {
+          "samples": 1040,
+          "avgWinImpactPP": 0.8029971153846215,
+          "avgRating": 6.785798076923074,
+          "avgPersonalContributionPP": 2.705528846153845
+        }
+      }
+    },
+    {
+      "playerPreset": "veteran",
+      "teamPreset": "rebuild",
+      "plan": "balanced",
+      "samples": 1000,
+      "avgOvrGrowth": 0.934,
+      "championshipRate": 0.024,
+      "playoffRate": 0.405,
+      "mvpRate": 0.002,
+      "fmvpRate": 0.003,
+      "positiveContributionLossRate": 0.5,
+      "negativeContributionWinRate": 0,
+      "avgRoleChange": -14.135,
+      "avgCoachTrustChange": 31.01,
+      "avgReputationChange": 0.322,
+      "roleDistribution": {
+        "substitute": 392,
+        "rotation": 608,
+        "starter": 0,
+        "core": 0
+      },
+      "gradeDistribution": {
+        "S": 0,
+        "A": 0,
+        "B": 185,
+        "C": 799,
+        "D": 16
+      },
+      "tagDistribution": {
+        "版本专家": 1000,
+        "生涯管理者": 176,
+        "赛季冠军": 20,
+        "常规赛 MVP": 2
+      },
+      "actionImpact": {
+        "mechanics": {
+          "samples": 5461,
+          "avgWinImpactPP": 1.572451474088962,
+          "avgRating": 7.022001464933159,
+          "avgPersonalContributionPP": 3.2459720747115863
+        },
+        "heroPool": {
+          "samples": 5020,
+          "avgWinImpactPP": 3.491603585657432,
+          "avgRating": 6.824332669322708,
+          "avgPersonalContributionPP": 1.9273425298804958
+        },
+        "gameSense": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "teamwork": {
+          "samples": 0,
+          "avgWinImpactPP": 0,
+          "avgRating": 0,
+          "avgPersonalContributionPP": 0
+        },
+        "mental": {
+          "samples": 461,
+          "avgWinImpactPP": 0.5991344902386119,
+          "avgRating": 7.008698481561819,
+          "avgPersonalContributionPP": 3.3241735357917555
+        },
+        "rest": {
+          "samples": 1058,
+          "avgWinImpactPP": 0.8032707939508555,
+          "avgRating": 6.766200378071828,
+          "avgPersonalContributionPP": 2.550920604914937
+        }
+      }
+    }
+  ],
+  "sampleCount": 1000,
+  "longCareer": {
+    "samples": 1000,
+    "byTeam": {
+      "contender": {
+        "samples": 334,
+        "avgChampionships": 1.2395209580838322,
+        "avgMvps": 0.46407185628742514,
+        "sevenPlusChampionshipsRate": 0
+      },
+      "mid": {
+        "samples": 333,
+        "avgChampionships": 1.0360360360360361,
+        "avgMvps": 0.3993993993993994,
+        "sevenPlusChampionshipsRate": 0
+      },
+      "rebuild": {
+        "samples": 333,
+        "avgChampionships": 0.948948948948949,
+        "avgMvps": 0.43543543543543545,
+        "sevenPlusChampionshipsRate": 0
+      }
+    },
+    "avgChampionships": 1.075,
+    "avgMvps": 0.433,
+    "sevenPlusChampionshipsRate": 0
+  },
+  "notes": [
+    "同一初始状态、同一道具节点、六个行动的选择敏感度。",
+    "批量样本使用自动模式，但行动结算、比赛报告与生涯承接均来自同一 Engine。",
+    "长生涯为 1000 条首轮抽样，用于发现极端样本，不替代正式玩法定标。"
+  ]
+}

@@ -1,4 +1,4 @@
-importScripts('random.js', 'constants.js', 'engine.js', 'auto.js');
+importScripts('random.js', 'constants.js', 'impact.js', 'career.js', 'engine.js', 'auto.js');
 
 self.onmessage = function (event) {
   var data = event.data || {};
@@ -36,7 +36,8 @@ self.onmessage = function (event) {
 
 function runSamples(config, count, seed, onSample) {
   var results = [];
-  var aggregate = { samples: count, avgOvrGrowth: 0, medianOvrGrowth: 0, championships: 0, playoffRate: 0, mvpRate: 0, fmvpRate: 0, failureRate: 0, restRate: 0 };
+  var aggregate = { samples: count, avgOvrGrowth: 0, medianOvrGrowth: 0, championships: 0, playoffRate: 0, mvpRate: 0, fmvpRate: 0, failureRate: 0, restRate: 0, positiveContributionLossRate: 0, negativeContributionWinRate: 0, avgRoleChange: 0, avgCoachTrustChange: 0, avgReputationChange: 0, roleDistribution: { substitute: 0, rotation: 0, starter: 0, core: 0 }, gradeDistribution: { S: 0, A: 0, B: 0, C: 0, D: 0 }, tagDistribution: {}, actionImpact: {} };
+  ['mechanics', 'heroPool', 'gameSense', 'teamwork', 'mental', 'rest'].forEach(function (action) { aggregate.actionImpact[action] = { samples: 0, avgWinImpactPP: 0, avgRating: 0, avgPersonalContributionPP: 0 }; });
   var growth = [];
   for (var i = 0; i < count; i += 1) {
     var state = OWL_ALPHA_AUTO.simulate({ seed: seed + i + config.playerPreset.length * 10000 + config.teamPreset.length * 100, playerPreset: config.playerPreset, teamPreset: config.teamPreset, plan: config.plan });
@@ -50,6 +51,31 @@ function runSamples(config, count, seed, onSample) {
     aggregate.playoffRate += report.qualified ? 1 : 0;
     aggregate.mvpRate += state.awards.mvp && state.awards.mvp.id === 'you' ? 1 : 0;
     aggregate.fmvpRate += state.awards.fmvp && state.awards.fmvp.name === '你' ? 1 : 0;
+    var actionContribution = 0;
+    state.blockReports.forEach(function (report) {
+      var action = aggregate.actionImpact[report.actionId];
+      if (!action) return;
+      action.samples += 1;
+      var ledger = (report.matches || []).map(function (match) { return match.impactLedger; });
+      var winImpact = ledger.reduce(function (sum, item) { return sum + (item.trainingImpactPP || 0); }, 0) / Math.max(1, ledger.length);
+      var personal = ledger.reduce(function (sum, item) { return sum + (item.personalContributionPP || 0); }, 0) / Math.max(1, ledger.length);
+      action.avgWinImpactPP += winImpact;
+      action.avgRating += report.averageRating;
+      action.avgPersonalContributionPP += personal;
+      actionContribution += winImpact;
+    });
+    var finalRole = OWL_ALPHA_IMPACT.roleProfile(state.resources.roleStatus).id;
+    if (aggregate.roleDistribution[finalRole] != null) aggregate.roleDistribution[finalRole] += 1;
+    aggregate.positiveContributionLossRate += actionContribution > 0 && state.wins < state.losses ? 1 : 0;
+    aggregate.negativeContributionWinRate += actionContribution < 0 && state.wins > state.losses ? 1 : 0;
+    aggregate.avgRoleChange += state.resources.roleStatus - 50;
+    aggregate.avgCoachTrustChange += state.resources.coachTrust - 50;
+    var grade = state.career && state.career.seasonGrade;
+    if (grade && aggregate.gradeDistribution[grade] != null) {
+      aggregate.gradeDistribution[grade] += 1;
+      aggregate.avgReputationChange += state.career.reputation - OWL_ALPHA_CONSTANTS.PLAYER_PRESETS[config.playerPreset].reputation;
+      (state.career.careerTags || []).forEach(function (tag) { aggregate.tagDistribution[tag] = (aggregate.tagDistribution[tag] || 0) + 1; });
+    }
     aggregate.failureRate += failures;
     aggregate.restRate += rests;
     if (i < 3) results.push(report);
@@ -64,6 +90,18 @@ function runSamples(config, count, seed, onSample) {
   aggregate.fmvpRate = aggregate.fmvpRate / count;
   aggregate.avgFailures = aggregate.failureRate / count;
   aggregate.avgRests = aggregate.restRate / count;
+  aggregate.positiveContributionLossRate = aggregate.positiveContributionLossRate / count;
+  aggregate.negativeContributionWinRate = aggregate.negativeContributionWinRate / count;
+  aggregate.avgRoleChange = aggregate.avgRoleChange / count;
+  aggregate.avgCoachTrustChange = aggregate.avgCoachTrustChange / count;
+  aggregate.avgReputationChange = aggregate.avgReputationChange / count;
+  Object.keys(aggregate.actionImpact).forEach(function (action) {
+    var metric = aggregate.actionImpact[action];
+    if (!metric.samples) return;
+    metric.avgWinImpactPP /= metric.samples;
+    metric.avgRating /= metric.samples;
+    metric.avgPersonalContributionPP /= metric.samples;
+  });
   delete aggregate.failureRate;
   delete aggregate.restRate;
   return { aggregate: aggregate, samples: results };

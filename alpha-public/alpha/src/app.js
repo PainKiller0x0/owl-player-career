@@ -20,7 +20,7 @@
 
   function render() {
     if (state) UI.render(state);
-    else UI.renderHome(!!S.load());
+    else UI.renderHome(!!S.load(), S.hasLegacy());
   }
 
   function start() {
@@ -110,13 +110,17 @@
   }
 
   document.addEventListener('click', function (event) {
-    var element = event.target.closest ? event.target.closest('[data-alpha-action],[data-alpha-event],[data-alpha-report],[data-alpha-playoff],[data-alpha-new]') : null;
+    var element = event.target.closest ? event.target.closest('[data-alpha-action],[data-alpha-action-result],[data-alpha-match-plan],[data-alpha-block-report],[data-alpha-event],[data-alpha-report],[data-alpha-playoff],[data-alpha-career],[data-alpha-new]') : null;
     if (element && state) {
       try {
         if (element.dataset.alphaAction) E.applyAction(state, element.dataset.alphaAction);
+        else if (element.dataset.alphaActionResult !== undefined) E.continueActionResult(state);
+        else if (element.dataset.alphaMatchPlan) E.chooseMatchPlan(state, element.dataset.alphaMatchPlan);
+        else if (element.dataset.alphaBlockReport !== undefined) E.acknowledgeBlockReport(state);
         else if (element.dataset.alphaEvent) E.resolveEvent(state, element.dataset.alphaEvent);
         else if (element.dataset.alphaReport !== undefined) E.continueReport(state);
         else if (element.dataset.alphaPlayoff !== undefined) E.resolvePlayoff(state);
+        else if (element.dataset.alphaCareer !== undefined) E.acknowledgeCareerHandoff(state);
         else if (element.dataset.alphaNew !== undefined) return start();
         save(); render();
         if (state.completed) T.send('alpha_season_complete', { mode: state.mode });

@@ -4,14 +4,17 @@
   var PLAYER_PRESETS = {
     rookie: {
       id: 'rookie', name: '天才新秀', age: 18, ovr: 76, potential: 92,
+      reputation: 20,
       attributes: { mechanics: 88, heroPool: 72, gameSense: 70, teamwork: 71, mental: 69 }
     },
     star: {
       id: 'star', name: '巅峰明星', age: 23, ovr: 87, potential: 91,
+      reputation: 70,
       attributes: { mechanics: 95, heroPool: 84, gameSense: 86, teamwork: 82, mental: 81 }
     },
     veteran: {
       id: 'veteran', name: '老将核心', age: 27, ovr: 86, potential: 88,
+      reputation: 65,
       attributes: { mechanics: 85, heroPool: 83, gameSense: 89, teamwork: 88, mental: 86 }
     }
   };
@@ -50,7 +53,7 @@
   };
 
   root.OWL_ALPHA_CONSTANTS = {
-    VERSION: 1,
+    VERSION: 2,
     PLAYER_PRESETS: PLAYER_PRESETS,
     TEAM_PRESETS: TEAM_PRESETS,
     PLANS: PLANS,
@@ -61,6 +64,12 @@
       2: [5, 5, 4, 5],
       3: [5, 4, 5, 5]
     },
-    AGE_BANDS: { rookie: [18, 20], peak: [21, 25], veteran: [26, 29] }
+    AGE_BANDS: { rookie: [18, 20], peak: [21, 25], veteran: [26, 29] },
+    MATCH_PLANS: {
+      stable: { id: 'stable', name: '稳健执行', description: '降低波动，优先把训练成果稳定兑现。' },
+      focus: { id: 'focus', name: '围绕当前备战方向', description: '让本节点训练方向在比赛中获得更清晰的反馈。' },
+      highRisk: { id: 'highRisk', name: '高风险抢节奏', description: '主动放大临场收益，赢下关键回合，但波动更大。' }
+    },
+    CAREER_GRADES: { S: 88, A: 78, B: 65, C: 50 }
   };
 })(typeof globalThis === 'undefined' ? this : globalThis);
